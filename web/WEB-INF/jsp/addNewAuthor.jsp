@@ -6,10 +6,11 @@
     <script src="resources/js/loadImage.js"></script>
 </head>
 <body>
+
 <form method="post" action="Controller" enctype="multipart/form-data">
     <input type="hidden" name="command" value="add_new_author"/>
-    <input type="file" id="file1" name="file" accept="image/jpeg,image/png,image/gif" />
-    <img id="image1" width="150px" height="180px"/>
+    <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif" />
+    <img id="image" width="150px" height="180px"/>
     <br><br>
     <input type="text" name="firstName" placeholder="Имя автора"
            title="Имя должно содержать от 2 до 20 символов"/><br/>

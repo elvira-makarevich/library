@@ -7,12 +7,20 @@ import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.exception.ServiceException;
 
+import java.util.List;
+
 public class AuthorServiceImpl implements AuthorService {
+
+    private final AuthorDAO authorDAO;
+
+    public AuthorServiceImpl(AuthorDAO authorDAO) {
+        this.authorDAO=authorDAO;
+    }
 
     @Override
     public void addAuthor(Author author) throws ServiceException {
 
-        AuthorDAO authorDAO = new AuthorDAOImpl();
+
         try {
         authorDAO.addAuthor(author);
         } catch (DAOException e) {
@@ -23,15 +31,15 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author findAuthor(int id) throws ServiceException {
+    public List<Author> findAuthor(int id) throws ServiceException {
         AuthorDAO authorDAO = new AuthorDAOImpl();
-        Author author;
+        List<Author> authors;
         try {
-            author= authorDAO.findAuthor(id);
+            authors= authorDAO.findAuthor(id);
         } catch (DAOException e) {
             // log
             throw new ServiceException(e);
         }
-        return author;
+        return authors;
     }
 }

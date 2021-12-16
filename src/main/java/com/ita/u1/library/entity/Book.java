@@ -11,6 +11,7 @@ public class Book implements Serializable {
     private String title;
     private String originalTitle;
     private List<Genre> genres;
+    private double price;
     private int numberOfCopies;
     private List<Author> authors;
     private List<Byte[]> covers;

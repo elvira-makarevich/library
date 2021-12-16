@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Author implements Serializable {
 
-    private long id;
+    private int id;
     private String firstName;
     private String lastName;
     private byte[] image;
@@ -20,14 +20,13 @@ public class Author implements Serializable {
     }
 
     public Author(byte[] bytes) {
-        this.image = bytes;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -70,7 +69,7 @@ public class Author implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id;
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(image);
@@ -86,4 +85,5 @@ public class Author implements Serializable {
                 ", image=" + Arrays.toString(image) +
                 '}';
     }
+
 }

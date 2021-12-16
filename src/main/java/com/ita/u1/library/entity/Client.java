@@ -9,5 +9,8 @@ public class Client {
     private String lastName;
     private String patronymic;
     private String passportNumber;
+    private String email;
+    private String address;
     private Date dateOfBirth;
+
 }

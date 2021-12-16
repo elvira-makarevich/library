@@ -1,15 +1,13 @@
-window.onload = () => init();
+window.onload = () => loadImage();
 
-function init() {
-    document.getElementById('file1').addEventListener('change', function () {
-
+function loadImage() {
+    document.getElementById('file').addEventListener('change', function () {
         if (this.files && this.files[0]) {
             let reader = new FileReader();
             reader.onload = function (e) {
-                document.getElementById('image1').setAttribute('src', e.target.result);
+                document.getElementById('image').setAttribute('src', e.target.result);
             };
             reader.readAsDataURL(this.files[0]);
-
         }
     })
 }
