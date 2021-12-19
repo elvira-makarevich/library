@@ -14,15 +14,14 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorDAO authorDAO;
 
     public AuthorServiceImpl(AuthorDAO authorDAO) {
-        this.authorDAO=authorDAO;
+        this.authorDAO = authorDAO;
     }
 
     @Override
     public void addAuthor(Author author) throws ServiceException {
 
-
         try {
-        authorDAO.addAuthor(author);
+            authorDAO.addAuthor(author);
         } catch (DAOException e) {
             // log
             throw new ServiceException(e);
@@ -31,15 +30,28 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Author> findAuthor(int id) throws ServiceException {
-        AuthorDAO authorDAO = new AuthorDAOImpl();
+    public List<Author> findAuthor(String lastName) throws ServiceException {
+
         List<Author> authors;
         try {
-            authors= authorDAO.findAuthor(id);
+            authors = authorDAO.findAuthor(lastName);
         } catch (DAOException e) {
             // log
             throw new ServiceException(e);
         }
         return authors;
+    }
+
+    @Override
+    public Author findAuthorImage(int id) throws ServiceException {
+
+        Author author;
+        try {
+            author = authorDAO.findAuthorImage(id);
+        } catch (DAOException e) {
+            // log
+            throw new ServiceException(e);
+        }
+        return author;
     }
 }

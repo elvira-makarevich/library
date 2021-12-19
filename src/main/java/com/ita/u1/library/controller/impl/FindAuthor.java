@@ -24,22 +24,28 @@ public class FindAuthor implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        List<Author> authors = null;
+
+        String lastName = request.getParameter("lastName");
+
+        if (lastName == null || lastName.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Введите фамилию! Поле не может быть пустым.");
+            //что тут??
+            return;
+        }
 
         try {
-            authors = authorService.findAuthor(55);
-            //    response.setContentType("image/jpeg");
-            //     response.setContentLength(author.getImage().length); // imageBytes - image in bytes
-            //    response.getOutputStream().write(author.getImage());
-            //    request.getRequestDispatcher("/WEB-INF/jsp/addNewAuthor.jsp").forward(request, response);
-
+            List <Author> authors  = authorService.findAuthor(lastName);
+            System.out.println(authors.toString());
             String json = new Gson().toJson(authors);
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);
+
         } catch (ServiceException e) {
             System.out.println("FIASKO, BRATAN");
         }
 
 
     }
+
+
 }

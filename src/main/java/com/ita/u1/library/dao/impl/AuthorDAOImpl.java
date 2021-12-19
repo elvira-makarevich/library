@@ -7,6 +7,7 @@ import com.ita.u1.library.dao.exception.DAOException;
 import com.ita.u1.library.entity.Author;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorDAOImpl implements AuthorDAO {
@@ -54,30 +55,58 @@ public class AuthorDAOImpl implements AuthorDAO {
     }
 
     @Override
-    public List<Author> findAuthor(int id) throws DAOException {
+    public List<Author> findAuthor(String lastName) throws DAOException {
 
         Connection connection;
         connection = CONNECTION_POOL.takeConnection();
-        List<Author> authors = null;
+        List<Author> authors = new ArrayList<>();
         try {
 
-            PreparedStatement ps = connection.prepareStatement("SELECT image FROM images WHERE image_id = ?");
-            ps.setInt(1, id);
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM authors WHERE last_name = ?");
+            ps.setString(1, lastName);
             ResultSet rs = ps.executeQuery();
             if (rs != null) {
                 while (rs.next()) {
-                    ///ПОСМОТРИ КОНСТРУКТОР!!!
-                    authors.add(new Author(rs.getBytes(1)));
+                    int id = rs.getInt(1);
+                    String firstName = rs.getString(2);
+                    String lastNameFound = rs.getString(3);
+                    authors.add(new Author(id, firstName, lastNameFound));
                 }
                 rs.close();
             }
             ps.close();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("TOTAL FIASKO");
         }
         CONNECTION_POOL.releaseConnection(connection);
         return authors;
+    }
+
+    @Override
+    public Author findAuthorImage(int id) throws DAOException {
+
+        Connection connection;
+        connection = CONNECTION_POOL.takeConnection();
+        Author author = new Author();
+        try {
+
+            PreparedStatement ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs != null) {
+                while (rs.next()) {
+                    author.setImage(rs.getBytes(1));
+                }
+                rs.close();
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("TOTAL FIASKO");
+        }
+        CONNECTION_POOL.releaseConnection(connection);
+        return author;
     }
 
 }

@@ -8,5 +8,7 @@ import java.util.List;
 public interface AuthorDAO {
 
     void addAuthor(Author author) throws DAOException;
-    List<Author> findAuthor (int id) throws DAOException;
+    List<Author> findAuthor (String lastName) throws DAOException;
+    Author findAuthorImage(int id) throws DAOException;
+
 }

@@ -5,38 +5,26 @@ import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
 import com.ita.u1.library.service.exception.ServiceException;
-import org.apache.commons.io.IOUtils;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
 import java.io.IOException;
-import java.io.InputStream;
 
-public class AddNewAuthor implements Command {
+public class FindAuthorImage implements Command {
 
     private final AuthorService authorService = ServiceProvider.getInstance().getAuthorService();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-
-        Part filePart = request.getPart("file");
-        InputStream inputStream = filePart.getInputStream();
-        byte[] bytesImage = IOUtils.toByteArray(inputStream);
-
-        Author author = new Author(firstName, lastName, bytesImage);
-
         try {
-            authorService.addAuthor(author);
-            response.sendRedirect("Controller?command=Go_To_Main_Page");
+            Author author = authorService.findAuthorImage(Integer.parseInt(request.getParameter("id")));
+            response.setContentType("image/jpeg");
+            response.setContentLength(author.getImage().length);
+            response.getOutputStream().write(author.getImage());
         } catch (ServiceException e) {
-            e.printStackTrace();
+            System.out.println("ne segodnja");
         }
     }
 }

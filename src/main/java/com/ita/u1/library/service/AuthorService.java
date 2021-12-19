@@ -8,6 +8,7 @@ import java.util.List;
 public interface AuthorService {
 
     void addAuthor(Author author) throws ServiceException;
-    List<Author> findAuthor(int id)throws ServiceException;
+    List<Author> findAuthor(String lastName)throws ServiceException;
+    Author findAuthorImage(int id) throws ServiceException;
 
 }

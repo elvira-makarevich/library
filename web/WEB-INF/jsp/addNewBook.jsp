@@ -3,94 +3,189 @@
 <html>
 <head>
     <title>Add new book</title>
-    <script src="resources/js/loadImage.js"></script>
-    <script>
-        window.onload = () => init();
+    <link rel="stylesheet" type="text/css" href="resources/css/newBook.css">
+    <script src="resources/js/registrationBook.js"></script>
+<script>
+    window.onload = () => init();
 
-        function init() {
-            document.getElementById('findAuthor').addEventListener("click", checkParam);
+    function init() {
+        document.getElementById('findAuthor').addEventListener('click', checkParamAuthor);
+    }
 
-        }
-
-        function checkParam() {
-
-            let initials = document.getElementById('initials');
-            let initialsValue = initials.value;
-            if (initialsValue.length < 2) {
-                alert("Недопустимая длина строки");
-            } else
-                alert("Отправка разрешена");
+    function checkParamAuthor() {
+        deleteItems();
+        let initials = document.getElementById('initials');
+        let initialsValue = initials.value;
+        if (initialsValue.length < 2) {
+            alert("Введите фамилию для поиска!");
+        } else
             findAuthorRequest();
 
-        }
+    }
 
+    function findAuthorRequest() {
 
-        function findAuthorRequest() {
-            let xhr = new XMLHttpRequest();
-            let initials = document.getElementById('initials');
-            let initialsValue = initials.value;
-            let param = 'lastName=' + initialsValue;
-            alert(initialsValue);
-            xhr.open("GET", '${pageContext.request.contextPath}/Controller?command=find_author&' + param, false);
-            xhr.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    let answer = JSON.parse(this.responseText);
-                    alert(answer.name);
-                    document.getElementById("demo").innerHTML = answer.name;
+        let xhr = new XMLHttpRequest();
+        let initials = document.getElementById('initials');
+        let initialsValue = initials.value;
+        let param = 'lastName=' + initialsValue;
+
+        xhr.open("GET", '${pageContext.request.contextPath}/Controller?command=find_author&' + param, false);
+
+        xhr.onreadystatechange = function () {
+
+            if (this.readyState == 4 && this.status == 400) {
+                alert(response.status);
+            }
+            let answer = JSON.parse(this.responseText);
+            if (this.readyState == 4 && this.status == 200) {
+
+                if (answer == "") {
+                    alert("Авторов не найдено. Добавьте автора в базу данных.");
+                } else {
+                    let i;
+                    for (i in answer) {
+                        let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
+                        let input = document.createElement("input");
+                        input.type = "text";
+                        input.value = answer[i].lastName + " " + answer[i].firstName;
+                        input.setAttribute("readonly", "readonly");
+                        let initials = input.value;
+                        possibleAuthorContainer.appendChild(input);
+
+                        let inputHidden = document.createElement("input");
+                        inputHidden.type = "hidden";
+                        inputHidden.value = answer[i].id;
+                        let id = inputHidden.value;
+                        possibleAuthorContainer.appendChild(inputHidden);
+
+                        let button = document.createElement("button");
+                        button.innerHTML = "Добавить";
+                        button.id = "addAuthor";
+                        button.addEventListener('click', addAuthor)
+                        possibleAuthorContainer.appendChild(button);
+
+                        function addAuthor() {
+                            let realAuthorContainer = document.getElementById("realAuthorContainer");
+                            let input = document.createElement("input");
+                            input.type = "text";
+                            input.value = initials;
+                            input.setAttribute("readonly", "readonly");
+                            realAuthorContainer.appendChild(input);
+
+                            let inputHidden = document.createElement("input");
+                            inputHidden.type = "hidden";
+                            inputHidden.value = id;
+                            inputHidden.name = "authorId";
+                            realAuthorContainer.appendChild(inputHidden);
+                            deleteItems();
+                        }
+                    }
                 }
-            };
-            xhr.send();
 
-        }
+            } else {
+                alert(response.status);
+            }
+        };
+        xhr.send();
+    }
 
-
-    </script>
+</script>
 </head>
 <body>
 
 <input id="initials" type="text" name="" placeholder="Введите фамилию автора">
 <button id="findAuthor" class="">НАЙТИ АВТОРА</button>
-<input id="demo" type="text" name="" >
+<br>
 
+<div id="possibleAuthorContainer">
+</div>
+<br> <br>
+
+<form method="post" action="Controller">
+    <input type="hidden" name="command" value="go_to_add_new_author_page"/>
+    <button class="button">Добавить нового автора</button>
+</form>
 
 <br> <br>
-<form action="Controller" method="post">
+<form id="saveBook" action="Controller" method="post" enctype="multipart/form-data">
+
     <input type="hidden" name="command" value="add_new_book"/>
 
-    <input type="text" name="title" placeholder="Название"> <br>
-    <input type="text" name="originalTitle" placeholder="Название на языке оригинала"> <br>
-    <br>
-    <input type="checkbox" name="Fiction" value="Fiction">Художественная литература<br>
-    <input type="checkbox" name="Non_fiction" value="Non-fiction">Научная литература<br>
-    <input type="checkbox" name="Business" value="Business">Бизнес<br>
-    <input type="checkbox" name="Novel" value="Novel">Роман<br>
-    <input type="checkbox" name="History" value="History">История<br>
-    <input type="checkbox" name="Detective" value="Detective">Детектив<br>
-    <input type="checkbox" name="Fantasy" value="Fantasy">Фантастика<br>
-    <input type="checkbox" name="Biography" value="Biography">Биография<br>
-    <input type="checkbox" name="Thriller" value="Thriller">Триллер<br>
-    <input type="checkbox" name="Health" value="Health">Здоровье<br>
-    <input type="checkbox" name="Children" value="Children">Детская литература<br>
-    <br>
-    <input type="text" name="price" placeholder="Цена"> <br>
-    <input type="text" name="numberOfCopies" placeholder="Количество экземпляров"> <br>
-    <input type="text" name="author" placeholder="Авторы"> <br>
-
-    <div class="form-row">
-        <div class="img-list" id="js-file-list"></div>
-        <input id="file" type="file" name="covers" multiple accept="image/jpeg,image/png,image/gif"> <br>
+    <div id="realAuthorContainer" class="realAuthorContainer">
+        Автор(ы):<br>
     </div>
-    <img id="image" width="150px" height="180px"/>
-    <br><br>
-
-
-    <input type="text" name="costPerDay" placeholder="Цена за день использования"> <br>
-    <input type="text" name="publishingYear" placeholder="Год издания"> <br>
-    <input type="text" name="numberOfPages" placeholder="Количество страниц"> <br>
-
-
+    <br>
+    <div class="titleBook">
+        <label for="title">Название:</label>
+        <input type="text" name="title" id="title" required minlength="2" maxlength="50">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="titleBook">
+        <label for="originalTitle">Название на языке оригинала:</label>
+        <input type="text" name="originalTitle" id="originalTitle">
+    </div>
+    <br>
+    <div class="genres">
+        <div> <span class="errorGenre" aria-live="polite"></span></div>
+        <input type="checkbox" class="genre" name="genres" value="Fiction">Художественная литература<br>
+        <input type="checkbox" class="genre" name="genres" value="Non_fiction">Научная литература<br>
+        <input type="checkbox" class="genre" name="genres" value="Business">Бизнес<br>
+        <input type="checkbox" class="genre" name="genres" value="Novel">Роман<br>
+        <input type="checkbox" class="genre" name="genres" value="History">История<br>
+        <input type="checkbox" class="genre" name="genres" value="Detective">Детектив<br>
+        <input type="checkbox" class="genre" name="genres" value="Fantasy">Фантастика<br>
+        <input type="checkbox" class="genre" name="genres" value="Biography">Биография<br>
+        <input type="checkbox" class="genre" name="genres" value="Thriller">Триллер<br>
+        <input type="checkbox" class="genre" name="genres" value="Health">Здоровье<br>
+        <input type="checkbox" class="genre" name="genres" value="Children">Детская литература<br>
+    </div>
+    <br>
+    <div class="price">
+        <label for="price">Цена, бел. руб.:</label>
+        <input type="text" name="price" id="price" pattern="^[0-9]{0,}[.,]?[0-9]{0,2}" required>
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="costPerDay">
+        <label for="costPerDay">Цена за день использования, бел. руб.:</label>
+        <input type="text" name="costPerDay" id="costPerDay" pattern="^[0-9]{0,}[.,]?[0-9]{0,2}" required>
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="numberOfCopies">
+        <label for="numberOfCopies">Количество экземпляров:</label>
+        <input type="number" name="numberOfCopies" id="numberOfCopies" min="1" pattern="\d+" required>
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="containerFiles">
+        <input id="files" type="file" name="covers" multiple accept="image/jpeg,image/png,image/gif" required>
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="img-item" id="fileListDisplay"></div>
+    <br>
+    <div class="publishingYear">
+        <label for="publishingYear">Год издания:</label>
+        <input type="number" name="publishingYear" id="publishingYear" min="868" max="2022">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="numberOfPages">
+        <label for="numberOfPages">Количество страниц:</label>
+        <input type="number" name="numberOfPages" id="numberOfPages" min="1" max="2000" pattern="\d+">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+    <div class="registrationDate">
+        <label for="registrationDate">Дата регистрации:</label>
+        <input id="registrationDate" type="text" readonly>
+    </div>
+    <br>
     <input type="submit" name="submit" value="Сохранить">
+
 </form>
 
 

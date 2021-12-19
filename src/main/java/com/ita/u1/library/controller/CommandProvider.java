@@ -18,6 +18,8 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_ADD_NEW_AUTHOR_PAGE, new GoToAddNewAuthorPage());
         commands.put(CommandName.GO_TO_ADD_NEW_BOOK_PAGE, new GoToAddNewBookPage());
         commands.put(CommandName.GO_TO_ADD_NEW_CLIENT_PAGE, new GoToAddNewCLientPage());
+        commands.put(CommandName.FIND_AUTHOR_IMAGE, new FindAuthorImage());
+        commands.put(CommandName.GO_TO_AUTHOR_INFO_PAGE, new GoToAuthorInfoPage());
     }
 
     public Command findCommand(String name) {

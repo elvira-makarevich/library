@@ -7,9 +7,16 @@
 </head>
 
 <body>
+
+<form method="post" action="Controller" >
+    <input type="hidden" name="command" value="go_to_author_info_page"/>
+      <button class="button">Фото автора</button>
+</form>
+<br>
+<br>
 <form method="post" action="Controller" >
     <input type="hidden" name="command" value="go_to_add_new_author_page"/>
-    <button class="button">Поиск автора</button>
+    <button class="button">Добавить автора</button>
 </form>
 
 <form method="post" action="Controller" >
