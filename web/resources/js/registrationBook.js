@@ -10,31 +10,109 @@ function init() {
     document.getElementById("files").addEventListener('input', checkCovers);
     document.getElementById("publishingYear").addEventListener('input', checkPublishingYear);
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
+    document.getElementById("submitButton").addEventListener('click', changeValidation);
     let formSaveBook = document.getElementById('saveBook');
     formSaveBook.addEventListener('submit', function (event) {
         event.preventDefault();
+        checkTitle();
+        checkPrice();
+        checkCostPerDay();
+        checkNumberOfCopies();
+        checkPublishingYear();
+        checkNumberOfPages();
         checkAuthors();
-        if (checkGenres()) {
+        checkGenres();
+       // checkCovers();
+        if (checkAuthors() && checkGenres() && checkCovers()) {
             document.createElement('form').submit.call(document.getElementById('saveBook'));
-        } else {
-
         }
 
+        formSaveBook.noValidate = false;
     });
 
     defineDate();
 }
 
-
-
-function checkAuthors(){
-    let authors = document.getElementsByClassName("realAuthorContainer");
-    if(authors.length>0){
-alert("Добавьте авторов");
-    }
-
-
+function changeValidation() {
+    let formSaveBook = document.getElementById('saveBook');
+    formSaveBook.noValidate = true;
 }
+
+function checkParamAuthor() {
+    deleteItems();
+    let initials = document.getElementById('initials');
+    let initialsValue = initials.value;
+    if (initialsValue.length < 2) {
+        alert("Enter the last name of the author to search!");
+    } else
+        findAuthorRequest();
+}
+
+function findAuthorRequest() {
+    let xhr = new XMLHttpRequest();
+    let initialsValue = document.getElementById('initials').value;
+    let param = 'lastName=' + initialsValue;
+    let pageContext = document.getElementById('pageContext').value;
+    let url = pageContext + "/Controller?command=find_author&" + param;
+
+    xhr.open("GET", url, false);
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 400) {
+            alert("Enter the last name of the author to search!");
+            return;
+        }
+        let answer = JSON.parse(this.responseText);
+        if (this.readyState == 4 && this.status == 200) {
+            if (answer == "") {
+                alert("No authors found. Add the author to the database.");
+            } else {
+                let i;
+                for (i in answer) {
+                    let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
+                    let input = document.createElement("input");
+                    input.type = "text";
+                    input.value = answer[i].lastName + " " + answer[i].firstName;
+                    input.setAttribute("readonly", "readonly");
+                    let initials = input.value;
+                    possibleAuthorContainer.appendChild(input);
+
+                    let inputHidden = document.createElement("input");
+                    inputHidden.type = "hidden";
+                    inputHidden.value = answer[i].id;
+                    let id = inputHidden.value;
+                    possibleAuthorContainer.appendChild(inputHidden);
+
+                    let button = document.createElement("button");
+                    button.innerHTML = "Добавить";
+                    button.id = "addAuthor";
+                    button.addEventListener('click', addAuthor)
+                    possibleAuthorContainer.appendChild(button);
+
+                    function addAuthor() {
+                        let realAuthorContainer = document.getElementById("realAuthorContainer");
+                        let input = document.createElement("input");
+                        input.type = "text";
+                        input.value = initials;
+                        input.className = "realAuthorContainer";
+                        input.setAttribute("readonly", "readonly");
+                        realAuthorContainer.appendChild(input);
+
+                        let inputHidden = document.createElement("input");
+                        inputHidden.type = "hidden";
+                        inputHidden.value = id;
+                        inputHidden.name = "authorId";
+                        realAuthorContainer.appendChild(inputHidden);
+                        deleteItems();
+                    }
+                }
+            }
+        } else {
+            alert(response.status);
+        }
+    };
+    xhr.send();
+}
+
 function defineDate() {
     let inputRegistrationDate = document.getElementById("registrationDate");
     let today = new Date();
@@ -42,8 +120,6 @@ function defineDate() {
     inputRegistrationDate.value = registrationDate;
 
 }
-
-
 
 function deleteItems() {
     let container = document.getElementById('possibleAuthorContainer');
@@ -54,10 +130,6 @@ function deleteItems() {
         deleteButton[i].remove();
     }
 }
-
-
-
-
 
 function loadImages() {
 
@@ -83,7 +155,8 @@ function loadImages() {
 }
 
 function checkTitle() {
-    let title = document.getElementById("title")
+
+    let title = document.getElementById("title");
     let errorTitle = document.querySelector('#title + span.error');
 
     if (title.validity.valid) {
@@ -91,11 +164,11 @@ function checkTitle() {
         errorTitle.className = 'error';
     } else {
         if (title.validity.valueMissing) {
-            errorTitle.textContent = 'Поле не может быть пустым.';
+            errorTitle.textContent = 'The field cannot be empty.';
         } else if (title.validity.tooShort) {
-            errorTitle.textContent = 'Слишком короткое значение. Минимум 2 символа.';
+            errorTitle.textContent = 'The title is too short. At least 2 characters.';
         } else if (title.validity.tooLong) {
-            errorTitle.textContent = 'Слишком длинное значение. Максимум 50 символов.';
+            errorTitle.textContent = 'The title too long. Maximum 50 characters.';
         }
     }
 }
@@ -109,9 +182,9 @@ function checkPrice() {
         errorPrice.className = 'error';
     } else {
         if (price.validity.valueMissing) {
-            errorPrice.textContent = 'Поле не может быть пустым.';
+            errorPrice.textContent = 'The field cannot be empty.';
         } else if (price.validity.patternMismatch) {
-            errorPrice.textContent = 'Проверьте соответствие введенных данных. Необходимо ввести только цифры, может быть 2 знака после запятой. Число должно быть положительным.';
+            errorPrice.textContent = 'Check that the entered data is correct. It is necessary to enter only numbers, there may be 2 decimal places. The number must be positive.';
         }
     }
 }
@@ -125,9 +198,9 @@ function checkCostPerDay() {
         errorPrice.className = 'error';
     } else {
         if (costPerDay.validity.valueMissing) {
-            errorPrice.textContent = 'Поле не может быть пустым.';
+            errorPrice.textContent = 'The field cannot be empty.';
         } else if (costPerDay.validity.patternMismatch) {
-            errorPrice.textContent = 'Проверьте соответствие введенных данных. Необходимо ввести только цифры, может быть 2 знака после запятой. Число должно быть положительным.';
+            errorPrice.textContent = 'Check that the entered data is correct. It is necessary to enter only numbers, there may be 2 decimal places. The number must be positive.';
         }
     }
 }
@@ -141,26 +214,23 @@ function checkNumberOfCopies() {
         error.className = 'error';
     } else {
         if (numberOfCopies.validity.valueMissing) {
-            error.textContent = 'Поле не может быть пустым.';
+            error.textContent = 'The field cannot be empty.';
         } else if (numberOfCopies.validity.rangeUnderflow) {
-            error.textContent = 'Количество копий не может быть отрицательным числом.';
+            error.textContent = 'The number of copies cannot be negative.';
         }
     }
 }
 
 
 function checkCovers() {
+    let result = true;
     let covers = document.getElementById("files");
-    let error = document.querySelector('files + span.error');
-
-    if (covers.validity.valid) {
-        error.textContent = '';
-        error.className = 'error';
-    } else {
-        if (covers.validity.valueMissing) {
-            error.textContent = 'Загрузите одну или несколько обложек для книги.';
-        }
+    if (covers.validity.valueMissing) {
+        alert("Upload one or more book covers!");
+        result =
+            false;
     }
+    return result;
 }
 
 function checkPublishingYear() {
@@ -172,11 +242,11 @@ function checkPublishingYear() {
         error.className = 'error';
     } else {
         if (publishingYear.validity.valueMissing) {
-            error.textContent = 'Поле не может быть пустым.';
+            error.textContent = 'The field cannot be empty.';
         } else if (publishingYear.validity.rangeUnderflow) {
-            error.textContent = 'Минимальный год издания 868.';
+            error.textContent = 'The minimum publication year is 868.';
         } else if (publishingYear.validity.rangeOverflow) {
-            error.textContent = 'Максимальный год издания 2022.';
+            error.textContent = 'The maximum publication year is 2022.';
         }
     }
 }
@@ -191,9 +261,11 @@ function checkNumberOfPages() {
         error.className = 'error';
     } else {
         if (numberOfPages.validity.valueMissing) {
-            error.textContent = 'Поле не может быть пустым.';
+            error.textContent = 'The field cannot be empty.';
         } else if (numberOfPages.validity.rangeUnderflow) {
-            error.textContent = 'Количество страниц не может быть отрицательным числом.';
+            error.textContent = 'The number of pages cannot be negative.';
+        } else if (numberOfPages.validity.rangeOverflow) {
+            error.textContent = 'The number of pages cannot exceed 2000 pages.';
         }
     }
 }
@@ -204,7 +276,7 @@ function checkGenres() {
     let result = false;
     let error = document.getElementsByClassName("errorGenre")[0];
     let checkbox = document.getElementsByClassName('genre');
-
+    error.textContent = '';
     for (let i = 0; i < checkbox.length; i++) {
 
         if (checkbox[i].checked) {
@@ -212,14 +284,20 @@ function checkGenres() {
         }
 
     }
-    alert("Выберите хотя бы один жанр!");
-    error.textContent = 'Выберите хотя бы один жанр!';
+
+    error.textContent = 'Please select at least one genre!';
     return result;
 }
 
+function checkAuthors() {
 
+    let authors = document.getElementsByClassName("realAuthorContainer");
+    let error = document.getElementsByClassName("errorAuthor")[0];
+    error.textContent = "";
+    if (authors.length === 0) {
+        error.textContent = "Add book authors!";
+        return false;
+    }
+    return true;
 
-
-
-
-
+}
