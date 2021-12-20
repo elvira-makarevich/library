@@ -9,7 +9,7 @@
 
 <form method="post" action="Controller" enctype="multipart/form-data">
     <input type="hidden" name="command" value="add_new_author"/>
-    <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif" />
+    <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif"/>
     <img id="image" width="150px" height="180px"/>
     <br><br>
     <input type="text" name="firstName" placeholder="Имя автора"

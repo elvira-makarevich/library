@@ -3,94 +3,9 @@
 <html>
 <head>
     <title>Add new book</title>
-    <link rel="stylesheet" type="text/css" href="resources/css/newBook.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/registrationBook.css">
     <script src="resources/js/registrationBook.js"></script>
-<script>
-    window.onload = () => init();
 
-    function init() {
-        document.getElementById('findAuthor').addEventListener('click', checkParamAuthor);
-    }
-
-    function checkParamAuthor() {
-        deleteItems();
-        let initials = document.getElementById('initials');
-        let initialsValue = initials.value;
-        if (initialsValue.length < 2) {
-            alert("Введите фамилию для поиска!");
-        } else
-            findAuthorRequest();
-
-    }
-
-    function findAuthorRequest() {
-
-        let xhr = new XMLHttpRequest();
-        let initials = document.getElementById('initials');
-        let initialsValue = initials.value;
-        let param = 'lastName=' + initialsValue;
-
-        xhr.open("GET", '${pageContext.request.contextPath}/Controller?command=find_author&' + param, false);
-
-        xhr.onreadystatechange = function () {
-
-            if (this.readyState == 4 && this.status == 400) {
-                alert(response.status);
-            }
-            let answer = JSON.parse(this.responseText);
-            if (this.readyState == 4 && this.status == 200) {
-
-                if (answer == "") {
-                    alert("Авторов не найдено. Добавьте автора в базу данных.");
-                } else {
-                    let i;
-                    for (i in answer) {
-                        let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
-                        let input = document.createElement("input");
-                        input.type = "text";
-                        input.value = answer[i].lastName + " " + answer[i].firstName;
-                        input.setAttribute("readonly", "readonly");
-                        let initials = input.value;
-                        possibleAuthorContainer.appendChild(input);
-
-                        let inputHidden = document.createElement("input");
-                        inputHidden.type = "hidden";
-                        inputHidden.value = answer[i].id;
-                        let id = inputHidden.value;
-                        possibleAuthorContainer.appendChild(inputHidden);
-
-                        let button = document.createElement("button");
-                        button.innerHTML = "Добавить";
-                        button.id = "addAuthor";
-                        button.addEventListener('click', addAuthor)
-                        possibleAuthorContainer.appendChild(button);
-
-                        function addAuthor() {
-                            let realAuthorContainer = document.getElementById("realAuthorContainer");
-                            let input = document.createElement("input");
-                            input.type = "text";
-                            input.value = initials;
-                            input.setAttribute("readonly", "readonly");
-                            realAuthorContainer.appendChild(input);
-
-                            let inputHidden = document.createElement("input");
-                            inputHidden.type = "hidden";
-                            inputHidden.value = id;
-                            inputHidden.name = "authorId";
-                            realAuthorContainer.appendChild(inputHidden);
-                            deleteItems();
-                        }
-                    }
-                }
-
-            } else {
-                alert(response.status);
-            }
-        };
-        xhr.send();
-    }
-
-</script>
 </head>
 <body>
 
@@ -100,7 +15,7 @@
 
 <div id="possibleAuthorContainer">
 </div>
-<br> <br>
+
 
 <form method="post" action="Controller">
     <input type="hidden" name="command" value="go_to_add_new_author_page"/>
@@ -112,8 +27,10 @@
 
     <input type="hidden" name="command" value="add_new_book"/>
 
-    <div id="realAuthorContainer" class="realAuthorContainer">
-        Автор(ы):<br>
+    <div id="realAuthorContainer">
+        <div><span class="errorAuthor" aria-live="polite"></span></div>
+        <br>
+        Автор(ы):
     </div>
     <br>
     <div class="titleBook">
@@ -128,7 +45,8 @@
     </div>
     <br>
     <div class="genres">
-        <div> <span class="errorGenre" aria-live="polite"></span></div>
+        <div><span class="errorGenre" aria-live="polite"></span></div>
+        <br>
         <input type="checkbox" class="genre" name="genres" value="Fiction">Художественная литература<br>
         <input type="checkbox" class="genre" name="genres" value="Non_fiction">Научная литература<br>
         <input type="checkbox" class="genre" name="genres" value="Business">Бизнес<br>
@@ -149,7 +67,7 @@
     </div>
     <br>
     <div class="costPerDay">
-        <label for="costPerDay">Цена за день использования, бел. руб.:</label>
+        <label for="costPerDay">Стоимость за день использования, бел. руб.:</label>
         <input type="text" name="costPerDay" id="costPerDay" pattern="^[0-9]{0,}[.,]?[0-9]{0,2}" required>
         <span class="error" aria-live="polite"></span>
     </div>
@@ -161,8 +79,8 @@
     </div>
     <br>
     <div class="containerFiles">
+
         <input id="files" type="file" name="covers" multiple accept="image/jpeg,image/png,image/gif" required>
-        <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="img-item" id="fileListDisplay"></div>
@@ -184,10 +102,10 @@
         <input id="registrationDate" type="text" readonly>
     </div>
     <br>
-    <input type="submit" name="submit" value="Сохранить">
+    <input type="submit" name="submit" id="submitButton" value="Сохранить">
 
 </form>
 
-
+<input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
 </body>
 </html>
