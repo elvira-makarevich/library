@@ -5,10 +5,13 @@ import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.entity.Author;
+import com.ita.u1.library.exception.DAONoSuchImageAuthorException;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class AuthorDAOImpl implements AuthorDAO {
 
@@ -75,13 +78,17 @@ public class AuthorDAOImpl implements AuthorDAO {
                 }
                 rs.close();
             }
-            ps.close();
+
         } catch (SQLException e) {
             //log
             throw new DAOException("SQLException when finding the authors.", e);
         }
 
         CONNECTION_POOL.releaseConnection(connection);
+
+        if (authors.isEmpty()) {
+            return Collections.emptyList();
+        }
         return authors;
     }
 
@@ -90,7 +97,8 @@ public class AuthorDAOImpl implements AuthorDAO {
 
         Connection connection;
         connection = CONNECTION_POOL.takeConnection();
-        Author author = new Author();
+        Author author = null;
+        Optional<Author> optionalAuthor;
 
         try (PreparedStatement ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?")) {
 
@@ -107,7 +115,11 @@ public class AuthorDAOImpl implements AuthorDAO {
             //log
             throw new DAOException("SQLException when finding the author's image.", e);
         }
+
         CONNECTION_POOL.releaseConnection(connection);
+
+        optionalAuthor = Optional.of(author);
+        author = optionalAuthor.orElseThrow(() -> new DAONoSuchImageAuthorException("Image of the author with the id does not exist."));
         return author;
     }
 

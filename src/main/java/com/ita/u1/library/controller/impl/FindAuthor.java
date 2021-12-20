@@ -5,6 +5,7 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.DAONoSuchImageAuthorException;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
 
@@ -41,6 +42,9 @@ public class FindAuthor implements Command {
             e.printStackTrace();
         } catch (DAOException e) {
             //перевести на страницу с сообщением: проблемы при запросе информации из бд
+            e.printStackTrace();
+        } catch (DAONoSuchImageAuthorException e) {
+            //перевести на страницу с сообщением: в бд не существует изображения с указанным ID
             e.printStackTrace();
         }
 
