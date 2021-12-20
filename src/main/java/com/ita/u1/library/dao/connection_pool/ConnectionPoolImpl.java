@@ -1,6 +1,6 @@
 package com.ita.u1.library.dao.connection_pool;
 
-import com.ita.u1.library.dao.exception.DAOException;
+import com.ita.u1.library.exception.DAOConnectionPoolException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,15 +37,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
         this.password = dbResourceManager.getValue(DBParameter.DB_PASSWORD);
         this.poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POLL_SIZE));
 
-        try {
-            initPoolData();
-        } catch (DAOException e) {
-            //add log
-            throw new RuntimeException("InitPoolData error", e);
-        }
+        initPoolData();
+
     }
 
-    public void initPoolData() throws DAOException {
+    public void initPoolData() {
 
         try {
             Class.forName(driverName);
@@ -57,16 +53,16 @@ public class ConnectionPoolImpl implements ConnectionPool {
             }
 
         } catch (ClassNotFoundException e) {
-            throw new DAOException("Can't find database driver class", e);
+            throw new DAOConnectionPoolException("Can't find database driver class", e);
 
         } catch (SQLException e) {
-            throw new DAOException("SQLException in ConnectionPool", e);
+            throw new DAOConnectionPoolException("SQLException in ConnectionPool while getting Connection.", e);
         }
 
     }
 
     @Override
-    public Connection takeConnection() throws DAOException {
+    public Connection takeConnection() {
 
         Connection newConnection;
         try {
@@ -81,27 +77,27 @@ public class ConnectionPoolImpl implements ConnectionPool {
                     freeConnection.add(getNewConnection());
                 }
             } else {
-                throw new DAOException("Database connection error.");
+                throw new DAOConnectionPoolException("Database connection error.");
             }
 
             usedConnection.add(newConnection);
 
         } catch (InterruptedException | SQLException e) {
-            throw new DAOException("Database connection error.", e);
+            throw new DAOConnectionPoolException("Database connection error.", e);
         }
         return newConnection;
     }
 
 
     @Override
-    public void releaseConnection(Connection connection) throws DAOException {
+    public void releaseConnection(Connection connection) {
 
         try {
             connection.clearWarnings();
             usedConnection.remove(connection);
             freeConnection.offer(connection);
         } catch (SQLException e) {
-            throw new DAOException("Connection Pool: problems returning a connection to free Connection", e);
+            throw new DAOConnectionPoolException("Connection Pool: problems returning a connection to free Connection", e);
         }
 
     }

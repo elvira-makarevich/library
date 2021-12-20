@@ -2,9 +2,11 @@ package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.entity.Author;
+import com.ita.u1.library.exception.DAOConnectionPoolException;
+import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
-import com.ita.u1.library.service.exception.ServiceException;
+import com.ita.u1.library.exception.ServiceException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +25,12 @@ public class FindAuthorImage implements Command {
             response.setContentType("image/jpeg");
             response.setContentLength(author.getImage().length);
             response.getOutputStream().write(author.getImage());
-        } catch (ServiceException e) {
-            System.out.println("ne segodnja");
+        } catch (DAOConnectionPoolException e) {
+            //перевести на страницу с сообщением:проблемы доступа к бд
+            e.printStackTrace();
+        } catch (DAOException e) {
+            //перевести на страницу с сообщением: проблемы при запросе информации из бд
+            e.printStackTrace();
         }
     }
 }

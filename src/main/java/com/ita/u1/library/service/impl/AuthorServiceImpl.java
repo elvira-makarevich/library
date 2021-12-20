@@ -1,11 +1,8 @@
 package com.ita.u1.library.service.impl;
 
 import com.ita.u1.library.dao.AuthorDAO;
-import com.ita.u1.library.dao.exception.DAOException;
-import com.ita.u1.library.dao.impl.AuthorDAOImpl;
 import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.service.AuthorService;
-import com.ita.u1.library.service.exception.ServiceException;
 
 import java.util.List;
 
@@ -18,40 +15,25 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public void addAuthor(Author author) throws ServiceException {
+    public void addAuthor(Author author) {
 
-        try {
-            authorDAO.addAuthor(author);
-        } catch (DAOException e) {
-            // log
-            throw new ServiceException(e);
-        }
+        authorDAO.addAuthor(author);
 
     }
 
     @Override
-    public List<Author> findAuthor(String lastName) throws ServiceException {
+    public List<Author> findAuthor(String lastName) {
 
         List<Author> authors;
-        try {
-            authors = authorDAO.findAuthor(lastName);
-        } catch (DAOException e) {
-            // log
-            throw new ServiceException(e);
-        }
+        authors = authorDAO.findAuthor(lastName);
         return authors;
     }
 
     @Override
-    public Author findAuthorImage(int id) throws ServiceException {
+    public Author findAuthorImage(int id) {
 
         Author author;
-        try {
-            author = authorDAO.findAuthorImage(id);
-        } catch (DAOException e) {
-            // log
-            throw new ServiceException(e);
-        }
+        author = authorDAO.findAuthorImage(id);
         return author;
     }
 }

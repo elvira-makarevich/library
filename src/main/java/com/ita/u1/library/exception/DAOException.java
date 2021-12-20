@@ -1,6 +1,6 @@
-package com.ita.u1.library.dao.exception;
+package com.ita.u1.library.exception;
 
-public class DAOException extends Exception {
+public class DAOException extends RuntimeException {
 
     public DAOException() {
         super();

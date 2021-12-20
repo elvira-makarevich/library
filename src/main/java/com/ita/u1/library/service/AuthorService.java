@@ -1,14 +1,13 @@
 package com.ita.u1.library.service;
 
 import com.ita.u1.library.entity.Author;
-import com.ita.u1.library.service.exception.ServiceException;
 
 import java.util.List;
 
 public interface AuthorService {
 
-    void addAuthor(Author author) throws ServiceException;
-    List<Author> findAuthor(String lastName)throws ServiceException;
-    Author findAuthorImage(int id) throws ServiceException;
+    void addAuthor(Author author);
+    List<Author> findAuthor(String lastName);
+    Author findAuthorImage(int id);
 
 }

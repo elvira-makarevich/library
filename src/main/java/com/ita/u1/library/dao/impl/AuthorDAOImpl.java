@@ -3,7 +3,7 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AuthorDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
-import com.ita.u1.library.dao.exception.DAOException;
+import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.entity.Author;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ public class AuthorDAOImpl implements AuthorDAO {
     static final ConnectionPool CONNECTION_POOL = ConnectionPoolImpl.getInstance();
 
     @Override
-    public void addAuthor(Author author) throws DAOException {
+    public void addAuthor(Author author) {
 
         Connection connection = CONNECTION_POOL.takeConnection();
 
@@ -46,23 +46,24 @@ public class AuthorDAOImpl implements AuthorDAO {
 
             connection.commit();
             connection.setAutoCommit(true);// Восстановление по умолчанию
+
         } catch (SQLException e) {
             //log
-            e.printStackTrace();
+            throw new DAOException("Creating author failed.", e);
         }
 
         CONNECTION_POOL.releaseConnection(connection);
     }
 
     @Override
-    public List<Author> findAuthor(String lastName) throws DAOException {
+    public List<Author> findAuthor(String lastName) {
 
         Connection connection;
         connection = CONNECTION_POOL.takeConnection();
         List<Author> authors = new ArrayList<>();
-        try {
 
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM authors WHERE last_name = ?");
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM authors WHERE last_name = ?")) {
+
             ps.setString(1, lastName);
             ResultSet rs = ps.executeQuery();
             if (rs != null) {
@@ -76,22 +77,23 @@ public class AuthorDAOImpl implements AuthorDAO {
             }
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("TOTAL FIASKO");
+            //log
+            throw new DAOException("SQLException when finding the authors.", e);
         }
+
         CONNECTION_POOL.releaseConnection(connection);
         return authors;
     }
 
     @Override
-    public Author findAuthorImage(int id) throws DAOException {
+    public Author findAuthorImage(int id) {
 
         Connection connection;
         connection = CONNECTION_POOL.takeConnection();
         Author author = new Author();
-        try {
 
-            PreparedStatement ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?");
+        try (PreparedStatement ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?")) {
+
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs != null) {
@@ -100,10 +102,10 @@ public class AuthorDAOImpl implements AuthorDAO {
                 }
                 rs.close();
             }
-            ps.close();
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("TOTAL FIASKO");
+            //log
+            throw new DAOException("SQLException when finding the author's image.", e);
         }
         CONNECTION_POOL.releaseConnection(connection);
         return author;

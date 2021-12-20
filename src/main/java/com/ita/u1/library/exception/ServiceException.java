@@ -1,6 +1,6 @@
-package com.ita.u1.library.service.exception;
+package com.ita.u1.library.exception;
 
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
 
     public ServiceException() {
         super();

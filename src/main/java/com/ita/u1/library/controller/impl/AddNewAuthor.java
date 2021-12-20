@@ -2,9 +2,10 @@ package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.entity.Author;
+import com.ita.u1.library.exception.DAOConnectionPoolException;
+import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
-import com.ita.u1.library.service.exception.ServiceException;
 import org.apache.commons.io.IOUtils;
 
 
@@ -35,8 +36,13 @@ public class AddNewAuthor implements Command {
         try {
             authorService.addAuthor(author);
             response.sendRedirect("Controller?command=Go_To_Main_Page");
-        } catch (ServiceException e) {
+        } catch (DAOConnectionPoolException e) {
+            //перевести на страницу с сообщением:проблемы доступа с соединением
+            e.printStackTrace();
+        } catch (DAOException e) {
+            //перевести на страницу с сообщением: проблемы с созданием автора
             e.printStackTrace();
         }
+
     }
 }
