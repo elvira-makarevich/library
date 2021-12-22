@@ -1,19 +1,22 @@
 window.onload = () => init();
 
 function init() {
+
     document.getElementById('findAuthor').addEventListener('click', checkParamAuthor);
     document.getElementById('files').addEventListener('change', loadImages);
     document.getElementById("title").addEventListener('input', checkTitle);
     document.getElementById("price").addEventListener('input', checkPrice);
     document.getElementById("costPerDay").addEventListener('input', checkCostPerDay);
     document.getElementById("numberOfCopies").addEventListener('input', checkNumberOfCopies);
-    document.getElementById("files").addEventListener('input', checkCovers);
+    document.getElementById("files").addEventListener('submit', checkCovers);
     document.getElementById("publishingYear").addEventListener('input', checkPublishingYear);
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
     document.getElementById("submitButton").addEventListener('click', changeValidation);
+
     let formSaveBook = document.getElementById('saveBook');
     formSaveBook.addEventListener('submit', function (event) {
         event.preventDefault();
+     
         checkTitle();
         checkPrice();
         checkCostPerDay();
@@ -22,7 +25,7 @@ function init() {
         checkNumberOfPages();
         checkAuthors();
         checkGenres();
-       // checkCovers();
+
         if (checkAuthors() && checkGenres() && checkCovers()) {
             document.createElement('form').submit.call(document.getElementById('saveBook'));
         }
@@ -67,8 +70,8 @@ function findAuthorRequest() {
                 alert("No authors found. Add the author to the database.");
             } else {
                 let i;
+                let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
                 for (i in answer) {
-                    let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
                     let input = document.createElement("input");
                     input.type = "text";
                     input.value = answer[i].lastName + " " + answer[i].firstName;
@@ -83,7 +86,7 @@ function findAuthorRequest() {
                     possibleAuthorContainer.appendChild(inputHidden);
 
                     let button = document.createElement("button");
-                    button.innerHTML = "Добавить";
+                    button.innerHTML = "Add";
                     button.id = "addAuthor";
                     button.addEventListener('click', addAuthor)
                     possibleAuthorContainer.appendChild(button);
@@ -107,7 +110,7 @@ function findAuthorRequest() {
                 }
             }
         } else {
-            alert(response.status);
+            alert(this.status);
         }
     };
     xhr.send();
@@ -125,10 +128,10 @@ function deleteItems() {
     let container = document.getElementById('possibleAuthorContainer');
     let deleteInput = container.querySelectorAll('input');
     let deleteButton = container.querySelectorAll('button');
-    for (let i = 0; i < deleteInput.length; i++) {
-        deleteInput[i].remove();
-        deleteButton[i].remove();
-    }
+        for (let i = 0; i < deleteInput.length; i++) {
+            deleteInput[i].remove();
+            deleteButton[i].remove();
+        }
 }
 
 function loadImages() {
@@ -225,10 +228,13 @@ function checkNumberOfCopies() {
 function checkCovers() {
     let result = true;
     let covers = document.getElementById("files");
+
+    if (covers.value==''){
+        alert("Upload one or more book covers!!");
+    }
     if (covers.validity.valueMissing) {
         alert("Upload one or more book covers!");
-        result =
-            false;
+        result = false;
     }
     return result;
 }

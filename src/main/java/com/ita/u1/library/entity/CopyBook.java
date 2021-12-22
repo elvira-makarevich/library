@@ -1,13 +1,20 @@
 package com.ita.u1.library.entity;
 
+import java.math.BigDecimal;
+
 public class CopyBook {
 
     private int id;
     private int bookId;
-    private double costPerDay;
+    private BigDecimal costPerDay;
     private boolean availability;
 
     public CopyBook() {
+    }
+
+    public CopyBook(BigDecimal costPerDay, boolean availability) {
+        this.costPerDay = costPerDay;
+        this.availability = availability;
     }
 
     public int getId() {
@@ -26,11 +33,11 @@ public class CopyBook {
         this.bookId = bookId;
     }
 
-    public double getCostPerDay() {
+    public BigDecimal getCostPerDay() {
         return costPerDay;
     }
 
-    public void setCostPerDay(double costPerDay) {
+    public void setCostPerDay(BigDecimal costPerDay) {
         this.costPerDay = costPerDay;
     }
 
@@ -51,18 +58,15 @@ public class CopyBook {
 
         if (id != copyBook.id) return false;
         if (bookId != copyBook.bookId) return false;
-        if (Double.compare(copyBook.costPerDay, costPerDay) != 0) return false;
-        return availability == copyBook.availability;
+        if (availability != copyBook.availability) return false;
+        return costPerDay != null ? costPerDay.equals(copyBook.costPerDay) : copyBook.costPerDay == null;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = id;
+        int result = id;
         result = 31 * result + bookId;
-        temp = Double.doubleToLongBits(costPerDay);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (costPerDay != null ? costPerDay.hashCode() : 0);
         result = 31 * result + (availability ? 1 : 0);
         return result;
     }

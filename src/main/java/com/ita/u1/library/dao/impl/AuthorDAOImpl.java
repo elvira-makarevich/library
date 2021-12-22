@@ -19,7 +19,7 @@ public class AuthorDAOImpl implements AuthorDAO {
 
     @Override
     public void addAuthor(Author author) {
-
+        System.out.println(author.getFirstName());
         Connection connection = CONNECTION_POOL.takeConnection();
 
         try (PreparedStatement psAuthor = connection.prepareStatement("INSERT INTO authors (first_name, last_name) VALUES (?,?) ", Statement.RETURN_GENERATED_KEYS); PreparedStatement psImage = connection.prepareStatement("INSERT INTO authors_images (author_id, image) VALUES (?,?)")) {
@@ -44,18 +44,27 @@ public class AuthorDAOImpl implements AuthorDAO {
             psImage.setBytes(2, author.getImage());
             psImage.executeUpdate();
 
-            psImage.close();
-            psAuthor.close();
-
             connection.commit();
-            connection.setAutoCommit(true);// Восстановление по умолчанию
 
         } catch (SQLException e) {
             //log
+            if (connection != null)
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new DAOException("Exception during rollback; operation: add author.", ex);
+                }
             throw new DAOException("Creating author failed.", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);// Восстановление по умолчанию
+                } catch (SQLException ex) {
+                    throw new DAOException("Creating author failed.", ex);
+                }
+            }
+            CONNECTION_POOL.releaseConnection(connection);
         }
-
-        CONNECTION_POOL.releaseConnection(connection);
     }
 
     @Override
@@ -82,9 +91,9 @@ public class AuthorDAOImpl implements AuthorDAO {
         } catch (SQLException e) {
             //log
             throw new DAOException("SQLException when finding the authors.", e);
+        } finally {
+            CONNECTION_POOL.releaseConnection(connection);
         }
-
-        CONNECTION_POOL.releaseConnection(connection);
 
         if (authors.isEmpty()) {
             return Collections.emptyList();
@@ -114,9 +123,9 @@ public class AuthorDAOImpl implements AuthorDAO {
         } catch (SQLException e) {
             //log
             throw new DAOException("SQLException when finding the author's image.", e);
+        } finally {
+            CONNECTION_POOL.releaseConnection(connection);
         }
-
-        CONNECTION_POOL.releaseConnection(connection);
 
         optionalAuthor = Optional.of(author);
         author = optionalAuthor.orElseThrow(() -> new DAONoSuchImageAuthorException("Image of the author with the id does not exist."));

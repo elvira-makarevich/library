@@ -1,9 +1,9 @@
 package com.ita.u1.library.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class Book implements Serializable {
 
@@ -11,7 +11,7 @@ public class Book implements Serializable {
     private String title;
     private String originalTitle;
     private List<Genre> genres;
-    private double price;
+    private BigDecimal price;
     private int numberOfCopies;
     private List<Author> authors;
     private List<byte[]> covers;
@@ -21,6 +21,18 @@ public class Book implements Serializable {
     private double rating;
 
     public Book() {
+    }
+
+    public Book(String title, String originalTitle, List<Genre> genreList, BigDecimal bookPrice, int copiesNumber, List<Author> authors, List<byte[]> covers, int bookPublishingYear, int bookNumberOfPages) {
+        this.title = title;
+        this.originalTitle = originalTitle;
+        this.genres = genreList;
+        this.price = bookPrice;
+        this.numberOfCopies = copiesNumber;
+        this.authors = authors;
+        this.covers = covers;
+        this.publishingYear = bookPublishingYear;
+        this.numberOfPages = bookNumberOfPages;
     }
 
     public int getId() {
@@ -55,11 +67,11 @@ public class Book implements Serializable {
         this.genres = genres;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -127,7 +139,6 @@ public class Book implements Serializable {
         Book book = (Book) o;
 
         if (id != book.id) return false;
-        if (Double.compare(book.price, price) != 0) return false;
         if (numberOfCopies != book.numberOfCopies) return false;
         if (publishingYear != book.publishingYear) return false;
         if (numberOfPages != book.numberOfPages) return false;
@@ -136,6 +147,7 @@ public class Book implements Serializable {
         if (originalTitle != null ? !originalTitle.equals(book.originalTitle) : book.originalTitle != null)
             return false;
         if (genres != null ? !genres.equals(book.genres) : book.genres != null) return false;
+        if (price != null ? !price.equals(book.price) : book.price != null) return false;
         if (authors != null ? !authors.equals(book.authors) : book.authors != null) return false;
         if (covers != null ? !covers.equals(book.covers) : book.covers != null) return false;
         return registrationDate != null ? registrationDate.equals(book.registrationDate) : book.registrationDate == null;
@@ -149,8 +161,7 @@ public class Book implements Serializable {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (originalTitle != null ? originalTitle.hashCode() : 0);
         result = 31 * result + (genres != null ? genres.hashCode() : 0);
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + numberOfCopies;
         result = 31 * result + (authors != null ? authors.hashCode() : 0);
         result = 31 * result + (covers != null ? covers.hashCode() : 0);

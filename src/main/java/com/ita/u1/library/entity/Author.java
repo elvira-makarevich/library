@@ -13,6 +13,10 @@ public class Author implements Serializable {
     public Author() {
     }
 
+    public Author(int id) {
+        this.id = id;
+    }
+
     public Author(String firstName, String lastName, byte[] image) {
         this.firstName = firstName;
         this.lastName = lastName;
