@@ -1,5 +1,7 @@
 package com.ita.u1.library.dao;
 
+import com.ita.u1.library.dao.connection_pool.ConnectionPool;
+import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
 import com.ita.u1.library.dao.impl.AuthorDAOImpl;
 import com.ita.u1.library.dao.impl.BookDAOImpl;
 import com.ita.u1.library.dao.impl.ClientDAOImpl;
@@ -7,9 +9,11 @@ import com.ita.u1.library.dao.impl.ClientDAOImpl;
 public class DAOProvider {
 
     private static final DAOProvider instance = new DAOProvider();
-    private final AuthorDAO authorDAO = new AuthorDAOImpl();
-    private final BookDAO bookDAO = new BookDAOImpl();
-    private final ClientDAO clientDAO = new ClientDAOImpl();
+
+    private final ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
+    private final AuthorDAO authorDAO = new AuthorDAOImpl(connectionPool);
+    private final BookDAO bookDAO = new BookDAOImpl(connectionPool);
+    private final ClientDAO clientDAO = new ClientDAOImpl(connectionPool);
 
     private DAOProvider() {
     }

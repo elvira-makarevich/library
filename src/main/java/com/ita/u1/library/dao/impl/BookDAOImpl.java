@@ -1,5 +1,6 @@
 package com.ita.u1.library.dao.impl;
 
+import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
@@ -10,14 +11,17 @@ import com.ita.u1.library.exception.DAOException;
 import java.sql.*;
 import java.time.LocalDate;
 
-public class BookDAOImpl implements BookDAO {
+public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
-    static final ConnectionPool CONNECTION_POOL = ConnectionPoolImpl.getInstance();
+    public BookDAOImpl(ConnectionPool connectionPool) {
+        super(connectionPool);
+    }
+
 
     @Override
     public void add(Book book, CopyBook[] copies) {
 
-        Connection connection = CONNECTION_POOL.takeConnection();
+        Connection connection = take();
         try (PreparedStatement psBook = connection.prepareStatement("INSERT INTO books (title, original_title, price, number_of_copies, publishing_year, registration_date, number_of_pages) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
              PreparedStatement psCover = connection.prepareStatement("INSERT INTO books_covers (book_id, cover) VALUES (?,?)");
              PreparedStatement psCopies = connection.prepareStatement("INSERT INTO books_copies (book_id, cost_per_day) VALUES (?,?)");
@@ -74,7 +78,6 @@ public class BookDAOImpl implements BookDAO {
                 psAuthors.executeUpdate();
             }
 
-
             connection.commit();
 
         } catch (SQLException e) {
@@ -93,7 +96,7 @@ public class BookDAOImpl implements BookDAO {
                     throw new DAOException("Adding book to database failed.", ex);
                 }
             }
-            CONNECTION_POOL.releaseConnection(connection);
+            release(connection);
         }
 
 

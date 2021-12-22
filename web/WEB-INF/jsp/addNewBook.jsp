@@ -3,13 +3,13 @@
 <html>
 <head>
     <title>Add new book</title>
-    <link rel="stylesheet" type="text/css" href="resources/css/registrationBook.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <script src="resources/js/registrationBook.js"></script>
 
 </head>
 <body>
 
-<input id="initials" type="text" name="" placeholder="Введите фамилию автора">
+<input id="initials" type="text" name="" placeholder="Enter last name">
 <button id="findAuthor" class="">Find author</button>
 <br>
 <br>
@@ -19,11 +19,11 @@
 
 <form method="post" action="Controller">
     <input type="hidden" name="command" value="go_to_add_new_author_page"/><br>
-    <button class="button">Add new author</button>
+    <button class="button">Save new author</button>
 </form>
 
 <br> <br>
-<form id="saveBook" action="Controller" method="post" enctype="multipart/form-data">
+<form id="saveBook" class="registerBook" action="Controller" method="post" enctype="multipart/form-data">
 
     <input type="hidden" name="command" value="add_new_book"/>
 
@@ -35,29 +35,30 @@
     <br>
     <div class="titleBook">
         <label for="title">Title:</label>
-        <input type="text" name="title" id="title" required minlength="2" maxlength="50">
+        <input type="text" name="title" id="title" required minlength="2" maxlength="70">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="titleBook">
         <label for="originalTitle">Original title:</label>
-        <input type="text" name="originalTitle" id="originalTitle">
+        <input type="text" name="originalTitle" id="originalTitle" minlength="2" maxlength="70">
+        <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="genres">
         <div><span class="errorGenre" aria-live="polite"></span></div>
-        <br>
-        <input type="checkbox" class="genre" name="genres" value="Fiction">FICTION<br>
-        <input type="checkbox" class="genre" name="genres" value="Non_fiction">NON-FICTION<br>
-        <input type="checkbox" class="genre" name="genres" value="Business">BUSINESS<br>
-        <input type="checkbox" class="genre" name="genres" value="Novel">NOVEL<br>
-        <input type="checkbox" class="genre" name="genres" value="History">HISTORY<br>
-        <input type="checkbox" class="genre" name="genres" value="Detective">DETECTIVE<br>
-        <input type="checkbox" class="genre" name="genres" value="Fantasy">FANTASY<br>
-        <input type="checkbox" class="genre" name="genres" value="Biography">BIOGRAPHY<br>
-        <input type="checkbox" class="genre" name="genres" value="Thriller">THRILLER<br>
-        <input type="checkbox" class="genre" name="genres" value="Health">HEALTH<br>
-        <input type="checkbox" class="genre" name="genres" value="Children">CHILDREN<br>
+        <br><label>Genre(s):</label>
+        <input type="checkbox" class="genre" name="genres" value="Fiction">Fiction<br>
+        <input type="checkbox" class="genre" name="genres" value="Non_fiction">Non-fiction<br>
+        <input type="checkbox" class="genre" name="genres" value="Business">Business<br>
+        <input type="checkbox" class="genre" name="genres" value="Novel">Novel<br>
+        <input type="checkbox" class="genre" name="genres" value="History">History<br>
+        <input type="checkbox" class="genre" name="genres" value="Detective">Detective<br>
+        <input type="checkbox" class="genre" name="genres" value="Fantasy">Fantasy<br>
+        <input type="checkbox" class="genre" name="genres" value="Biography">Biography<br>
+        <input type="checkbox" class="genre" name="genres" value="Thriller">Thriller<br>
+        <input type="checkbox" class="genre" name="genres" value="Health">Health<br>
+        <input type="checkbox" class="genre" name="genres" value="Children">Children<br>
     </div>
     <br>
     <div class="price">
@@ -78,7 +79,7 @@
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
-    <div class="containerFiles"><p>
+    <div class="containerFiles"><div class="filesError">   </div>
         <label for="files">Cover (s):</label>
         <input id="files" type="file" name="covers" multiple accept="image/jpeg,image/png,image/gif" required>
     </div>

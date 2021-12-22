@@ -5,6 +5,8 @@ import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
+import com.ita.u1.library.exception.DAOConnectionPoolException;
+import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.commons.io.IOUtils;
@@ -57,19 +59,16 @@ public class AddNewBook implements Command {
         BigDecimal bookPrice = new BigDecimal(price.replace(',', '.'));
         BigDecimal bookCostPerDay = new BigDecimal(costPerDay.replace(',', '.'));
 
-
-
-        int bookPublishingYear=0;
-        if(publishingYear!=null&&!publishingYear.isEmpty()) {
+        int bookPublishingYear = 0;
+        if (publishingYear != null && !publishingYear.isEmpty()) {
             bookPublishingYear = Integer.parseInt(publishingYear);
         }
 
-        int bookNumberOfPages=0;
-        if(numberOfPages!=null&&!numberOfPages.isEmpty()) {
+        int bookNumberOfPages = 0;
+        if (numberOfPages != null && !numberOfPages.isEmpty()) {
             bookNumberOfPages = Integer.parseInt(numberOfPages);
         }
 
-        //  System.out.println(title + " " + originalTitle + " " + price + " " + costPerDay + " " + numberOfCopies + " " + publishingYear + numberOfPages);
         List<byte[]> covers = new ArrayList<>();
 
         for (Part filePart : fileParts) {
@@ -85,7 +84,20 @@ public class AddNewBook implements Command {
 
         Book book = new Book(title, originalTitle, genreList, bookPrice, copiesNumber, authors, covers, bookPublishingYear, bookNumberOfPages);
 
-        bookService.add(book, copies);
+
+        try {
+            bookService.add(book, copies);
+
+            response.sendRedirect("Controller?command=Go_To_Main_Page&message=OK");
+            //сообщение о том, что добавлена
+        } catch (DAOConnectionPoolException e) {
+            //перевести на страницу с сообщением:проблемы доступа с соединением
+            e.printStackTrace();
+        } catch (DAOException e) {
+            //перевести на страницу с сообщением: проблемы с созданием книги
+            e.printStackTrace();
+        }
+
 
     }
 }

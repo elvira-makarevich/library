@@ -3,8 +3,9 @@ window.onload = () => init();
 function init() {
 
     document.getElementById('findAuthor').addEventListener('click', checkParamAuthor);
-    document.getElementById('files').addEventListener('change', loadImages);
+    document.getElementById("files").addEventListener('change', loadImages);
     document.getElementById("title").addEventListener('input', checkTitle);
+    document.getElementById("originalTitle").addEventListener('input', checkOriginalTitle);
     document.getElementById("price").addEventListener('input', checkPrice);
     document.getElementById("costPerDay").addEventListener('input', checkCostPerDay);
     document.getElementById("numberOfCopies").addEventListener('input', checkNumberOfCopies);
@@ -12,11 +13,12 @@ function init() {
     document.getElementById("publishingYear").addEventListener('input', checkPublishingYear);
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
     document.getElementById("submitButton").addEventListener('click', changeValidation);
+    defineDate();
 
     let formSaveBook = document.getElementById('saveBook');
     formSaveBook.addEventListener('submit', function (event) {
         event.preventDefault();
-     
+
         checkTitle();
         checkPrice();
         checkCostPerDay();
@@ -26,14 +28,12 @@ function init() {
         checkAuthors();
         checkGenres();
 
-        if (checkAuthors() && checkGenres() && checkCovers()) {
+        if (checkCovers() && checkAuthors() && checkGenres()) {
             document.createElement('form').submit.call(document.getElementById('saveBook'));
         }
-
         formSaveBook.noValidate = false;
     });
 
-    defineDate();
 }
 
 function changeValidation() {
@@ -128,10 +128,10 @@ function deleteItems() {
     let container = document.getElementById('possibleAuthorContainer');
     let deleteInput = container.querySelectorAll('input');
     let deleteButton = container.querySelectorAll('button');
-        for (let i = 0; i < deleteInput.length; i++) {
-            deleteInput[i].remove();
-            deleteButton[i].remove();
-        }
+    for (let i = 0; i < deleteInput.length; i++) {
+        deleteInput[i].remove();
+        deleteButton[i].remove();
+    }
 }
 
 function loadImages() {
@@ -171,7 +171,24 @@ function checkTitle() {
         } else if (title.validity.tooShort) {
             errorTitle.textContent = 'The title is too short. At least 2 characters.';
         } else if (title.validity.tooLong) {
-            errorTitle.textContent = 'The title too long. Maximum 50 characters.';
+            errorTitle.textContent = 'The title too long. Maximum 70 characters.';
+        }
+    }
+}
+
+function checkOriginalTitle() {
+
+    let originalTitle = document.getElementById("originalTitle");
+    let errorTitle = document.querySelector('#originalTitle + span.error');
+
+    if (originalTitle.validity.valid) {
+        errorTitle.textContent = '';
+        errorTitle.className = 'error';
+    } else {
+        if (originalTitle.validity.tooShort) {
+            errorTitle.textContent = 'The title is too short. At least 2 characters.';
+        } else if (originalTitle.validity.tooLong) {
+            errorTitle.textContent = 'The title too long. Maximum 70 characters.';
         }
     }
 }
@@ -187,7 +204,7 @@ function checkPrice() {
         if (price.validity.valueMissing) {
             errorPrice.textContent = 'The field cannot be empty.';
         } else if (price.validity.patternMismatch) {
-            errorPrice.textContent = 'Check that the entered data is correct. It is necessary to enter only numbers, there may be 2 decimal places. The number must be positive.';
+            errorPrice.textContent = 'The price cannot be negative (2 decimal places are allowed).';
         }
     }
 }
@@ -203,7 +220,7 @@ function checkCostPerDay() {
         if (costPerDay.validity.valueMissing) {
             errorPrice.textContent = 'The field cannot be empty.';
         } else if (costPerDay.validity.patternMismatch) {
-            errorPrice.textContent = 'Check that the entered data is correct. It is necessary to enter only numbers, there may be 2 decimal places. The number must be positive.';
+            errorPrice.textContent = 'The cost cannot be negative (2 decimal places are allowed).';
         }
     }
 }
@@ -219,7 +236,7 @@ function checkNumberOfCopies() {
         if (numberOfCopies.validity.valueMissing) {
             error.textContent = 'The field cannot be empty.';
         } else if (numberOfCopies.validity.rangeUnderflow) {
-            error.textContent = 'The number of copies cannot be negative.';
+            error.textContent = 'The number must be greater than zero.';
         }
     }
 }
@@ -228,11 +245,9 @@ function checkNumberOfCopies() {
 function checkCovers() {
     let result = true;
     let covers = document.getElementById("files");
-
-    if (covers.value==''){
-        alert("Upload one or more book covers!!");
-    }
+    document.querySelector("filesError").innerHTML = "Upload one or more book covers!"
     if (covers.validity.valueMissing) {
+        document.querySelector("filesError").innerHTML = "Upload one or more book covers!"
         alert("Upload one or more book covers!");
         result = false;
     }
@@ -269,7 +284,7 @@ function checkNumberOfPages() {
         if (numberOfPages.validity.valueMissing) {
             error.textContent = 'The field cannot be empty.';
         } else if (numberOfPages.validity.rangeUnderflow) {
-            error.textContent = 'The number of pages cannot be negative.';
+            error.textContent = 'The number must be greater than zero.';
         } else if (numberOfPages.validity.rangeOverflow) {
             error.textContent = 'The number of pages cannot exceed 2000 pages.';
         }
@@ -290,7 +305,6 @@ function checkGenres() {
         }
 
     }
-
     error.textContent = 'Please select at least one genre!';
     return result;
 }
