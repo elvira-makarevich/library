@@ -14,8 +14,6 @@ function init() {
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
     document.getElementById("submitButton").addEventListener('click', changeValidation);
 
-
-
     defineDate();
 
     let formSaveBook = document.getElementById('saveBook');
@@ -32,15 +30,37 @@ function init() {
         checkGenres();
 
         if (checkCovers() && checkAuthors() && checkGenres()) {
-            document.createElement('form').submit.call(document.getElementById('saveBook'));
+            submitValidForm();
         }
         formSaveBook.noValidate = false;
     });
 
 }
 
+function submitValidForm() {
 
-function  submitValidForm() {
+    let formData = new FormData(document.getElementById('saveBook'));
+    let xhr = new XMLHttpRequest();
+
+    let pageContext = document.getElementById('pageContext').value;
+    let url = pageContext + "/Controller?command=add_new_book";
+    let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
+    xhr.onloadend = function () {
+        if (xhr.status == 200) {
+            alert("The book was saved.");
+            window.location=urlRedirect;
+        } else if (xhr.status == 500) {
+            console.log("Error" + this.status);
+            alert("Check the correctness of the entered data.");
+        } else {
+            console.log("Error" + this.status);
+            alert("Try later.");
+        }
+
+    };
+
+    xhr.open("POST", url, true);
+    xhr.send(formData);
 
 }
 
@@ -66,14 +86,15 @@ function findAuthorRequest() {
     let pageContext = document.getElementById('pageContext').value;
     let url = pageContext + "/Controller?command=find_author&" + param;
 
-    xhr.open("GET", url, false);
+    xhr.open("GET", url, true);
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 400) {
             alert("Enter the last name of the author to search!");
             return;
         }
-        let answer = JSON.parse(this.responseText);
+
         if (this.readyState == 4 && this.status == 200) {
+            let answer = JSON.parse(xhr.response);
             if (answer == "") {
                 alert("No authors found. Add the author to the database.");
             } else {
@@ -120,7 +141,7 @@ function findAuthorRequest() {
                 }
             }
         } else {
-            alert(this.status);
+            console.log(this.status);
         }
     };
     xhr.send();
@@ -151,7 +172,6 @@ function loadImages() {
     let files = fileInput.files;
     let file;
 
-
     for (let i = 0; i < files.length; i++) {
         let image = document.createElement("img");
         let reader = new FileReader();
@@ -165,6 +185,7 @@ function loadImages() {
         containerImages.appendChild(image);
 
     }
+    checkCovers();
 }
 
 function checkTitle() {
@@ -253,12 +274,14 @@ function checkNumberOfCopies() {
 
 
 function checkCovers() {
+
     let result = true;
     let covers = document.getElementById("files");
+    let error = document.getElementById("filesError");
+    error.innerHTML = "";
 
     if (covers.validity.valueMissing) {
-
-        alert("Upload one or more book covers!");
+        error.innerHTML = "Upload one or more book covers!";
         result = false;
     }
     return result;

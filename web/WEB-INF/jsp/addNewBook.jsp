@@ -23,7 +23,7 @@
 </form>
 
 <br> <br>
-<form id="saveBook" class="registerBook" action="Controller" method="post" enctype="multipart/form-data">
+<form id="saveBook" class="registerBook" action="Controller" method="post" name="registerBook" enctype="multipart/form-data">
 
     <input type="hidden" name="command" value="add_new_book"/>
 
@@ -47,7 +47,7 @@
     <br>
     <div class="genres">
         <div><span class="errorGenre" aria-live="polite"></span></div>
-        <br><label>Genre(s):</label>
+        <br><label>Genre(s):</label><br>
         <input type="checkbox" class="genre" name="genres" value="Fiction">Fiction<br>
         <input type="checkbox" class="genre" name="genres" value="Non_fiction">Non-fiction<br>
         <input type="checkbox" class="genre" name="genres" value="Business">Business<br>
@@ -79,7 +79,7 @@
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
-    <div class="containerFiles"><div class="filesError">   </div>
+    <div class="containerFiles"><p id="filesError" class="error"></p>
         <label for="files">Cover (s):</label>
         <input id="files" type="file" name="covers" multiple accept="image/jpeg,image/png,image/gif" required>
     </div>
