@@ -13,6 +13,9 @@ function init() {
     document.getElementById("publishingYear").addEventListener('input', checkPublishingYear);
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
     document.getElementById("submitButton").addEventListener('click', changeValidation);
+
+
+
     defineDate();
 
     let formSaveBook = document.getElementById('saveBook');
@@ -33,6 +36,11 @@ function init() {
         }
         formSaveBook.noValidate = false;
     });
+
+}
+
+
+function  submitValidForm() {
 
 }
 
@@ -105,8 +113,10 @@ function findAuthorRequest() {
                         inputHidden.value = id;
                         inputHidden.name = "authorId";
                         realAuthorContainer.appendChild(inputHidden);
+                        checkAuthors();
                         deleteItems();
                     }
+
                 }
             }
         } else {
@@ -245,9 +255,9 @@ function checkNumberOfCopies() {
 function checkCovers() {
     let result = true;
     let covers = document.getElementById("files");
-    document.querySelector("filesError").innerHTML = "Upload one or more book covers!"
+
     if (covers.validity.valueMissing) {
-        document.querySelector("filesError").innerHTML = "Upload one or more book covers!"
+
         alert("Upload one or more book covers!");
         result = false;
     }
