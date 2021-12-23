@@ -87,9 +87,7 @@ public class AddNewBook implements Command {
 
         try {
             bookService.add(book, copies);
-request.setAttribute("message", "OK!");
-           // response.sendRedirect("Controller?command=Go_To_Main_Page&message=OK");
-            //сообщение о том, что добавлена
+            
         } catch (DAOConnectionPoolException e) {
             //перевести на страницу с сообщением:проблемы доступа с соединением
             e.printStackTrace();

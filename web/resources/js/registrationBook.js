@@ -48,7 +48,7 @@ function submitValidForm() {
     xhr.onloadend = function () {
         if (xhr.status == 200) {
             alert("The book was saved.");
-            window.location=urlRedirect;
+            window.location = urlRedirect;
         } else if (xhr.status == 500) {
             console.log("Error" + this.status);
             alert("Check the correctness of the entered data.");
@@ -275,16 +275,15 @@ function checkNumberOfCopies() {
 
 function checkCovers() {
 
-    let result = true;
     let covers = document.getElementById("files");
     let error = document.getElementById("filesError");
     error.innerHTML = "";
 
     if (covers.validity.valueMissing) {
         error.innerHTML = "Upload one or more book covers!";
-        result = false;
+        return false;
     }
-    return result;
+    return true;
 }
 
 function checkPublishingYear() {

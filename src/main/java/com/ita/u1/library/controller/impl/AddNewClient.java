@@ -11,5 +11,7 @@ public class AddNewClient implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        System.out.println(request.getParameter("firstName"));
+
     }
 }
