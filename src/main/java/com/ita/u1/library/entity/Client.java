@@ -1,9 +1,10 @@
 package com.ita.u1.library.entity;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
-public class Client {
+public class Client implements Serializable {
 
     private int id;
     private byte[] image;
@@ -12,10 +13,22 @@ public class Client {
     private String patronymic;
     private String passportNumber;
     private String email;
-    private String address;
+    private Address address;
     private Date dateOfBirth;
 
     public Client() {
+    }
+
+    public Client(String firstName, String lastName, String patronymic, String passportNumber, String email, Date dateOfBirth, Address address, byte[] image) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.patronymic = patronymic;
+        this.passportNumber = passportNumber;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.image = image;
     }
 
     public int getId() {
@@ -74,11 +87,11 @@ public class Client {
         this.email = email;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 
@@ -133,9 +146,8 @@ public class Client {
                 ", patronymic='" + patronymic + '\'' +
                 ", passportNumber='" + passportNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
+                ", address=" + address +
                 ", dateOfBirth=" + dateOfBirth +
                 '}';
     }
-    
 }

@@ -1,6 +1,5 @@
 window.onload = () => init();
 
-
 function init() {
     setMaxDateOfBirth();
     document.getElementById("file").addEventListener('change', loadImage);
@@ -11,7 +10,13 @@ function init() {
     document.getElementById("email").addEventListener('input', checkEmail);
     document.getElementById("dateOfBirth").addEventListener('input', checkDateOfBirth);
     document.getElementById("passportNumber").addEventListener('input', checkPassportNumber);
-
+    document.getElementById("postcode").addEventListener('input', checkPostcode);
+    document.getElementById("country").addEventListener('input', checkCountry);
+    document.getElementById("locality").addEventListener('input', checkLocality);
+    document.getElementById("street").addEventListener('input', checkStreet);
+    document.getElementById("houseNumber").addEventListener('input', checkHouseNumber);
+    document.getElementById("building").addEventListener('input', checkBuilding);
+    document.getElementById("apartmentNumber").addEventListener('input', checkApartmentNumber);
 
     let formSaveClient = document.getElementById('registerClientForm');
     formSaveClient.addEventListener('submit', function (event) {
@@ -20,8 +25,15 @@ function init() {
         checkLastName();
         checkEmail();
         checkDateOfBirth();
+        checkPostcode();
+        checkCountry();
+        checkLocality();
+        checkStreet();
+        checkHouseNumber();
+
         //checkUniquenessPassportNumber();
-        if (checkImage() && checkFirstName() && checkLastName() && checkEmail() && checkDateOfBirth()) {
+
+        if (checkImage() && checkFirstName() && checkLastName() && checkEmail() && checkDateOfBirth() && checkPostcode() && checkCountry() && checkLocality() && checkStreet() && checkHouseNumber() && checkPatronymic() && checkBuilding() && checkApartmentNumber()) {
             submitValidForm();
         }
     })
@@ -44,7 +56,7 @@ function submitValidForm() {
             alert("Check the correctness of the entered data.");
         } else {
             console.log("Error" + this.status);
-            alert("Try later.");
+            alert("Connection problems. Try later.");
         }
 
     };
@@ -110,10 +122,10 @@ function checkFirstName() {
     error.textContent = "";
 
     if (firstName == "") {
-        error.textContent = "Required field.";
+        error.textContent = "The field cannot be empty.";
         return false;
     } else {
-        let regex = /([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)/;
+        let regex = /([a-zA-Z]{2,20}$)|(^[\p{L}]{2,20}$)/u;
         if (regex.test(firstName) === false) {
             error.textContent = "Please enter the correct name.";
             return false;
@@ -129,10 +141,10 @@ function checkLastName() {
     error.textContent = "";
 
     if (lastName == "") {
-        error.textContent = "Required field.";
+        error.textContent = "The field cannot be empty.";
         return false;
     } else {
-        let regex = /([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)/;
+        let regex = /([a-zA-Z]{2,20}$)|(^[\p{L}]{2,20}$)/u;
         if (regex.test(lastName) === false) {
             error.textContent = "Please enter the correct last name.";
             return false;
@@ -147,10 +159,16 @@ function checkPatronymic() {
     let error = document.querySelector('#patronymic + span.error');
     error.textContent = "";
 
-    let regex = /([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$|(^\s*$))/;
-    if (regex.test(patronymic) === false) {
-        error.textContent = "Please enter the correct patronymic.";
+    if (patronymic == '') {
+        return true;
+    } else {
+        let regex = /([a-zA-Z]{2,20}$)|(^[\p{L}]{2,20}$)/u;
+        if (regex.test(patronymic) === false) {
+            error.textContent = "Please enter the correct patronymic.";
+            return false;
+        }
     }
+    return true;
 }
 
 function checkEmail() {
@@ -159,7 +177,7 @@ function checkEmail() {
     error.textContent = "";
 
     if (email == "") {
-        error.textContent = "Required field.";
+        error.textContent = "The field cannot be empty.";
         return false;
     } else {
         let regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -233,9 +251,139 @@ function checkPassportNumber() {
     let error = document.querySelector('#passportNumber + span.error');
     error.textContent = "";
 
-    let regex = /([A-Z]{2}[0-9]{7})|(^\s*$)/;
-    if (regex.test(passportNumber) === false) {
-        error.textContent = "Please enter the correct passport number.";
-    }
 
+    if (passportNumber == '') {
+        return true;
+    } else {
+        let regex = /([A-Z]{2}[0-9]{7})|(^\s*$)/;
+        if (regex.test(passportNumber) === false) {
+            error.textContent = "Please enter the correct passport number.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkPostcode() {
+    let postcode = document.getElementById("postcode").value;
+    let error = document.querySelector('#postcode + span.error');
+    error.textContent = "";
+
+    if (postcode == "") {
+        error.textContent = "The field cannot be empty.";
+        return false;
+    } else {
+        let regex = /^[0-9]{6}$/;
+        if (regex.test(postcode) === false) {
+            error.textContent = "Enter the correct postcode. 6 numbers.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkCountry() {
+    let country = document.getElementById("country").value;
+    let error = document.querySelector('#country + span.error');
+    error.textContent = "";
+
+    if (country == "") {
+        error.textContent = "The field cannot be empty.";
+        return false;
+    } else {
+        let regex = /([a-zA-Z]{2,40}$)|(^[\p{L}]{2,40}$)/u;
+        if (regex.test(country) === false) {
+            error.textContent = "Enter the correct state.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkLocality() {
+    let locality = document.getElementById("locality").value;
+    let error = document.querySelector('#locality + span.error');
+    error.textContent = "";
+
+    if (locality == "") {
+        error.textContent = "The field cannot be empty.";
+        return false;
+    } else {
+        let regex = /([a-zA-Z]{2,40}$)|(^[\p{L}]{2,40}$)/u;
+        if (regex.test(locality) === false) {
+            error.textContent = "Enter the correct locality.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkStreet() {
+    let street = document.getElementById("street").value;
+    let error = document.querySelector('#street + span.error');
+    error.textContent = "";
+
+    if (street == "") {
+        error.textContent = "The field cannot be empty.";
+        return false;
+    } else {
+        let regex = /([a-zA-Z]{2,40}$)|(^[\p{L}]{2,40}$)/u;
+        if (regex.test(street) === false) {
+            error.textContent = "Enter the correct street.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkHouseNumber() {
+    let houseNumber = document.getElementById("houseNumber").value;
+    let error = document.querySelector('#houseNumber + span.error');
+    error.textContent = "";
+
+    if (houseNumber == "") {
+        error.textContent = "The field cannot be empty.";
+        return false;
+    } else {
+        let regex = /^[0-9]{1,3}$/;
+        if (regex.test(houseNumber) === false) {
+            error.textContent = "Enter the correct house number.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkBuilding() {
+    let building = document.getElementById("building").value;
+    let error = document.querySelector('#building + span.error');
+    error.textContent = "";
+
+    if (building == "") {
+        return true;
+    } else {
+        let regex = /(^[0-9A-Za-z]$)|(^\s*$)/;
+        if (regex.test(building) === false) {
+            error.textContent = "Enter the correct building.";
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkApartmentNumber() {
+    let apartmentNumber = document.getElementById("apartmentNumber").value;
+    let error = document.querySelector('#apartmentNumber + span.error');
+    error.textContent = "";
+
+    if (apartmentNumber == "") {
+        return true;
+    } else {
+        let regex = /^[0-9]{1,4}$/;
+        if (regex.test(apartmentNumber) === false) {
+            error.textContent = "Enter the correct building.";
+            return false;
+        }
+    }
+    return true;
 }

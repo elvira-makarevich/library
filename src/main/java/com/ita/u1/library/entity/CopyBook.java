@@ -1,8 +1,9 @@
 package com.ita.u1.library.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class CopyBook {
+public class CopyBook implements Serializable {
 
     private int id;
     private int bookId;

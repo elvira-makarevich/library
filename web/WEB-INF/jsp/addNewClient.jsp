@@ -2,13 +2,9 @@
 <html>
 <head>
     <title>Add new client</title>
+    <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
-
-
-    <script>
-
-
-    </script>
+    <script src="resources/js/registrationClient.js"></script>
 </head>
 <body>
 <form id="registerClientForm" class="registerClient">
@@ -63,6 +59,55 @@
     <div class="fields">
         <label for="passportNumber">Passport number:</label>
         <input type="text" name="passportNumber" id="passportNumber">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="postcode">Postcode:</label>
+        <input type="text" name="postcode" id="postcode">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="country">Country:</label>
+        <input type="text" name="country" id="country">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="locality">Locality:</label>
+        <input type="text" name="locality" id="locality">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="street">Street:</label>
+        <input type="text" name="street" id="street">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="houseNumber">House number:</label>
+        <input type="text" name="houseNumber" id="houseNumber">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="building">Building:</label>
+        <input type="text" name="building" id="building">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="apartmentNumber">Apartment number:</label>
+        <input type="text" name="apartmentNumber" id="apartmentNumber">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
