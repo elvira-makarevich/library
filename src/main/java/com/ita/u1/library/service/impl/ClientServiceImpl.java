@@ -18,4 +18,18 @@ public class ClientServiceImpl implements ClientService {
         clientDAO.add(client);
 
     }
+
+    @Override
+    public boolean checkUniquenessPassportNumber(String passportNumber) {
+
+        boolean result = clientDAO.checkUniquenessPassportNumber(passportNumber);
+        return result;
+    }
+
+    @Override
+    public boolean checkUniquenessEmail(String email) {
+
+        boolean result = clientDAO.checkUniquenessEmail(email);
+        return result;
+    }
 }

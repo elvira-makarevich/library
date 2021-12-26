@@ -1,8 +1,9 @@
 package com.ita.u1.library.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Order {
+public class Order implements Serializable {
 
     private long id;
     private long clientId;

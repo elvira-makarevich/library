@@ -77,4 +77,51 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         }
 
     }
+
+    @Override
+    public boolean checkUniquenessPassportNumber(String passportNumber) {
+
+        Connection connection = take();
+
+        try (PreparedStatement psClient = connection.prepareStatement("SELECT * FROM clients WHERE passport_number=? ")) {
+
+            psClient.setString(1, passportNumber);
+
+            ResultSet rs = psClient.executeQuery();
+
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method checkUniquenessPassportNumber() failed.", e);
+        } finally {
+            release(connection);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean checkUniquenessEmail(String email) {
+        Connection connection = take();
+
+        try (PreparedStatement psClient = connection.prepareStatement("SELECT * FROM clients WHERE email=? ")) {
+
+            psClient.setString(1, email);
+
+            ResultSet rs = psClient.executeQuery();
+
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method checkUniquenessEmail() failed.", e);
+        } finally {
+            release(connection);
+        }
+
+        return false;
+    }
 }

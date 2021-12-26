@@ -20,6 +20,8 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_ADD_NEW_CLIENT_PAGE, new GoToAddNewClientPage());
         commands.put(CommandName.FIND_AUTHOR_IMAGE, new FindAuthorImage());
         commands.put(CommandName.GO_TO_AUTHOR_INFO_PAGE, new GoToAuthorInfoPage());
+        commands.put(CommandName.CHECK_UNIQUENESS_PASSPORT_NUMBER, new CheckUniquenessPassportNumber());
+        commands.put(CommandName.CHECK_UNIQUENESS_EMAIL, new CheckUniquenessEmail());
     }
 
     public Command findCommand(String name) {
