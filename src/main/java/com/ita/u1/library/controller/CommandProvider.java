@@ -22,6 +22,10 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_AUTHOR_INFO_PAGE, new GoToAuthorInfoPage());
         commands.put(CommandName.CHECK_UNIQUENESS_PASSPORT_NUMBER, new CheckUniquenessPassportNumber());
         commands.put(CommandName.CHECK_UNIQUENESS_EMAIL, new CheckUniquenessEmail());
+        commands.put(CommandName.GO_TO_ALL_BOOKS_PAGE, new GoToAllBooksPage());
+        commands.put(CommandName.VIEW_ALL_BOOKS, new ViewAllBooks());
+        commands.put(CommandName.VIEW_BOOK, new ViewBook());
+
     }
 
     public Command findCommand(String name) {

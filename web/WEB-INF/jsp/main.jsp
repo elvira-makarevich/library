@@ -33,5 +33,13 @@
     <button class="button">Add new client</button>
 </form>
 
+<br>
+<br>
+
+<form method="post" action="Controller" >
+    <input type="hidden" name="command" value="go_to_all_books_page"/>
+    <button class="button">All books</button>
+</form>
+
 </body>
 </html>

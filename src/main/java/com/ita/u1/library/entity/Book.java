@@ -13,6 +13,7 @@ public class Book implements Serializable {
     private List<Genre> genres;
     private BigDecimal price;
     private int numberOfCopies;
+    private int numberOfAvailableCopies;
     private List<Author> authors;
     private List<byte[]> covers;
     private int publishingYear;
@@ -33,6 +34,12 @@ public class Book implements Serializable {
         this.covers = covers;
         this.publishingYear = bookPublishingYear;
         this.numberOfPages = bookNumberOfPages;
+    }
+
+    public Book(int id, String title, int copiesNumber) {
+        this.id = id;
+        this.title = title;
+        this.numberOfCopies = copiesNumber;
     }
 
     public int getId() {
@@ -81,6 +88,14 @@ public class Book implements Serializable {
 
     public void setNumberOfCopies(int numberOfCopies) {
         this.numberOfCopies = numberOfCopies;
+    }
+
+    public int getNumberOfAvailableCopies() {
+        return numberOfAvailableCopies;
+    }
+
+    public void setNumberOfAvailableCopies(int numberOfAvailableCopies) {
+        this.numberOfAvailableCopies = numberOfAvailableCopies;
     }
 
     public List<Author> getAuthors() {
@@ -140,6 +155,7 @@ public class Book implements Serializable {
 
         if (id != book.id) return false;
         if (numberOfCopies != book.numberOfCopies) return false;
+        if (numberOfAvailableCopies != book.numberOfAvailableCopies) return false;
         if (publishingYear != book.publishingYear) return false;
         if (numberOfPages != book.numberOfPages) return false;
         if (Double.compare(book.rating, rating) != 0) return false;
@@ -163,6 +179,7 @@ public class Book implements Serializable {
         result = 31 * result + (genres != null ? genres.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + numberOfCopies;
+        result = 31 * result + numberOfAvailableCopies;
         result = 31 * result + (authors != null ? authors.hashCode() : 0);
         result = 31 * result + (covers != null ? covers.hashCode() : 0);
         result = 31 * result + publishingYear;
@@ -182,6 +199,7 @@ public class Book implements Serializable {
                 ", genres=" + genres +
                 ", price=" + price +
                 ", numberOfCopies=" + numberOfCopies +
+                ", numberOfAvailableCopies=" + numberOfAvailableCopies +
                 ", authors=" + authors +
                 ", covers=" + covers +
                 ", publishingYear=" + publishingYear +
@@ -190,5 +208,4 @@ public class Book implements Serializable {
                 ", rating=" + rating +
                 '}';
     }
-
 }

@@ -6,10 +6,14 @@ import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
+import com.ita.u1.library.entity.Genre;
 import com.ita.u1.library.exception.DAOException;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
@@ -101,4 +105,83 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
 
     }
+
+    @Override
+    public List<Book> getAllBooks(int startFromBook, int amountOfBooks) {
+
+        Connection connection = take();
+
+        List<Book> books = new ArrayList<>();
+
+        try (PreparedStatement psBooks = connection.prepareStatement("SELECT * FROM books order by title LIMIT ? OFFSET ? ");
+             PreparedStatement psBooksGenres = connection.prepareStatement("SELECT * FROM genres where book_id=?");
+             PreparedStatement psBooksAvailable = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true")) {
+
+            psBooks.setInt(1, amountOfBooks);
+            psBooks.setInt(2, startFromBook);
+
+            ResultSet rs = psBooks.executeQuery();
+
+            while (rs.next()) {
+                Book book = new Book();
+                book.setId(rs.getInt(1));
+                book.setTitle(rs.getString(2));
+                book.setNumberOfCopies(rs.getInt(5));
+                book.setPublishingYear(rs.getInt(6));
+
+                psBooksGenres.setInt(1, book.getId());
+                psBooksAvailable.setInt(1, book.getId());
+
+                ResultSet rsGenres = psBooksGenres.executeQuery();
+                ResultSet rsAvailableBooks = psBooksAvailable.executeQuery();
+
+                List<Genre> genres = new ArrayList<>();
+                while (rsGenres.next()) {
+                    String genre = rsGenres.getString(3);
+                    String g = genre.toUpperCase();
+                    genres.add(Genre.valueOf(g));
+                }
+
+                book.setGenres(genres);
+
+                int numberOfAvailableCopies = 0;
+                while (rsAvailableBooks.next()) {
+                    numberOfAvailableCopies++;
+                }
+
+                book.setNumberOfAvailableCopies(numberOfAvailableCopies);
+
+                books.add(book);
+
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method getAllBooks() failed.", e);
+        } finally {
+            release(connection);
+        }
+
+        return books;
+    }
+
+    @Override
+    public int getNumberOfRecords() {
+        int numberOfRecords = 0;
+
+        Connection connection = take();
+
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM books", ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE); ResultSet rs = ps.executeQuery()) {
+            rs.last();
+            numberOfRecords = rs.getRow();
+
+        } catch (SQLException e) {
+            throw new DAOException("Method getNumberOfRecords() failed.", e);
+        } finally {
+            release(connection);
+        }
+
+        return numberOfRecords;
+    }
 }
+
