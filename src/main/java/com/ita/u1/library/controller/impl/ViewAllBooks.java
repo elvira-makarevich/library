@@ -25,11 +25,8 @@ public class ViewAllBooks implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int numberOfRecords;
-        int numberOfPages;
-
-        numberOfRecords=bookService.getNumberOfRecords();
-        numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);// рассчитать количество
+        int numberOfRecords=bookService.getNumberOfBooks();
+        int numberOfPages= (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
 
         int page = DEFAULT_PAGE_NUMBER;
 
@@ -37,7 +34,6 @@ public class ViewAllBooks implements Command {
             page = Integer.parseInt(request.getParameter(PARAM_PAGE));
         }
 
-        System.out.println(page);
         List<Book> books = bookService.getAllBooks((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
 
         request.setAttribute(PARAM_NUMBER_OF_PAGES, numberOfPages);

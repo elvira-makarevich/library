@@ -3,31 +3,32 @@ package com.ita.u1.library.controller.impl;
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.entity.Book;
-import com.ita.u1.library.service.BookService;
+import com.ita.u1.library.entity.Client;
+import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class GoToAllBooksPage implements Command {
+public class ViewAllClients implements Command {
 
-    private final BookService bookService = ServiceProvider.getInstance().getBookService();
+    private final ClientService clientService = ServiceProvider.getInstance().getClientService();
 
-    public static final String PATH_ALL_BOOKS_PAGE = "/WEB-INF/jsp/allBooks.jsp";
+
     public static final String PARAM_PAGE = "currentPage";
     public static final String PARAM_NUMBER_OF_PAGES = "numberOfPages";
 
     public static final int DEFAULT_PAGE_NUMBER = 1;
     public static final int RECORDS_PER_PAGE = 10;
 
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int numberOfRecords = bookService.getNumberOfBooks();
+        int numberOfRecords = clientService.getNumberOfClients();
         int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
 
         int page = DEFAULT_PAGE_NUMBER;
@@ -36,9 +37,19 @@ public class GoToAllBooksPage implements Command {
             page = Integer.parseInt(request.getParameter(PARAM_PAGE));
         }
 
-        request.setAttribute(PARAM_PAGE, page);
-        request.setAttribute(PARAM_NUMBER_OF_PAGES, numberOfPages);
+        List<Client> clients = clientService.getAllClients((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        for(Client c : clients){
+            System.out.println(c.getDateOfBirth());
+        }
 
-        request.getRequestDispatcher(PATH_ALL_BOOKS_PAGE).forward(request, response);
+
+        request.setAttribute(PARAM_NUMBER_OF_PAGES, numberOfPages);
+        request.setAttribute(PARAM_PAGE, page);
+
+        String json = new Gson().toJson(clients);
+        response.setHeader("Content-Type", "application/json; charset=UTF-8");
+        response.getWriter().write(json);
+
     }
 }

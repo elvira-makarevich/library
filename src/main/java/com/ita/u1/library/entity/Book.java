@@ -196,7 +196,7 @@ public class Book implements Serializable {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
-                ", genres=" + genres +
+                ", genres=" + genres+
                 ", price=" + price +
                 ", numberOfCopies=" + numberOfCopies +
                 ", numberOfAvailableCopies=" + numberOfAvailableCopies +

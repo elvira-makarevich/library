@@ -31,9 +31,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public int getNumberOfRecords() {
+    public  int getNumberOfBooks() {
 
-        int numberOfRecords = bookDAO.getNumberOfRecords();
+        int numberOfRecords = bookDAO.getNumberOfBooks();
         return numberOfRecords;
     }
 }

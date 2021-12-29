@@ -8,6 +8,8 @@ import java.util.List;
 public interface BookDAO {
 
     void add(Book book, CopyBook[] copies);
+
     List<Book> getAllBooks(int startFromBook, int amountOfBooks);
-    int getNumberOfRecords();
+
+    int getNumberOfBooks();
 }

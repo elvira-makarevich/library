@@ -4,6 +4,8 @@ import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.service.ClientService;
 
+import java.util.List;
+
 public class ClientServiceImpl implements ClientService {
 
     private final ClientDAO clientDAO;
@@ -31,5 +33,21 @@ public class ClientServiceImpl implements ClientService {
 
         boolean result = clientDAO.checkUniquenessEmail(email);
         return result;
+    }
+
+    @Override
+    public int getNumberOfClients() {
+
+        int number = clientDAO.getNumberOfClients();
+        return number;
+
+    }
+
+    @Override
+    public List<Client> getAllClients(int startFromClient, int amountOfClients) {
+
+        List<Client> clients = clientDAO.getAllClients(startFromClient, amountOfClients);
+
+        return clients;
     }
 }

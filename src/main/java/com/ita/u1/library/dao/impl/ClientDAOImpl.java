@@ -3,10 +3,13 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
+import com.ita.u1.library.entity.Address;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DAOException;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
@@ -124,4 +127,67 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
         return false;
     }
+
+    @Override
+    public int getNumberOfClients() {
+
+        int numberOfRecords = 0;
+
+        Connection connection = take();
+
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM clients", ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE); ResultSet rs = ps.executeQuery()) {
+            rs.last();
+            numberOfRecords = rs.getRow();
+
+        } catch (SQLException e) {
+            throw new DAOException("Method getNumberOfRecords() failed.", e);
+        } finally {
+            release(connection);
+        }
+
+        return numberOfRecords;
+    }
+
+    @Override
+    public List<Client> getAllClients(int startFromClient, int amountOfClients) {
+        Connection connection = take();
+        List<Client> clients = new ArrayList<>();
+        try (PreparedStatement psClients = connection.prepareStatement("SELECT * FROM clients order by last_name LIMIT ? OFFSET ?")) {
+
+            psClients.setInt(1, amountOfClients);
+            psClients.setInt(2, startFromClient);
+
+            ResultSet rs = psClients.executeQuery();
+
+            while (rs.next()) {
+                Client client = new Client();
+                client.setId(rs.getInt(1));
+
+                client.setFirstName(rs.getString(2));
+
+
+
+                client.setLastName(rs.getString(3));
+
+
+                client.setDateOfBirth(rs.getDate(7));
+
+                client.setEmail(rs.getString(6));
+                client.setAddress(new Address(rs.getInt(8), rs.getString(9), rs.getString(10),
+                        rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14)));
+
+                clients.add(client);
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method getAllClients() failed.", e);
+        } finally {
+            release(connection);
+        }
+
+
+        return clients;
+    }
+
 }

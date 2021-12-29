@@ -1,39 +1,7 @@
-window.onload = () => init();
-
-function init() {
-    getBooks(${currentPage});
-
-}
-
-function getBooks(page) {
-
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=view_all_books&currentPage=" + page;
-    let response =  fetch(url);
-
-    if (response.ok) {
-        let json =  response.json();
-
-        viewBooksInTable(json);
-        createNavigation(page, ${numberOfPages});
-    } else {
-        console.log("Response.status: " + response.status);
-    }
-
-}
-
-function removeTable() {
-
-    let table = document.getElementsByTagName("table")[0];
-    table.parentNode.removeChild(table);
-
-
-}
-
-
-function viewBooksInTable(books) {
+function viewInTable(books) {
 
     let table = document.createElement('table');
+    table.className = "table_sort";
     let thead = document.createElement('thead');
     let tbody = document.createElement('tbody');
 
@@ -102,71 +70,7 @@ function viewBooksInTable(books) {
         tbody.appendChild(row);
     }
 
+    sortByThead();
+
 }
 
-function createNavigation(currentPage, numberOfPages) {
-    let pageContainer = document.getElementById('pagination');
-    let size = numberOfPages;
-    let page = currentPage;
-    let step = 3;
-
-    let code = '';
-
-    start();
-
-    function start() {
-        if (size < step * 2 + 6) {
-            add(1, size + 1);
-        } else if (page < step * 2 + 1) {
-            add(1, step * 2 + 4);
-            last();
-        } else if (page > size - step * 2) {
-            first();
-            add(size - step * 2 - 2, size + 1);
-        } else {
-            first();
-            add(page - step, page*1 + step*1 + 1);
-            last();
-
-        }
-        finish();
-    }
-
-
-    function add(p, q) {
-        for (let l = p; l < q; l++) {
-            code += '<a>' + l + '</a>';
-        }
-    }
-
-    function last() {
-        code += '<i>...</i><a>' + size + '</a>';
-    }
-
-    function first() {
-        code += '<a>1</a><i>...</i>';
-    }
-
-    function finish() {
-
-        pageContainer.innerHTML = code;
-        code = '';
-        bind();
-    }
-
-    function bind() {
-        let a = pageContainer.getElementsByTagName('a');
-        for (let num = 0; num < a.length; num++) {
-            if (a[num].innerHTML === page)
-                a[num].className = 'current';
-            a[num].addEventListener('click', clickA, false);
-        }
-    }
-
-    function clickA() {
-        page = this.innerHTML;
-        removeTable();
-        getBooks(page);
-        start();
-    }
-}

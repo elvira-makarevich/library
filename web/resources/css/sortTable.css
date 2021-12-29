@@ -33,10 +33,3 @@ th.sorted[data-order="-1"]::after {
     position: absolute;
 }
 
-th.sorted[data-order="-1"]::after {
-    content: "?"
-}
-
-th.sorted[data-order="1"]::after {
-    content: "?"
-}

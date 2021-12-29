@@ -114,8 +114,8 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         List<Book> books = new ArrayList<>();
 
         try (PreparedStatement psBooks = connection.prepareStatement("SELECT books.*, count(availability) as available FROM books inner join books_copies on books.id=books_copies.book_id where  books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ");
-             PreparedStatement psBooksGenres = connection.prepareStatement("SELECT * FROM genres where book_id=?");
-        ) {
+             PreparedStatement psBooksGenres = connection.prepareStatement("SELECT * FROM genres where book_id=?")) {
+
 
             //  PreparedStatement psBooksAvailable = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true")
             psBooks.setInt(1, amountOfBooks);
@@ -145,7 +145,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
                 book.setGenres(genres);
 
-                int numberOfAvailableCopies = 0;
+               // int numberOfAvailableCopies = 0;
                 //   while (rsAvailableBooks.next()) {
                 //        numberOfAvailableCopies++;
                 //    }
@@ -166,7 +166,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
     }
 
     @Override
-    public int getNumberOfRecords() {
+    public int getNumberOfBooks(){
         int numberOfRecords = 0;
 
         Connection connection = take();

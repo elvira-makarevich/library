@@ -39,7 +39,6 @@ public class AddNewClient implements Command {
         String building = request.getParameter("building");
         String apartmentNumber = request.getParameter("apartmentNumber");
 
-        System.out.println(dateOfBirth);
         int postcodeClient = Integer.parseInt(postcode);
         int houseNumberClient = Integer.parseInt(houseNumber);
         int apartmentNumberClient = Integer.parseInt(apartmentNumber);
