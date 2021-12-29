@@ -4,11 +4,16 @@
 <head>
     <title>All books</title>
     <link rel="stylesheet" type="text/css" href="resources/css/navigation.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/sortTable.css">
+    <style>
+
+    </style>
     <script>
         window.onload = () => init();
 
         function init() {
             getBooks(${currentPage});
+
 
         }
 
@@ -16,7 +21,7 @@
 
             let pageContext = document.getElementById('pageContext').value;
             let url = pageContext + "/Controller?command=view_all_books&currentPage=" + page;
-            let response =await fetch(url);
+            let response = await fetch(url);
 
             if (response.ok) {
                 let json = await response.json();
@@ -41,6 +46,7 @@
         function viewBooksInTable(books) {
 
             let table = document.createElement('table');
+            table.className = "table_sort";
             let thead = document.createElement('thead');
             let tbody = document.createElement('tbody');
 
@@ -109,6 +115,28 @@
                 tbody.appendChild(row);
             }
 
+            addSortThead();
+
+        }
+
+        function addSortThead() {
+            document.querySelectorAll('.table_sort thead').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
+            const getSort = ({target}) => {
+                const order = (target.dataset.order = -(target.dataset.order || -1));
+                const index = [...target.parentNode.cells].indexOf(target);
+                const collator = new Intl.Collator(['en', 'ru'], {numeric: true});
+                const comparator = (index, order) => (a, b) => order * collator.compare(
+                    a.children[index].innerHTML,
+                    b.children[index].innerHTML
+                );
+
+                for (const tBody of target.closest('table').tBodies)
+                    tBody.append(...[...tBody.rows].sort(comparator(index, order)));
+
+                for (const cell of target.parentNode.cells)
+                    cell.classList.toggle('sorted', cell === target);
+            };
+
         }
 
         function createNavigation(currentPage, numberOfPages) {
@@ -132,7 +160,7 @@
                     add(size - step * 2 - 2, size + 1);
                 } else {
                     first();
-                    add(page - step, page*1 + step*1 + 1);
+                    add(page - step, page * 1 + step * 1 + 1);
                     last();
 
                 }
@@ -183,7 +211,8 @@
 
 <h1>All books</h1>
 
-<div id="booksTable"></div><br>
+<div id="booksTable"></div>
+<br>
 <div id="pagination"></div>
 <input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
 </body>
