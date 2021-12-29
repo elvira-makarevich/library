@@ -21,7 +21,7 @@ public class GoToAllBooksPage implements Command {
     public static final String PARAM_NUMBER_OF_PAGES = "numberOfPages";
 
     public static final int DEFAULT_PAGE_NUMBER = 1;
-    public static final int RECORDS_PER_PAGE = 2;
+    public static final int RECORDS_PER_PAGE = 10;
 
 
     @Override

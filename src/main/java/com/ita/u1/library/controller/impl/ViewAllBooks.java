@@ -16,14 +16,14 @@ public class ViewAllBooks implements Command {
 
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
 
-    public static final int RECORDS_PER_PAGE = 2;
+    public static final int RECORDS_PER_PAGE = 10;
     public static final int DEFAULT_PAGE_NUMBER = 1;
+
     public static final String PARAM_PAGE = "currentPage";
     public static final String PARAM_NUMBER_OF_PAGES = "numberOfPages";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 
         int numberOfRecords;
         int numberOfPages;

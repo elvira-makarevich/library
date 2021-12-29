@@ -5,6 +5,7 @@ import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.service.BookService;
 
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -25,6 +26,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> getAllBooks(int startFromBook, int amountOfBooks) {
 
         List<Book> books = bookDAO.getAllBooks(startFromBook, amountOfBooks);
+      //  books.sort(Comparator.comparing(Book::getNumberOfAvailableCopies).thenComparing(Book::getTitle));
         return books;
     }
 

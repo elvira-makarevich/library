@@ -113,10 +113,11 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
         List<Book> books = new ArrayList<>();
 
-        try (PreparedStatement psBooks = connection.prepareStatement("SELECT * FROM books order by title LIMIT ? OFFSET ? ");
+        try (PreparedStatement psBooks = connection.prepareStatement("SELECT books.*, count(availability) as available FROM books inner join books_copies on books.id=books_copies.book_id where  books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ");
              PreparedStatement psBooksGenres = connection.prepareStatement("SELECT * FROM genres where book_id=?");
-             PreparedStatement psBooksAvailable = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true")) {
+        ) {
 
+            //  PreparedStatement psBooksAvailable = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true")
             psBooks.setInt(1, amountOfBooks);
             psBooks.setInt(2, startFromBook);
 
@@ -128,12 +129,12 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                 book.setTitle(rs.getString(2));
                 book.setNumberOfCopies(rs.getInt(5));
                 book.setPublishingYear(rs.getInt(6));
-
+                book.setNumberOfAvailableCopies(rs.getInt("available"));
                 psBooksGenres.setInt(1, book.getId());
-                psBooksAvailable.setInt(1, book.getId());
+                //     psBooksAvailable.setInt(1, book.getId());
 
                 ResultSet rsGenres = psBooksGenres.executeQuery();
-                ResultSet rsAvailableBooks = psBooksAvailable.executeQuery();
+                //  ResultSet rsAvailableBooks = psBooksAvailable.executeQuery();
 
                 List<Genre> genres = new ArrayList<>();
                 while (rsGenres.next()) {
@@ -145,11 +146,11 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                 book.setGenres(genres);
 
                 int numberOfAvailableCopies = 0;
-                while (rsAvailableBooks.next()) {
-                    numberOfAvailableCopies++;
-                }
+                //   while (rsAvailableBooks.next()) {
+                //        numberOfAvailableCopies++;
+                //    }
 
-                book.setNumberOfAvailableCopies(numberOfAvailableCopies);
+                //     book.setNumberOfAvailableCopies(numberOfAvailableCopies);
 
                 books.add(book);
 

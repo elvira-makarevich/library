@@ -166,11 +166,11 @@
                 for (let num = 0; num < a.length; num++) {
                     if (a[num].innerHTML === page)
                         a[num].className = 'current';
-                    a[num].addEventListener('click', clickA, false);
+                    a[num].addEventListener('click', click, false);
                 }
             }
 
-            function clickA() {
+            function click() {
                 page = this.innerHTML;
                 removeTable();
                 getBooks(page);
