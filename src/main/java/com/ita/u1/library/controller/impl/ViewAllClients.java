@@ -2,7 +2,6 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
-import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
@@ -11,13 +10,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ViewAllClients implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
-
 
     public static final String PARAM_PAGE = "currentPage";
     public static final String PARAM_NUMBER_OF_PAGES = "numberOfPages";
@@ -38,11 +35,6 @@ public class ViewAllClients implements Command {
         }
 
         List<Client> clients = clientService.getAllClients((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-        for(Client c : clients){
-            System.out.println(c.getDateOfBirth());
-        }
-
 
         request.setAttribute(PARAM_NUMBER_OF_PAGES, numberOfPages);
         request.setAttribute(PARAM_PAGE, page);

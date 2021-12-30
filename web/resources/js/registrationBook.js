@@ -98,53 +98,58 @@ function findAuthorRequest() {
             if (answer == "") {
                 alert("No authors found. Add the author to the database.");
             } else {
-                let i;
-                let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
-                for (i in answer) {
-                    let input = document.createElement("input");
-                    input.type = "text";
-                    input.value = answer[i].lastName + " " + answer[i].firstName;
-                    input.setAttribute("readonly", "readonly");
-                    let initials = input.value;
-                    possibleAuthorContainer.appendChild(input);
-
-                    let inputHidden = document.createElement("input");
-                    inputHidden.type = "hidden";
-                    inputHidden.value = answer[i].id;
-                    let id = inputHidden.value;
-                    possibleAuthorContainer.appendChild(inputHidden);
-
-                    let button = document.createElement("button");
-                    button.innerHTML = "Add";
-                    button.id = "addAuthor";
-                    button.addEventListener('click', addAuthor)
-                    possibleAuthorContainer.appendChild(button);
-
-                    function addAuthor() {
-                        let realAuthorContainer = document.getElementById("realAuthorContainer");
-                        let input = document.createElement("input");
-                        input.type = "text";
-                        input.value = initials;
-                        input.className = "realAuthorContainer";
-                        input.setAttribute("readonly", "readonly");
-                        realAuthorContainer.appendChild(input);
-
-                        let inputHidden = document.createElement("input");
-                        inputHidden.type = "hidden";
-                        inputHidden.value = id;
-                        inputHidden.name = "authorId";
-                        realAuthorContainer.appendChild(inputHidden);
-                        checkAuthors();
-                        deleteItems();
-                    }
-
-                }
+                createInputForAuthor(answer);
             }
         } else {
+            alert("Check the correctness of the entered data.");
             console.log(this.status);
         }
     };
     xhr.send();
+}
+
+function createInputForAuthor(authors) {
+    let i;
+    let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
+    for (i in authors) {
+        let input = document.createElement("input");
+        input.type = "text";
+        input.value = authors[i].lastName + " " + authors[i].firstName;
+        input.setAttribute("readonly", "readonly");
+        let initials = input.value;
+        possibleAuthorContainer.appendChild(input);
+
+        let inputHidden = document.createElement("input");
+        inputHidden.type = "hidden";
+        inputHidden.value = authors[i].id;
+        let id = inputHidden.value;
+        possibleAuthorContainer.appendChild(inputHidden);
+
+        let button = document.createElement("button");
+        button.innerHTML = "Add";
+        button.id = "addAuthor";
+        button.addEventListener('click', addAuthor);
+        possibleAuthorContainer.appendChild(button);
+
+        function addAuthor() {
+            let realAuthorContainer = document.getElementById("realAuthorContainer");
+            let input = document.createElement("input");
+            input.type = "text";
+            input.value = initials;
+            input.className = "realAuthorContainer";
+            input.setAttribute("readonly", "readonly");
+            realAuthorContainer.appendChild(input);
+
+            let inputHidden = document.createElement("input");
+            inputHidden.type = "hidden";
+            inputHidden.value = id;
+            inputHidden.name = "authorId";
+            realAuthorContainer.appendChild(inputHidden);
+            checkAuthors();
+            deleteItems();
+        }
+
+    }
 }
 
 function defineDate() {

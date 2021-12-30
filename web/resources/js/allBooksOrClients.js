@@ -110,5 +110,8 @@ function createNavigation(currentPage, numberOfPages) {
 
 function removeTable() {
     let table = document.getElementsByTagName("table")[0];
+    if (!table){
+        return;
+    }
     table.parentNode.removeChild(table);
 }

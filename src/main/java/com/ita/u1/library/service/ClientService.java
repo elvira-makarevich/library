@@ -15,4 +15,6 @@ public interface ClientService {
     int getNumberOfClients();
 
     List<Client> getAllClients(int startFromClient, int amountOfClients);
+
+    List<Client> findClient(String lastName);
 }

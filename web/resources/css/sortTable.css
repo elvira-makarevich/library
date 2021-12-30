@@ -3,7 +3,7 @@
 }
 
 .table_sort th {
-    font-size: 23px;
+    font-size: 20px;
     color: #f8f7f6;
     background: #a70424;
     cursor: pointer;
@@ -11,7 +11,7 @@
 
 .table_sort td,
 .table_sort th {
-    font-size: 20px;
+    font-size: 17px;
     width: 200px;
     height: 40px;
     text-align: center;

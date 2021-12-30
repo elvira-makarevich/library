@@ -28,6 +28,9 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_ALL_CLIENTS_PAGE, new GoToAllClientsPage());
         commands.put(CommandName.VIEW_ALL_CLIENTS, new ViewAllClients());
         commands.put(CommandName.VIEW_CLIENT, new ViewClient());
+        commands.put(CommandName.GO_TO_NEW_ORDER_PAGE, new GoToNewOrderPage());
+        commands.put(CommandName.FIND_CLIENT, new FindClient());
+        commands.put(CommandName.FIND_BOOK, new FindBook());
 
     }
 

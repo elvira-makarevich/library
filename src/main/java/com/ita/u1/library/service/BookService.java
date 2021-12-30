@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface BookService {
 
-    void add(Book book, CopyBook[] copies);
+    void add(Book book);
 
     List<Book> getAllBooks(int startFromBook, int amountOfBooks);
 
     int getNumberOfBooks();
+
+    List<Book> findBook(String title);
 
 }

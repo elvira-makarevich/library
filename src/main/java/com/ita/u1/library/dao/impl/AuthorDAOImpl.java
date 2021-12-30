@@ -22,12 +22,18 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
 
     @Override
     public void addAuthor(Author author) {
-        System.out.println(author.getFirstName());
+
         Connection connection = take();
+        PreparedStatement psAuthor = null;
+        PreparedStatement psImage = null;
+        ResultSet generatedKeys = null;
 
-        try (PreparedStatement psAuthor = connection.prepareStatement("INSERT INTO authors (first_name, last_name) VALUES (?,?) ", Statement.RETURN_GENERATED_KEYS); PreparedStatement psImage = connection.prepareStatement("INSERT INTO authors_images (author_id, image) VALUES (?,?)")) {
-
+        try {
             connection.setAutoCommit(false);
+
+            psAuthor = connection.prepareStatement("INSERT INTO authors (first_name, last_name) VALUES (?,?) ", Statement.RETURN_GENERATED_KEYS);
+            psImage = connection.prepareStatement("INSERT INTO authors_images (author_id, image) VALUES (?,?)");
+
             psAuthor.setString(1, author.getFirstName());
             psAuthor.setString(2, author.getLastName());
 
@@ -35,12 +41,12 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             if (affectedRows == 0) {
                 throw new DAOException("Creating author failed, no rows affected.");
             }
-            try (ResultSet generatedKeys = psAuthor.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    author.setId(generatedKeys.getInt(1));
-                } else {
-                    throw new DAOException("Creating author failed, no ID obtained.");
-                }
+
+            generatedKeys = psAuthor.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                author.setId(generatedKeys.getInt(1));
+            } else {
+                throw new DAOException("Creating author failed, no ID obtained.");
             }
 
             psImage.setInt(1, author.getId());
@@ -51,14 +57,17 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
 
         } catch (SQLException e) {
             //log
-            if (connection != null)
+            if (connection != null) {
                 try {
                     connection.rollback();
                 } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: add author.", ex);
+                    throw new DAOException("Exception while rollback; operation: add author.", ex);
                 }
+            }
             throw new DAOException("Creating author failed.", e);
         } finally {
+            close(generatedKeys);
+            close(psAuthor, psImage);
             if (connection != null) {
                 try {
                     connection.setAutoCommit(true);// Восстановление по умолчанию
@@ -73,30 +82,34 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
     @Override
     public List<Author> findAuthor(String lastName) {
 
-        Connection connection = take();
         List<Author> authors = new ArrayList<>();
+        Connection connection = take();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM authors WHERE last_name = ?")) {
-
+        try {
+            ps = connection.prepareStatement("SELECT * FROM authors WHERE last_name = ?");
             ps.setString(1, lastName);
-            ResultSet rs = ps.executeQuery();
+
+            rs = ps.executeQuery();
             if (rs != null) {
                 while (rs.next()) {
-                    int id = rs.getInt(1);
-                    String firstName = rs.getString(2);
-                    String lastNameFound = rs.getString(3);
-                    authors.add(new Author(id, firstName, lastNameFound));
+                    Author author = new Author();
+                    author.setId(rs.getInt(1));
+                    author.setFirstName(rs.getString(2));
+                    author.setLastName(rs.getString(3));
+                    authors.add(author);
                 }
-                rs.close();
             }
-
         } catch (SQLException e) {
             //log
             throw new DAOException("SQLException when finding the authors.", e);
         } finally {
+            close(rs);
+            close(ps);
             release(connection);
         }
-
+//перенести в сервис
         if (authors.isEmpty()) {
             return Collections.emptyList();
         }
@@ -106,25 +119,27 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
     @Override
     public Author findAuthorImage(int id) {
 
-        Connection connection = take();
         Author author = null;
         Optional<Author> optionalAuthor;
+        Connection connection = take();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?")) {
-
+        try {
+            ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?");
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs != null) {
                 while (rs.next()) {
                     author.setImage(rs.getBytes(1));
                 }
-                rs.close();
             }
-
         } catch (SQLException e) {
             //log
             throw new DAOException("SQLException when finding the author's image.", e);
         } finally {
+            close(rs);
+            close(ps);
             release(connection);
         }
 

@@ -4,11 +4,13 @@ import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.entity.Address;
+import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DAOException;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
@@ -21,10 +23,14 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
     public void add(Client client) {
 
         Connection connection = take();
-        try (PreparedStatement psClient = connection.prepareStatement("INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement psClientImage = connection.prepareStatement("INSERT INTO clients_images (client_id, image) VALUES (?,?)")) {
+        PreparedStatement psClient = null;
+        PreparedStatement psClientImage = null;
+        ResultSet generatedKeys = null;
 
+        try {
             connection.setAutoCommit(false);
+            psClient = connection.prepareStatement("INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            psClientImage = connection.prepareStatement("INSERT INTO clients_images (client_id, image) VALUES (?,?)");
 
             psClient.setString(1, client.getFirstName());
             psClient.setString(2, client.getLastName());
@@ -43,15 +49,13 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
             int affectedRows = psClient.executeUpdate();
 
             if (affectedRows == 0) {
-
                 throw new DAOException("Adding new client failed, no rows affected.");
             }
-            try (ResultSet generatedKeys = psClient.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    client.setId(generatedKeys.getInt(1));
-                } else {
-                    throw new DAOException("Adding new client failed, no ID obtained.");
-                }
+            generatedKeys = psClient.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                client.setId(generatedKeys.getInt(1));
+            } else {
+                throw new DAOException("Adding new client failed, no ID obtained.");
             }
 
             psClientImage.setInt(1, client.getId());
@@ -69,6 +73,8 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
                 }
             throw new DAOException("Adding book to database failed.", e);
         } finally {
+            close(generatedKeys);
+            close(psClientImage, psClient);
             if (connection != null) {
                 try {
                     connection.setAutoCommit(true);
@@ -78,19 +84,20 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
             }
             release(connection);
         }
-
     }
 
     @Override
     public boolean checkUniquenessPassportNumber(String passportNumber) {
 
         Connection connection = take();
+        PreparedStatement psClient = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement psClient = connection.prepareStatement("SELECT * FROM clients WHERE passport_number=? ")) {
-
+        try {
+            psClient = connection.prepareStatement("SELECT * FROM clients WHERE passport_number=? ");
             psClient.setString(1, passportNumber);
 
-            ResultSet rs = psClient.executeQuery();
+            rs = psClient.executeQuery();
 
             while (rs.next()) {
                 return true;
@@ -99,21 +106,25 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         } catch (SQLException e) {
             throw new DAOException("Method checkUniquenessPassportNumber() failed.", e);
         } finally {
+            close(rs);
+            close(psClient);
             release(connection);
         }
-
         return false;
     }
 
     @Override
     public boolean checkUniquenessEmail(String email) {
+
         Connection connection = take();
+        PreparedStatement psClient = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement psClient = connection.prepareStatement("SELECT * FROM clients WHERE email=? ")) {
-
+        try {
+            psClient = connection.prepareStatement("SELECT * FROM clients WHERE email=? ");
             psClient.setString(1, email);
 
-            ResultSet rs = psClient.executeQuery();
+            rs = psClient.executeQuery();
 
             while (rs.next()) {
                 return true;
@@ -122,9 +133,10 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         } catch (SQLException e) {
             throw new DAOException("Method checkUniquenessEmail() failed.", e);
         } finally {
+            close(rs);
+            close(psClient);
             release(connection);
         }
-
         return false;
     }
 
@@ -134,59 +146,97 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         int numberOfRecords = 0;
 
         Connection connection = take();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM clients", ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE); ResultSet rs = ps.executeQuery()) {
+        try {
+            ps = connection.prepareStatement("SELECT * FROM clients", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            rs = ps.executeQuery();
             rs.last();
             numberOfRecords = rs.getRow();
 
         } catch (SQLException e) {
             throw new DAOException("Method getNumberOfRecords() failed.", e);
         } finally {
+            close(rs);
+            close(ps);
             release(connection);
         }
-
         return numberOfRecords;
     }
 
     @Override
     public List<Client> getAllClients(int startFromClient, int amountOfClients) {
-        Connection connection = take();
-        List<Client> clients = new ArrayList<>();
-        try (PreparedStatement psClients = connection.prepareStatement("SELECT * FROM clients order by last_name LIMIT ? OFFSET ?")) {
 
+        List<Client> clients = new ArrayList<>();
+        Connection connection = take();
+        PreparedStatement psClients = null;
+        ResultSet rs = null;
+
+        try {
+            psClients = connection.prepareStatement("SELECT * FROM clients order by last_name LIMIT ? OFFSET ?");
             psClients.setInt(1, amountOfClients);
             psClients.setInt(2, startFromClient);
 
-            ResultSet rs = psClients.executeQuery();
+            rs = psClients.executeQuery();
 
             while (rs.next()) {
                 Client client = new Client();
                 client.setId(rs.getInt(1));
 
                 client.setFirstName(rs.getString(2));
-
-
-
                 client.setLastName(rs.getString(3));
-
-
                 client.setDateOfBirth(rs.getDate(7));
-
                 client.setEmail(rs.getString(6));
                 client.setAddress(new Address(rs.getInt(8), rs.getString(9), rs.getString(10),
                         rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14)));
-
                 clients.add(client);
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Method getAllClients() failed.", e);
+            throw new DAOException("DAOException: method getAllClients() failed.", e);
         } finally {
+            close(rs);
+            close(psClients);
+            release(connection);
+        }
+        return clients;
+    }
+
+    @Override
+    public List<Client> findClient(String lastName) {
+
+        List<Client> clients = new ArrayList<>();
+        Connection connection = take();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = connection.prepareStatement("SELECT * FROM clients WHERE last_name = ?");
+            ps.setString(1, lastName);
+            rs = ps.executeQuery();
+            if (rs != null) {
+                while (rs.next()) {
+                    Client client = new Client();
+                    client.setId(rs.getInt(1));
+                    client.setFirstName(rs.getString(2));
+                    client.setLastName(rs.getString(3));
+                    client.setDateOfBirth(rs.getDate(7));
+                    clients.add(client);
+                }
+            }
+        } catch (SQLException e) {
+            //log
+            throw new DAOException("DAOException: method findClient() failed.", e);
+        } finally {
+            close(rs);
+            close(ps);
             release(connection);
         }
 
-
+        if (clients.isEmpty()) {
+            return Collections.emptyList();
+        }
         return clients;
     }
 

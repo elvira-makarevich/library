@@ -23,14 +23,15 @@
 </form>
 
 <br> <br>
-<form id="saveBook" class="registerBook" action="Controller" method="post" name="registerBook" enctype="multipart/form-data">
+<form id="saveBook" class="registerBook" action="Controller" method="post" name="registerBook"
+      enctype="multipart/form-data">
 
     <input type="hidden" name="command" value="add_new_book"/>
 
     <div id="realAuthorContainer">
         <div><span class="errorAuthor" aria-live="polite"></span></div>
         <br>
-        Author(s):
+        <label>Author(s):</label>
     </div>
     <br>
     <div class="titleBook">

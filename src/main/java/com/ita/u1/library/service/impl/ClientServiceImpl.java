@@ -50,4 +50,10 @@ public class ClientServiceImpl implements ClientService {
 
         return clients;
     }
+
+    @Override
+    public List<Client> findClient(String lastName) {
+        List<Client> clients = clientDAO.findClient(lastName);
+        return clients;
+    }
 }

@@ -82,11 +82,10 @@ public class AddNewBook implements Command {
             copies[i] = new CopyBook(bookCostPerDay, true);
         }
 
-        Book book = new Book(title, originalTitle, genreList, bookPrice, copiesNumber, authors, covers, bookPublishingYear, bookNumberOfPages);
-
+        Book book = new Book(title, originalTitle, genreList, bookPrice, copiesNumber, authors, covers, bookPublishingYear, bookNumberOfPages, copies);
 
         try {
-            bookService.add(book, copies);
+            bookService.add(book);
             
         } catch (DAOConnectionPoolException e) {
             //перевести на страницу с сообщением:проблемы доступа с соединением

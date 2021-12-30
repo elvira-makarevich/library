@@ -46,5 +46,10 @@
     <button class="button">All clients</button>
 </form>
 
+<form method="post" action="Controller" >
+    <input type="hidden" name="command" value="go_to_new_order_page"/>
+    <button class="button">New order</button>
+</form>
+
 </body>
 </html>

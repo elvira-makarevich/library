@@ -3,7 +3,7 @@ body {
     background: #f9f9f9;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
-.registerBook, .registerClient {
+.registerBook, .registerClient, .saveOrder, .findClientArea, .findBookArea {
     width: 700px;
     background: #fff;
     padding: 15px 40px 40px;

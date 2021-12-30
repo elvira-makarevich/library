@@ -2,6 +2,7 @@ package com.ita.u1.library.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +21,12 @@ public class Book implements Serializable {
     private Date registrationDate;
     private int numberOfPages;
     private double rating;
+    private CopyBook[] copies;
 
     public Book() {
     }
 
-    public Book(String title, String originalTitle, List<Genre> genreList, BigDecimal bookPrice, int copiesNumber, List<Author> authors, List<byte[]> covers, int bookPublishingYear, int bookNumberOfPages) {
+    public Book(String title, String originalTitle, List<Genre> genreList, BigDecimal bookPrice, int copiesNumber, List<Author> authors, List<byte[]> covers, int bookPublishingYear, int bookNumberOfPages, CopyBook[] copies) {
         this.title = title;
         this.originalTitle = originalTitle;
         this.genres = genreList;
@@ -34,6 +36,7 @@ public class Book implements Serializable {
         this.covers = covers;
         this.publishingYear = bookPublishingYear;
         this.numberOfPages = bookNumberOfPages;
+        this.copies = copies;
     }
 
     public Book(int id, String title, int copiesNumber) {
@@ -146,6 +149,14 @@ public class Book implements Serializable {
         this.rating = rating;
     }
 
+    public CopyBook[] getCopies() {
+        return copies;
+    }
+
+    public void setCopies(CopyBook[] copies) {
+        this.copies = copies;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -166,7 +177,10 @@ public class Book implements Serializable {
         if (price != null ? !price.equals(book.price) : book.price != null) return false;
         if (authors != null ? !authors.equals(book.authors) : book.authors != null) return false;
         if (covers != null ? !covers.equals(book.covers) : book.covers != null) return false;
-        return registrationDate != null ? registrationDate.equals(book.registrationDate) : book.registrationDate == null;
+        if (registrationDate != null ? !registrationDate.equals(book.registrationDate) : book.registrationDate != null)
+            return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(copies, book.copies);
     }
 
     @Override
@@ -187,6 +201,7 @@ public class Book implements Serializable {
         result = 31 * result + numberOfPages;
         temp = Double.doubleToLongBits(rating);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + Arrays.hashCode(copies);
         return result;
     }
 
@@ -196,7 +211,7 @@ public class Book implements Serializable {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
-                ", genres=" + genres+
+                ", genres=" + genres +
                 ", price=" + price +
                 ", numberOfCopies=" + numberOfCopies +
                 ", numberOfAvailableCopies=" + numberOfAvailableCopies +
@@ -206,6 +221,7 @@ public class Book implements Serializable {
                 ", registrationDate=" + registrationDate +
                 ", numberOfPages=" + numberOfPages +
                 ", rating=" + rating +
+                ", copies=" + Arrays.toString(copies) +
                 '}';
     }
 }

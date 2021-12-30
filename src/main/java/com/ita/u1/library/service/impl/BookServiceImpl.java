@@ -18,8 +18,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void add(Book book, CopyBook[] copies) {
-        bookDAO.add(book, copies);
+    public void add(Book book) {
+        bookDAO.add(book);
     }
 
     @Override
@@ -35,5 +35,12 @@ public class BookServiceImpl implements BookService {
 
         int numberOfRecords = bookDAO.getNumberOfBooks();
         return numberOfRecords;
+    }
+
+    @Override
+    public List<Book> findBook(String title) {
+
+        List<Book> books = bookDAO.findBook(title);
+        return books;
     }
 }

@@ -2,37 +2,37 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
-import com.ita.u1.library.entity.Author;
+import com.ita.u1.library.entity.Book;
+import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.DAONoSuchImageAuthorException;
-import com.ita.u1.library.service.AuthorService;
+import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.List;
 
-public class FindAuthor implements Command {
+public class FindBook implements Command {
 
-    private final AuthorService authorService = ServiceProvider.getInstance().getAuthorService();
+    private final BookService bookService = ServiceProvider.getInstance().getBookService();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String lastName = request.getParameter("lastName");
-        lastName.trim();
-        if (lastName == null || lastName.isEmpty()) {
+        String title = request.getParameter("title");
+        title.trim();
+        if (title == null || title.isEmpty()) {
+            //+message
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         try {
-            List<Author> authors = authorService.findAuthor(lastName);
-            String json = new Gson().toJson(authors);
+            List<Book> books = bookService.findBook(title);
+            String json = new Gson().toJson(books);
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);
 
@@ -42,12 +42,6 @@ public class FindAuthor implements Command {
         } catch (DAOException e) {
             //перевести на страницу с сообщением: проблемы при запросе информации из бд
             e.printStackTrace();
-        } catch (DAONoSuchImageAuthorException e) {
-            //перевести на страницу с сообщением: в бд не существует изображения с указанным ID
-            e.printStackTrace();
         }
-
     }
-
-
 }
