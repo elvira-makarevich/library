@@ -6,17 +6,6 @@
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <link rel="stylesheet" type="text/css" href="resources/css/table.css">
 
-    <style>
-        th.sorted[data-order="-1"]::after {
-            content: "▼"
-        }
-
-        th.sorted[data-order="1"]::after {
-            content: "▲"
-        }
-
-    </style>
-
     <script>
 
         window.onload = () => init();
@@ -25,7 +14,6 @@
             defineMaxReturnDate();
 
             let url = document.getElementById("pageContextAddClient").value;
-
             document.getElementById("addClient").addEventListener('click', () => {
                 window.open(url);
             });
@@ -33,22 +21,68 @@
             document.getElementById('findClient').addEventListener('click', checkParamClient);
             document.getElementById('findBook').addEventListener('click', checkParamBook);
 
-            document.querySelectorAll('.table_clients').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
-            const getSort = ({target}) => {
-                const order = (target.dataset.order = -(target.dataset.order || -1));
-                const index = [...target.parentNode.cells].indexOf(target);
-                const collator = new Intl.Collator(['en', 'ru'], {numeric: true});
-                const comparator = (index, order) => (a, b) => order * collator.compare(
-                    a.children[index].innerHTML,
-                    b.children[index].innerHTML
-                );
 
-                for (const tBody of target.closest('table').tBodies)
-                    tBody.append(...[...tBody.rows].sort(comparator(index, order)));
+            let formSaveOrder = document.getElementById('saveOrder');
+            formSaveOrder.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-                for (const cell of target.parentNode.cells)
-                    cell.classList.toggle('sorted', cell === target);
-            };
+                checkClient();
+                checkBooks();
+                if (checkClient() && checkBooks()) {
+                    submitValidForm();
+                }
+            })
+
+        }
+
+        async function submitValidForm() {
+
+            let formData = new FormData(document.getElementById('saveOrder'));
+            let pageContext = document.getElementById('pageContext').value;
+            let url = pageContext + "/Controller?command=save_order";
+            let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
+
+            let response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("The order has been successfully completed.");
+                window.location = urlRedirect;
+            } else {
+                console.log("Error" + this.status);
+                alert("Check the correctness of the entered data.");
+            }
+
+        }
+
+        function checkClient() {
+            let client = document.getElementById("realClient");
+            let error = document.getElementById("clientError");
+            error.innerHTML = "";
+
+            if (!client) {
+                error.innerHTML = "Add reader!";
+                return false;
+            }
+            return true;
+        }
+
+
+        function checkBooks() {
+
+            let error = document.getElementById("booksError");
+            error.innerHTML = "";
+            if (!isTableExists("books_order")) {
+                error.innerHTML = "Add book(s)!";
+                return false;
+            } else if (document.getElementsByClassName("books_order")[0].rows.length == 1) {
+                error.innerHTML = "Add book(s)!";
+                return false;
+            }
+
+            return true;
 
         }
 
@@ -112,7 +146,7 @@
             let heading_3 = document.createElement('th');
             heading_3.innerHTML = "Date of birth";
             let heading_4 = document.createElement('th');
-            heading_4.innerHTML = "Action";
+            heading_4.innerHTML = "";
 
             row_1.appendChild(heading_1);
             row_1.appendChild(heading_2);
@@ -152,6 +186,7 @@
                     let realClientContainer = document.getElementById("realClientContainer");
                     let input = document.createElement("input");
                     input.type = "text";
+                    input.id = "realClient";
                     input.value = initials;
                     input.setAttribute("readonly", "readonly");
                     realClientContainer.appendChild(input);
@@ -163,6 +198,7 @@
                     realClientContainer.appendChild(inputHidden);
 
                     removeTable("table_clients");
+                    checkClient();
                 }
             }
 
@@ -179,6 +215,7 @@
         function removeClient() {
 
             let div = document.getElementById('realClientContainer');
+
             while (div.firstChild) {
                 div.removeChild(div.firstChild);
             }
@@ -229,9 +266,9 @@
             let heading_1 = document.createElement('th');
             heading_1.innerHTML = "Title";
             let heading_2 = document.createElement('th');
-            heading_2.innerHTML = "Cost per day";
+            heading_2.innerHTML = "Cost per day, Br";
             let heading_3 = document.createElement('th');
-            heading_3.innerHTML = "Action";
+            heading_3.innerHTML = "";
 
             row_1.appendChild(heading_1);
             row_1.appendChild(heading_2);
@@ -266,62 +303,79 @@
 
                     function addBook() {
 
-                        let realBooksContainer = document.getElementById("realBooksContainer");
-
                         if (!isTableExists("books_order")) {
                             createTableForBooksOrder();
                         }
-                        let books_order = document.getElementsByClassName("books_order")[0];
 
-                        let row = document.createElement('tr');
-                        let row_data_1 = document.createElement('td');
-                        row_data_1.innerHTML = title;
-                        let row_data_2 = document.createElement('td');
-                        row_data_2.innerHTML = costPerDay;
-                        let row_data_3 = document.createElement('td');
+                        if (!isItPossibleToAddABookToTheOrder()) {
 
-                        let inputHidden = document.createElement("input");
-                        inputHidden.type = "hidden";
-                        inputHidden.value = id;
-                        inputHidden.name = "copyId";
-                        row_data_3.appendChild(inputHidden);
+                            if (!isThereDuplicationOfBooks(title)) {
+                                let books_order = document.getElementsByClassName("books_order")[0];
 
-                        let row_data_4 = document.createElement('td');
+                                let row = document.createElement('tr');
+                                let row_data_1 = document.createElement('td');
+                                row_data_1.innerHTML = title;
+                                let row_data_2 = document.createElement('td');
+                                row_data_2.innerHTML = costPerDay;
+                                let row_data_3 = document.createElement('td');
 
-                        let buttonRemove = document.createElement('button');
-                        buttonRemove.innerHTML = "Delete";
+                                let inputHidden = document.createElement("input");
+                                inputHidden.type = "hidden";
+                                inputHidden.value = id;
+                                inputHidden.name = "copyId";
+                                row_data_3.appendChild(inputHidden);
 
-                        let attr = document.createAttribute("onclick");
-                        attr.value = "deleteRow(this);";
-                        buttonRemove.setAttributeNode(attr);
+                                let row_data_4 = document.createElement('td');
 
-                        row_data_4.appendChild(buttonRemove);
+                                let buttonRemove = document.createElement('button');
+                                buttonRemove.innerHTML = "Delete";
 
-                        row.appendChild(row_data_1);
-                        row.appendChild(row_data_2);
-                        row.appendChild(row_data_3);
-                        row.appendChild(row_data_4);
-                        books_order.appendChild(row);
+                                let attr = document.createAttribute("onclick");
+                                attr.value = "deleteRow(this);";
+                                buttonRemove.setAttributeNode(attr);
 
+                                row_data_4.appendChild(buttonRemove);
+
+                                row.appendChild(row_data_1);
+                                row.appendChild(row_data_2);
+                                row.appendChild(row_data_3);
+                                row.appendChild(row_data_4);
+                                books_order.appendChild(row);
+                            }
+                        }
                         removeTable("table_books");
+                        calculateTheOrderAmount();
+                        checkBooks();
                     }
-
-
                 }
             }
         }
 
-        function deleteRow(r) {
-            let i = r.parentNode.parentNode.rowIndex;
-            document.getElementsByClassName("books_order")[0].deleteRow(i);
+        function calculateTheOrderAmount() {
+            let table = document.getElementsByClassName("books_order")[0];
+            let daysNumber = calculateTheNumberOfDays();
+            let amountOfBooks = table.rows.length - 1;
+            let sum = 0;
+            for (let r = 1, n = table.rows.length; r < n; r++) {
+                let price = table.rows[r].cells[1].innerHTML;
+                sum = sum * 1 + price * 1 * daysNumber;
+            }
+
+            if (amountOfBooks > 4) {
+                sum = sum * 0.85;
+            } else if (amountOfBooks > 2) {
+                sum = sum * 0.9;
+            }
+            let preliminaryCost = document.getElementById("preliminaryCost");
+            preliminaryCost.value = sum.toFixed(2);
         }
 
-        function isTableExists(className) {
-            let table = document.getElementsByClassName(className)[0];
-            if (!table) {
-                return false;
-            }
-            return true;
+        function calculateTheNumberOfDays() {
+            let today = new Date();
+            let aMonthLater = new Date();
+            aMonthLater.setMonth(today.getMonth() + 1);
+            let daysLag = Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24));
+            return daysLag;
         }
 
         function createTableForBooksOrder() {
@@ -338,7 +392,7 @@
             let heading_1 = document.createElement('th');
             heading_1.innerHTML = "Title";
             let heading_2 = document.createElement('th');
-            heading_2.innerHTML = "Cost per day";
+            heading_2.innerHTML = "Cost per day, Br";
             let heading_3 = document.createElement('th');
             heading_3.innerHTML = "";
 
@@ -347,6 +401,42 @@
             row_1.appendChild(heading_3);
             thead.appendChild(row_1);
         }
+
+        function isThereDuplicationOfBooks(title) {
+            let table = document.getElementsByClassName("books_order")[0];
+            for (let r = 1, n = table.rows.length; r < n; r++) {
+                if (title == table.rows[r].cells[0].innerHTML) {
+                    alert("The book has already been added to the order!");
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function isItPossibleToAddABookToTheOrder() {
+            let table = document.getElementsByClassName("books_order")[0];
+            if (table.rows.length == 6) {
+                alert("The maximum number of books in an order should not exceed 5 copies!");
+                return true;
+            }
+            return false;
+        }
+
+        function deleteRow(r) {
+            let i = r.parentNode.parentNode.rowIndex;
+            document.getElementsByClassName("books_order")[0].deleteRow(i);
+            checkBooks();
+            calculateTheOrderAmount();
+        }
+
+        function isTableExists(className) {
+            let table = document.getElementsByClassName(className)[0];
+            if (!table) {
+                return false;
+            }
+            return true;
+        }
+
     </script>
 </head>
 <body>
@@ -377,11 +467,14 @@
 <form id="saveOrder" class="saveOrder" action="Controller" method="post">
     <input type="hidden" name="command" value="save_order"/>
     <h1>Order</h1>
+
+    <p id="clientError" class="error"></p>
     <div class="clientContainer"><label>Client:</label><br><br>
         <div id="realClientContainer">
         </div>
     </div>
     <br>
+    <p id="booksError" class="error"></p>
     <div class="realBooksContainer">
         <div id="realBooksContainer"><label>Books:</label><br><br>
         </div>
@@ -393,9 +486,10 @@
     </div>
 
     <br><br>
-    <div id="preliminaryCost"><label>Preliminary cost:</label><br><br>
+    <div><label>Preliminary cost, Br:</label>
+        <input id="preliminaryCost" type="text" readonly>
     </div>
-
+    <br><br>
     <input type="submit" name="submit" id="submitButton" value="Save">
 </form>
 
