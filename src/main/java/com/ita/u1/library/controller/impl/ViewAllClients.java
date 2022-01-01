@@ -2,6 +2,7 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
@@ -31,7 +32,7 @@ public class ViewAllClients implements Command {
         int page = DEFAULT_PAGE_NUMBER;
 
         if (request.getParameter(PARAM_PAGE) != null) {
-            page = Integer.parseInt(request.getParameter(PARAM_PAGE));
+            page = Converter.toInt(request.getParameter(PARAM_PAGE));
         }
 
         List<Client> clients = clientService.getAllClients((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);

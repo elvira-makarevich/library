@@ -56,12 +56,9 @@ function submitValidForm() {
             console.log("Error" + this.status);
             alert("Try later.");
         }
-
     };
-
     xhr.open("POST", url, true);
     xhr.send(formData);
-
 }
 
 function changeValidation() {
@@ -173,6 +170,7 @@ function deleteItems() {
 function loadImages() {
 
     let containerImages = document.getElementById("fileListDisplay");
+    deleteImages();
     let fileInput = document.getElementById("files");
     let files = fileInput.files;
     let file;
@@ -191,6 +189,13 @@ function loadImages() {
 
     }
     checkCovers();
+}
+
+function deleteImages() {
+    let div = document.getElementById('fileListDisplay');
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
 }
 
 function checkTitle() {

@@ -2,6 +2,7 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
@@ -21,13 +22,8 @@ public class FindClient implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String lastName = request.getParameter("lastName");
-        lastName.trim();
-        if (lastName == null || lastName.isEmpty()) {
-            //+message
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
+        String lastName = Validator.assertNotNullOrEmpty(request.getParameter("lastName"));
+
         try {
             List<Client> clients = clientService.findClient(lastName);
             String json = new Gson().toJson(clients);
@@ -36,11 +32,11 @@ public class FindClient implements Command {
 
         } catch (DAOConnectionPoolException e) {
             //перевести на страницу с сообщением:проблемы доступа к бд
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (
                 DAOException e) {
             //перевести на страницу с сообщением: проблемы при запросе информации из бд
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Converter;
+import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Address;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.service.ClientService;
@@ -25,39 +27,23 @@ public class AddNewClient implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = request.getParameter("firstName");//o
-        String lastName = request.getParameter("lastName");//o
-        String patronymic = request.getParameter("patronymic");
-        String passportNumber = request.getParameter("passportNumber");
-        String email = request.getParameter("email");//o
-        String dateOfBirth = request.getParameter("dateOfBirth");//o
-        String postcode = request.getParameter("postcode");//o
-        String country = request.getParameter("country");//o
-        String locality = request.getParameter("locality");//o
-        String street = request.getParameter("street");//o
-        String houseNumber = request.getParameter("houseNumber");//o
-        String building = request.getParameter("building");
-        String apartmentNumber = request.getParameter("apartmentNumber");
+        String firstName = Validator.assertNotNullOrEmpty(request.getParameter("firstName"));
+        String lastName = Validator.assertNotNullOrEmpty(request.getParameter("lastName"));
+        String patronymic = Converter.toNullIfEmpty(request.getParameter("patronymic"));
+        String passportNumber = Converter.toNullIfEmpty(request.getParameter("passportNumber"));
+        String email = Validator.assertNotNullOrEmpty(request.getParameter("email"));
+        Date dateOfBirth = Converter.toDate(request.getParameter("dateOfBirth"));
+        int postcode = Converter.toInt(request.getParameter("postcode"));
+        String country = Validator.assertNotNullOrEmpty(request.getParameter("country"));
+        String locality = Validator.assertNotNullOrEmpty(request.getParameter("locality"));
+        String street = Validator.assertNotNullOrEmpty(request.getParameter("street"));
+        int houseNumber = Converter.toInt(request.getParameter("houseNumber"));
+        String building = Converter.toNullIfEmpty(request.getParameter("building"));
+        int apartmentNumber = Converter.toNullIfEmptyOrInt(request.getParameter("apartmentNumber"));
+        byte[] bytesImage = Converter.toBytes(request.getPart("file"));
 
-        int postcodeClient = Integer.parseInt(postcode);
-        int houseNumberClient = Integer.parseInt(houseNumber);
-        int apartmentNumberClient = Integer.parseInt(apartmentNumber);
-
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        Date dateOfBirthClient = null;
-        try {
-            dateOfBirthClient = df.parse(dateOfBirth);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Part filePart = request.getPart("file");
-        InputStream inputStream = filePart.getInputStream();
-        byte[] bytesImage = IOUtils.toByteArray(inputStream);
-
-        Address clientAddress = new Address(postcodeClient, country, locality, street, houseNumberClient, building, apartmentNumberClient);
-
-        Client client = new Client(firstName, lastName, patronymic, passportNumber, email, dateOfBirthClient, clientAddress, bytesImage);
+        Address clientAddress = new Address(postcode, country, locality, street, houseNumber, building, apartmentNumber);
+        Client client = new Client(firstName, lastName, patronymic, passportNumber, email, dateOfBirth, clientAddress, bytesImage);
 
         clientService.add(client);
 

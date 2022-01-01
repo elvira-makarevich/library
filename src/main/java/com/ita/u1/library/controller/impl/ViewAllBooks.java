@@ -2,6 +2,7 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
@@ -25,13 +26,13 @@ public class ViewAllBooks implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int numberOfRecords=bookService.getNumberOfBooks();
-        int numberOfPages= (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+        int numberOfRecords = bookService.getNumberOfBooks();
+        int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
 
         int page = DEFAULT_PAGE_NUMBER;
 
         if (request.getParameter(PARAM_PAGE) != null) {
-            page = Integer.parseInt(request.getParameter(PARAM_PAGE));
+            page = Converter.toInt(request.getParameter(PARAM_PAGE));
         }
 
         List<Book> books = bookService.getAllBooks((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);

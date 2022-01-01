@@ -1,6 +1,8 @@
 package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Converter;
+import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
@@ -24,12 +26,9 @@ public class AddNewAuthor implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-
-        Part filePart = request.getPart("file");
-        InputStream inputStream = filePart.getInputStream();
-        byte[] bytesImage = IOUtils.toByteArray(inputStream);
+        String firstName = Validator.assertNotNullOrEmpty(request.getParameter("firstName"));
+        String lastName = Validator.assertNotNullOrEmpty(request.getParameter("lastName"));
+        byte[] bytesImage = Converter.toBytes(request.getPart("file"));
 
         Author author = new Author(firstName, lastName, bytesImage);
 

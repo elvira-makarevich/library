@@ -8,7 +8,7 @@ import java.io.IOException;
 public class EncodingFilter implements Filter {
 
     public static final String CONFIG_INIT_PARAM = "characterEncoding";
-    private String encoding = "utf-8";
+    private String encoding;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

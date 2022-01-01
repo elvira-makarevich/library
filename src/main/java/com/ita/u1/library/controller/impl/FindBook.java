@@ -2,6 +2,7 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
@@ -22,23 +23,27 @@ public class FindBook implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String title = request.getParameter("title");
-        title.trim();
-        if (title == null || title.isEmpty()) {
-            //+message
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
+        String title = Validator.assertNotNullOrEmpty(request.getParameter("title"));
 
         try {
             List<Book> books = bookService.findBook(title);
+            for (Book b: books){
+
+    System.out.println(b);
+
+
+
+
+
+            }
+
             String json = new Gson().toJson(books);
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);
 
         } catch (DAOConnectionPoolException e) {
             //перевести на страницу с сообщением:проблемы доступа к бд
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (DAOException e) {
             //перевести на страницу с сообщением: проблемы при запросе информации из бд
             e.printStackTrace();

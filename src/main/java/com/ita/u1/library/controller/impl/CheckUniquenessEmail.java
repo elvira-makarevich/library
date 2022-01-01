@@ -2,6 +2,7 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.ClientService;
@@ -19,7 +20,7 @@ public class CheckUniquenessEmail implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String email = request.getParameter("email");
+        String email = Validator.assertNotNullOrEmpty(request.getParameter("email"));
 
         try {
             boolean result = clientService.checkUniquenessEmail(email);

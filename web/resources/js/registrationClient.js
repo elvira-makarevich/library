@@ -56,9 +56,7 @@ function submitValidForm() {
             console.log("Error" + this.status);
             alert("Connection problems. Try later.");
         }
-
     };
-
     xhr.open("POST", url, true);
     xhr.send(formData);
 
@@ -264,18 +262,15 @@ async function checkPassportNumber() {
     if (passportNumber == '') {
         return true;
     } else {
-        let regex = /([A-Z]{2}[0-9]{7})|(^\s*$)/;
+        let regex = /([A-Z]{2}[0-9]{7}$)|(^\s*$)/;
         if (regex.test(passportNumber) === false) {
             error.textContent = "Please enter the correct passport number.";
             return false;
+        } else if (await checkUniquenessPassportNumber() == true) {
+            error.textContent = "This passport number already exists.";
+            return false;
         }
     }
-
-    if (await checkUniquenessPassportNumber() == true) {
-        error.textContent = "This passport number already exists.";
-        return false;
-    }
-
     return true;
 }
 

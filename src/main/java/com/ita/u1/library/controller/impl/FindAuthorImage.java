@@ -1,6 +1,7 @@
 package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
@@ -20,8 +21,9 @@ public class FindAuthorImage implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        int id = Converter.toInt(request.getParameter("id"));
         try {
-            Author author = authorService.findAuthorImage(Integer.parseInt(request.getParameter("id")));
+            Author author = authorService.findAuthorImage(id);
             response.setContentType("image/jpeg");
             response.setContentLength(author.getImage().length);
             response.getOutputStream().write(author.getImage());

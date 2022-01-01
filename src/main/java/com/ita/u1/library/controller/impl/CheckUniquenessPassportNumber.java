@@ -2,6 +2,7 @@ package com.ita.u1.library.controller.impl;
 
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.ClientService;
@@ -19,7 +20,7 @@ public class CheckUniquenessPassportNumber implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String passportNumber = request.getParameter("passportNumber");
+        String passportNumber = Validator.assertNotNullOrEmpty(request.getParameter("passportNumber"));
 
         try {
             boolean result = clientService.checkUniquenessPassportNumber(passportNumber);
