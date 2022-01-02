@@ -4,16 +4,18 @@ import com.ita.u1.library.dao.DAOProvider;
 import com.ita.u1.library.service.impl.AuthorServiceImpl;
 import com.ita.u1.library.service.impl.BookServiceImpl;
 import com.ita.u1.library.service.impl.ClientServiceImpl;
+import com.ita.u1.library.service.impl.OrderServiceImpl;
 
 public class ServiceProvider {
 
     private static final ServiceProvider instance = new ServiceProvider();
 
     private DAOProvider daoProvider = DAOProvider.getInstance();
-//добавить и внедрить валидацию
+    //добавить и внедрить валидацию
     private final AuthorService authorService = new AuthorServiceImpl(daoProvider.getAuthorDAO());
     private final ClientService clientService = new ClientServiceImpl(daoProvider.getClientDAO());
     private final BookService bookService = new BookServiceImpl(daoProvider.getBookDAO());
+    private final OrderService orderService = new OrderServiceImpl(daoProvider.getOrderDAO());
 
     private ServiceProvider() {
     }
@@ -32,6 +34,10 @@ public class ServiceProvider {
 
     public ClientService getClientService() {
         return clientService;
+    }
+
+    public OrderService getOrderService() {
+        return orderService;
     }
 }
 

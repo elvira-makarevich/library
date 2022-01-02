@@ -31,6 +31,10 @@ public class Client implements Serializable {
         this.image = image;
     }
 
+    public Client(int clientId) {
+        this.id = clientId;
+    }
+
     public int getId() {
         return id;
     }

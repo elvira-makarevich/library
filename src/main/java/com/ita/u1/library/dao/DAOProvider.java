@@ -5,6 +5,7 @@ import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
 import com.ita.u1.library.dao.impl.AuthorDAOImpl;
 import com.ita.u1.library.dao.impl.BookDAOImpl;
 import com.ita.u1.library.dao.impl.ClientDAOImpl;
+import com.ita.u1.library.dao.impl.OrderDAOImpl;
 
 public class DAOProvider {
 
@@ -14,6 +15,7 @@ public class DAOProvider {
     private final AuthorDAO authorDAO = new AuthorDAOImpl(connectionPool);
     private final BookDAO bookDAO = new BookDAOImpl(connectionPool);
     private final ClientDAO clientDAO = new ClientDAOImpl(connectionPool);
+    private final OrderDAO orderDAO = new OrderDAOImpl(connectionPool);
 
     private DAOProvider() {
     }
@@ -32,5 +34,9 @@ public class DAOProvider {
 
     public ClientDAO getClientDAO() {
         return clientDAO;
+    }
+
+    public OrderDAO getOrderDAO() {
+        return orderDAO;
     }
 }

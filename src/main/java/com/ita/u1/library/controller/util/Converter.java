@@ -1,6 +1,7 @@
 package com.ita.u1.library.controller.util;
 
 import com.ita.u1.library.entity.Author;
+import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
 import com.ita.u1.library.exception.ControllerValidationException;
 import org.apache.commons.io.IOUtils;
@@ -73,6 +74,17 @@ public class Converter {
             authors.add(new Author(Integer.parseInt(s)));
         }
         return authors;
+    }
+
+    public static List<CopyBook> toListCopies(String[] values) throws ControllerValidationException {
+        if (values == null || values.length == 0) {
+            throw new ControllerValidationException("Provided values can not be empty.");
+        }
+        List<CopyBook> copies = new ArrayList<>();
+        for (String s : values) {
+            copies.add(new CopyBook(Integer.parseInt(s)));
+        }
+        return copies;
     }
 
     public static List<Genre> toListGenres(String[] values) throws ControllerValidationException {

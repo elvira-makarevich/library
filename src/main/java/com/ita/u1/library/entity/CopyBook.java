@@ -18,6 +18,10 @@ public class CopyBook implements Serializable {
         this.availability = availability;
     }
 
+    public CopyBook(int id) {
+        this.id=id;
+    }
+
     public int getId() {
         return id;
     }

@@ -32,6 +32,7 @@ public class CommandProvider {
         commands.put(CommandName.FIND_CLIENT, new FindClient());
         commands.put(CommandName.FIND_BOOK, new FindBook());
         commands.put(CommandName.SAVE_ORDER, new SaveOrder());
+        commands.put(CommandName.CHECK_CLIENT_ACTIVE_ORDER, new CheckClientActiveOrder());
 
     }
 

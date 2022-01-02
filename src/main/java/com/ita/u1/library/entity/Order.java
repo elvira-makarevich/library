@@ -1,48 +1,104 @@
 package com.ita.u1.library.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Order implements Serializable {
 
-    private long id;
-    private long clientId;
-    private List<Book> books;
-    private double advanceOrderValue;
+    private int id;
+    private int clientId;
+    private List<CopyBook> books;
+    private BigDecimal preliminaryCost;
+    private BigDecimal totalCost;
+    private LocalDate orderDate;
+    private LocalDate possibleReturnDate;
+    private LocalDate realReturnDate;
+    private boolean status;
 
     public Order() {
     }
 
-    public long getId() {
+    public Order(int clientId, BigDecimal preliminaryCost, List<CopyBook> books, LocalDate orderDate, LocalDate possibleReturnDate) {
+        this.clientId = clientId;
+        this.preliminaryCost = preliminaryCost;
+        this.books = books;
+        this.orderDate = orderDate;
+        this.possibleReturnDate = possibleReturnDate;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public long getClientId() {
+    public int getClientId() {
         return clientId;
     }
 
-    public void setClientId(long clientId) {
+    public void setClientId(int clientId) {
         this.clientId = clientId;
     }
 
-    public List<Book> getBooks() {
+    public List<CopyBook> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Book> books) {
+    public void setBooks(List<CopyBook> books) {
         this.books = books;
     }
 
-    public double getAdvanceOrderValue() {
-        return advanceOrderValue;
+    public BigDecimal getPreliminaryCost() {
+        return preliminaryCost;
     }
 
-    public void setAdvanceOrderValue(double advanceOrderValue) {
-        this.advanceOrderValue = advanceOrderValue;
+    public void setPreliminaryCost(BigDecimal preliminaryCost) {
+        this.preliminaryCost = preliminaryCost;
+    }
+
+    public BigDecimal getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(BigDecimal totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public LocalDate getPossibleReturnDate() {
+        return possibleReturnDate;
+    }
+
+    public void setPossibleReturnDate(LocalDate possibleReturnDate) {
+        this.possibleReturnDate = possibleReturnDate;
+    }
+
+    public LocalDate getRealReturnDate() {
+        return realReturnDate;
+    }
+
+    public void setRealReturnDate(LocalDate realReturnDate) {
+        this.realReturnDate = realReturnDate;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     @Override
@@ -54,19 +110,28 @@ public class Order implements Serializable {
 
         if (id != order.id) return false;
         if (clientId != order.clientId) return false;
-        if (Double.compare(order.advanceOrderValue, advanceOrderValue) != 0) return false;
-        return books != null ? books.equals(order.books) : order.books == null;
+        if (status != order.status) return false;
+        if (books != null ? !books.equals(order.books) : order.books != null) return false;
+        if (preliminaryCost != null ? !preliminaryCost.equals(order.preliminaryCost) : order.preliminaryCost != null)
+            return false;
+        if (totalCost != null ? !totalCost.equals(order.totalCost) : order.totalCost != null) return false;
+        if (orderDate != null ? !orderDate.equals(order.orderDate) : order.orderDate != null) return false;
+        if (possibleReturnDate != null ? !possibleReturnDate.equals(order.possibleReturnDate) : order.possibleReturnDate != null)
+            return false;
+        return realReturnDate != null ? realReturnDate.equals(order.realReturnDate) : order.realReturnDate == null;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (clientId ^ (clientId >>> 32));
+        int result = id;
+        result = 31 * result + clientId;
         result = 31 * result + (books != null ? books.hashCode() : 0);
-        temp = Double.doubleToLongBits(advanceOrderValue);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (preliminaryCost != null ? preliminaryCost.hashCode() : 0);
+        result = 31 * result + (totalCost != null ? totalCost.hashCode() : 0);
+        result = 31 * result + (orderDate != null ? orderDate.hashCode() : 0);
+        result = 31 * result + (possibleReturnDate != null ? possibleReturnDate.hashCode() : 0);
+        result = 31 * result + (realReturnDate != null ? realReturnDate.hashCode() : 0);
+        result = 31 * result + (status ? 1 : 0);
         return result;
     }
 
@@ -76,8 +141,12 @@ public class Order implements Serializable {
                 "id=" + id +
                 ", clientId=" + clientId +
                 ", books=" + books +
-                ", advanceOrderValue=" + advanceOrderValue +
+                ", preliminaryCost=" + preliminaryCost +
+                ", totalCost=" + totalCost +
+                ", orderDate=" + orderDate +
+                ", possibleReturnDate=" + possibleReturnDate +
+                ", realReturnDate=" + realReturnDate +
+                ", status=" + status +
                 '}';
     }
-
 }
