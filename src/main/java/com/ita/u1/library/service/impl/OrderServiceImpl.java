@@ -2,8 +2,11 @@ package com.ita.u1.library.service.impl;
 
 import com.ita.u1.library.dao.OrderDAO;
 import com.ita.u1.library.entity.Client;
+import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
 import com.ita.u1.library.service.OrderService;
+
+import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
 
@@ -22,4 +25,11 @@ public class OrderServiceImpl implements OrderService {
     public boolean hasClientActiveOrder(Client client) {
         return orderDAO.hasClientActiveOrder(client);
     }
+
+    @Override
+    public Order findOrderInfo(Client client) {
+        return orderDAO.findOrderInfo(client);
+    }
+
+
 }

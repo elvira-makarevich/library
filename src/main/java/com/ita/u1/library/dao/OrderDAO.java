@@ -6,5 +6,8 @@ import com.ita.u1.library.entity.Order;
 public interface OrderDAO {
 
     void saveOrder(Order order);
+
     boolean hasClientActiveOrder(Client client);
+
+    Order findOrderInfo(Client client);
 }

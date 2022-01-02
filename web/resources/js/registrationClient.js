@@ -175,7 +175,6 @@ async function checkEmail() {
         error.textContent = "A client with such email is already registered.";
         return false;
     }
-
     return true;
 }
 

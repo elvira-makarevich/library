@@ -10,25 +10,25 @@ import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Converter {
 
-    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static Date toDate(String s) throws ControllerValidationException {
+    public static LocalDate toDate(String s) throws ControllerValidationException {
         if (s == null || s.isEmpty()) {
             throw new ControllerValidationException("Date can not be empty.");
         }
-        Date date = null;
+        LocalDate date = null;
         try {
-            date = dateFormat.parse(s);
-        } catch (ParseException | NumberFormatException e) {
+            date = LocalDate.parse(s, formatter);
+        } catch (NumberFormatException e) {
             throw new ControllerValidationException("Value [" + s + "] can not be converted to Date.", e);
         }
         return date;

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class AddNewClient implements Command {
@@ -32,7 +33,7 @@ public class AddNewClient implements Command {
         String patronymic = Converter.toNullIfEmpty(request.getParameter("patronymic"));
         String passportNumber = Converter.toNullIfEmpty(request.getParameter("passportNumber"));
         String email = Validator.assertNotNullOrEmpty(request.getParameter("email"));
-        Date dateOfBirth = Converter.toDate(request.getParameter("dateOfBirth"));
+        LocalDate dateOfBirth = Converter.toDate(request.getParameter("dateOfBirth"));
         int postcode = Converter.toInt(request.getParameter("postcode"));
         String country = Validator.assertNotNullOrEmpty(request.getParameter("country"));
         String locality = Validator.assertNotNullOrEmpty(request.getParameter("locality"));

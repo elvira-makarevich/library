@@ -3,6 +3,7 @@ window.onload = () => init();
 function init() {
     let page = document.getElementById('currentPage').value;
     getList(page);
+
 }
 
 async function getList(page) {
@@ -38,7 +39,6 @@ function sortByThead() {
         for (const cell of target.parentNode.cells)
             cell.classList.toggle('sorted', cell === target);
     };
-
 }
 
 function createNavigation(currentPage, numberOfPages) {

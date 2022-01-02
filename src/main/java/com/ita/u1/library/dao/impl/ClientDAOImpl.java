@@ -37,7 +37,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
             psClient.setString(3, client.getPatronymic());
             psClient.setString(4, client.getPassportNumber());
             psClient.setString(5, client.getEmail());
-            psClient.setDate(6, new java.sql.Date(client.getDateOfBirth().getTime()));
+            psClient.setDate(6, Date.valueOf(client.getDateOfBirth()));
             psClient.setInt(7, client.getAddress().getPostcode());
             psClient.setString(8, client.getAddress().getCountry());
             psClient.setString(9, client.getAddress().getLocality());
@@ -186,7 +186,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
                 client.setFirstName(rs.getString(2));
                 client.setLastName(rs.getString(3));
-                client.setDateOfBirth(rs.getDate(7));
+                client.setDateOfBirth(rs.getDate(7).toLocalDate());
                 client.setEmail(rs.getString(6));
                 client.setAddress(new Address(rs.getInt(8), rs.getString(9), rs.getString(10),
                         rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14)));
@@ -221,7 +221,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
                     client.setId(rs.getInt(1));
                     client.setFirstName(rs.getString(2));
                     client.setLastName(rs.getString(3));
-                    client.setDateOfBirth(rs.getDate(7));
+                    client.setDateOfBirth(rs.getDate(7).toLocalDate());
                     clients.add(client);
                 }
             }

@@ -9,6 +9,7 @@ public class CopyBook implements Serializable {
     private int bookId;
     private BigDecimal costPerDay;
     private boolean availability;
+    private String title;
 
     public CopyBook() {
     }
@@ -54,6 +55,14 @@ public class CopyBook implements Serializable {
         this.availability = availability;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,7 +73,8 @@ public class CopyBook implements Serializable {
         if (id != copyBook.id) return false;
         if (bookId != copyBook.bookId) return false;
         if (availability != copyBook.availability) return false;
-        return costPerDay != null ? costPerDay.equals(copyBook.costPerDay) : copyBook.costPerDay == null;
+        if (costPerDay != null ? !costPerDay.equals(copyBook.costPerDay) : copyBook.costPerDay != null) return false;
+        return title != null ? title.equals(copyBook.title) : copyBook.title == null;
     }
 
     @Override
@@ -73,6 +83,7 @@ public class CopyBook implements Serializable {
         result = 31 * result + bookId;
         result = 31 * result + (costPerDay != null ? costPerDay.hashCode() : 0);
         result = 31 * result + (availability ? 1 : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
         return result;
     }
 
@@ -83,8 +94,8 @@ public class CopyBook implements Serializable {
                 ", bookId=" + bookId +
                 ", costPerDay=" + costPerDay +
                 ", availability=" + availability +
+                ", title='" + title + '\'' +
                 '}';
     }
-
 }
 

@@ -1,6 +1,7 @@
 package com.ita.u1.library.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -14,12 +15,12 @@ public class Client implements Serializable {
     private String passportNumber;
     private String email;
     private Address address;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     public Client() {
     }
 
-    public Client(String firstName, String lastName, String patronymic, String passportNumber, String email, Date dateOfBirth, Address address, byte[] image) {
+    public Client(String firstName, String lastName, String patronymic, String passportNumber, String email,LocalDate dateOfBirth, Address address, byte[] image) {
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -99,11 +100,11 @@ public class Client implements Serializable {
         this.address = address;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

@@ -51,5 +51,10 @@
     <button class="button">New order</button>
 </form>
 
+<form method="post" action="Controller" >
+    <input type="hidden" name="command" value="go_to_close_order_page"/>
+    <button class="button">Close order</button>
+</form>
+
 </body>
 </html>

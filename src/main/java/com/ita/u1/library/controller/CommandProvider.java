@@ -33,6 +33,8 @@ public class CommandProvider {
         commands.put(CommandName.FIND_BOOK, new FindBook());
         commands.put(CommandName.SAVE_ORDER, new SaveOrder());
         commands.put(CommandName.CHECK_CLIENT_ACTIVE_ORDER, new CheckClientActiveOrder());
+        commands.put(CommandName.GO_TO_CLOSE_ORDER_PAGE, new GoToCloseOrderPage());
+        commands.put(CommandName.FIND_ORDER_INFO, new FindOrderInfo());
 
     }
 

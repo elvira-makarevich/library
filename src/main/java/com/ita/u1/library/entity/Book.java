@@ -2,6 +2,7 @@ package com.ita.u1.library.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,7 @@ public class Book implements Serializable {
     private List<Author> authors;
     private List<byte[]> covers;
     private int publishingYear;
-    private Date registrationDate;
+    private LocalDate registrationDate;
     private int numberOfPages;
     private double rating;
     private CopyBook[] copies;
@@ -125,11 +126,11 @@ public class Book implements Serializable {
         this.publishingYear = publishingYear;
     }
 
-    public Date getRegistrationDate() {
+    public LocalDate getRegistrationDate() {
         return registrationDate;
     }
 
-    public void setRegistrationDate(Date registrationDate) {
+    public void setRegistrationDate(LocalDate registrationDate) {
         this.registrationDate = registrationDate;
     }
 

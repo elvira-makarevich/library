@@ -157,7 +157,7 @@ function viewInTableClients(clients) {
         let row_data_2 = document.createElement('td');
         row_data_2.innerHTML = clients[i].firstName;
         let row_data_3 = document.createElement('td');
-        row_data_3.innerHTML = clients[i].dateOfBirth;
+        row_data_3.innerHTML = clients[i].dateOfBirth.year + "-" + clients[i].dateOfBirth.month + "-" + clients[i].dateOfBirth.day;
         let row_data_4 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
