@@ -1,5 +1,6 @@
 package com.ita.u1.library.controller.impl;
 
+import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Client;
@@ -29,5 +30,9 @@ public class FindOrderInfo implements Command {
         for (CopyBook c : b) {
             System.out.println(c.getTitle());
         }
+
+        String json = new Gson().toJson(order);
+        response.setHeader("Content-Type", "application/json; charset=UTF-8");
+        response.getWriter().write(json);
     }
 }

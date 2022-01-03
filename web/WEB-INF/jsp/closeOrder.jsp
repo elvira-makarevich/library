@@ -9,6 +9,7 @@
 
         function init() {
             document.getElementById('findClient').addEventListener('click', checkParamClient);
+            document.getElementById('penalty').addEventListener('input', checkPenalty);
         }
 
         function checkParamClient() {
@@ -120,12 +121,13 @@
                         checkClient();
                         findOrderBooks(id);
 
-                    } else{
+                    } else {
                         alert("The reader has no orders!");
                     }
                 }
             }
         }
+
 
         async function findOrderBooks(clientId) {
 
@@ -138,18 +140,179 @@
 
             if (response.ok) {
                 let json = await response.json();
-
-                if (json == "") {
-                    alert("No books found.");
-                } else {
-                   // viewInTableBooksToCloseOrder(json);
-                }
-
+                viewOrderInfo(json);
             } else {
                 alert("Error while finding books.");
                 console.log("Response.status: " + response.status);
             }
         }
+
+        function viewOrderInfo(order) {
+            viewBooksInfo(order);
+            indicateDates(order);
+            calculateTheTotalRentalCost(order);
+
+        }
+
+
+        function calculateTheTotalRentalCost(order) {
+            let totalCost = document.getElementById("totalCost");
+            let penalty = document.getElementById("penalty").value * 1;
+
+            if (isReturnDateViolated(order) == true) {
+                //нарушен срок возврата
+
+            } else {
+                //не нарушен
+
+                let numberOfRentalDays = calculateTheNumberOfRentalDays(order);
+                let numberOfPossibleRentalDays = calculateTheNumberOfPossibleRentalDays(order);
+                let rentalCostPerDay = order.preliminaryCost / numberOfPossibleRentalDays;
+
+                let totalCostValue = (numberOfRentalDays * rentalCostPerDay + penalty).toFixed(2);
+                totalCost.value = totalCostValue;
+
+            }
+
+        }
+
+        function checkPenalty() {
+
+            let penalty = document.getElementById("penalty").value;
+            let error = document.getElementById("penaltyError");
+            error.innerHTML = "";
+
+            let regex = /(^[0-9]{0,}[.,]?[0-9]{0,2})$/;
+            if (regex.test(penalty) === false) {
+                error.textContent = "Penalty cannot be negative, 2 decimal places are allowed.";
+                return false;
+            }
+            return true;
+        }
+
+        function calculateTheNumberOfPossibleRentalDays(order) {
+
+            let orderDate = new Date(order.orderDate.year, order.orderDate.month - 1, order.orderDate.day);
+            let possibleReturnDate = new Date(order.possibleReturnDate.year, order.possibleReturnDate.month - 1, order.possibleReturnDate.day);
+            let daysLag = Math.ceil(Math.abs(possibleReturnDate.getTime() - orderDate.getTime()) / (1000 * 3600 * 24)) + 1;
+            return daysLag;
+        }
+
+        function calculateTheNumberOfRentalDays(order) {
+            let today = new Date();
+            let orderDate = new Date(order.orderDate.year, order.orderDate.month - 1, order.orderDate.day);
+            let daysLag = Math.ceil(Math.abs(today.getTime() - orderDate.getTime()) / (1000 * 3600 * 24));
+            return daysLag;
+        }
+
+        function isReturnDateViolated(order) {
+
+            let today = new Date();
+            let possibleReturnDate = new Date(order.possibleReturnDate.year, order.possibleReturnDate.month - 1, order.possibleReturnDate.day);
+
+            if (possibleReturnDate.getTime() < today.getTime()) {
+                return true;
+            }
+            return false;
+
+        }
+
+        function indicateDates(order) {
+
+            let inputMaxReturnDate = document.getElementById("inputMaxReturnDate");
+            let inputReturnDate = document.getElementById("inputReturnDate");
+            let inputOrderDate = document.getElementById("inputOrderDate");
+            let today = new Date();
+            let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            inputMaxReturnDate.value = order.possibleReturnDate.day + " " + months[(order.possibleReturnDate.month - 1)] + ", " + order.possibleReturnDate.year;
+            inputReturnDate.value = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
+            inputOrderDate.value = order.orderDate.day + " " + months[(order.orderDate.month - 1)] + ", " + order.orderDate.year;
+        }
+
+        function viewBooksInfo(order) {
+            removeTable("table_books");
+            let table = document.createElement('table');
+            table.className = "table_books";
+            let thead = document.createElement('thead');
+            let tbody = document.createElement('tbody');
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            document.getElementById('realBooksContainer').appendChild(table);
+
+            let row_1 = document.createElement('tr');
+            let heading_1 = document.createElement('th');
+            heading_1.innerHTML = "Title";
+            let heading_2 = document.createElement('th');
+            heading_2.innerHTML = "Cost per day, Br";
+            let heading_3 = document.createElement('th');
+            heading_3.innerHTML = "Rating";
+
+            row_1.appendChild(heading_1);
+            row_1.appendChild(heading_2);
+            row_1.appendChild(heading_3);
+            thead.appendChild(row_1);
+
+            let orderId = order.id;
+            let i;
+            for (i in order.books) {
+
+                let title = order.books[i].title;
+                let costPerDay = order.books[i].costPerDay;
+                let copyId = order.books[i].id;
+
+                let row = document.createElement('tr');
+                let row_data_1 = document.createElement('td');
+                row_data_1.innerHTML = order.books[i].title;
+                let row_data_2 = document.createElement('td');
+                row_data_2.innerHTML = order.books[i].costPerDay;
+                let row_data_3 = document.createElement('td');
+
+                let divElement = document.createElement('div');
+                for (let j = 1; j < 6; j++) {
+                    let inputRadio = document.createElement('input');
+                    inputRadio.type = "radio";
+                    inputRadio.name = "rating" + i;
+                    inputRadio.value = j;
+                    let label = document.createElement('label');
+                    label.innerHTML = j;
+                    divElement.appendChild(inputRadio);
+                    divElement.appendChild(label);
+                }
+
+                row_data_3.appendChild(divElement);
+
+                let row_data_4 = document.createElement('td');
+
+                let buttonAdd = document.createElement('button');
+                buttonAdd.innerHTML = "Indicate violation";
+                buttonAdd.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    let pageContext = document.getElementById('pageContext').value;
+                    let command = "/Controller?command=go_to_book_violation_page&";
+                    let params = 'orderId=' + orderId + '&copyId=' + copyId + '&title=' + title + '&costPerDay=' + costPerDay;
+                    let url = pageContext + command + params;
+                    window.open(url);
+                });
+                row_data_4.appendChild(buttonAdd);
+
+                let row_data_5 = document.createElement('td');
+
+                let inputHidden = document.createElement("input");
+                inputHidden.type = "hidden";
+                inputHidden.value = copyId;
+                inputHidden.name = "copyId";
+                row_data_5.appendChild(inputHidden);
+
+                row.appendChild(row_data_1);
+                row.appendChild(row_data_2);
+                row.appendChild(row_data_3);
+                row.appendChild(row_data_4);
+                row.appendChild(row_data_5);
+                tbody.appendChild(row);
+            }
+        }
+
 
         async function hasClientActiveOrder(id) {
 
@@ -166,6 +329,14 @@
             } else {
                 console.log("Response.status: " + response.status);
             }
+        }
+
+        function isTableExists(className) {
+            let table = document.getElementsByClassName(className)[0];
+            if (!table) {
+                return false;
+            }
+            return true;
         }
 
         function removeTable(className) {
@@ -219,11 +390,41 @@
     <h1>Close order</h1>
 
     <p id="clientError" class="error"></p>
-    <div class="clientContainer"><label>Client:</label><br><br>
+    <div class="clientContainer"><label>Client: </label><br><br>
         <div id="realClientContainer">
         </div>
     </div>
+    <br><br>
+    <div class="realBooksContainer">
+        <div id="realBooksContainer"><label>Books:</label><br><br>
+        </div>
+    </div>
+    <br> <br>
+    <div><label>Order date:</label>
+        <input id="inputOrderDate" type="text" readonly>
+    </div>
 
+    <br>
+    <div><label>Possible return date:</label>
+        <input id="inputMaxReturnDate" type="text" readonly>
+    </div>
+    <br>
+    <div><label>Return date:</label>
+        <input id="inputReturnDate" type="text" readonly>
+    </div>
+    <br><br>
+    <p id="penaltyError" class="error"></p>
+    <div><label>Penalty, Br:</label>
+        <input id="penalty" type="text" value="0">
+    </div>
+
+
+    <br><br>
+    <div><label>Total cost, Br:</label>
+        <input id="totalCost" name="totalCost" type="text" readonly>
+    </div>
+
+    <br><br>
     <input type="submit" name="submit" id="submitButton" value="Close order">
 </form>
 

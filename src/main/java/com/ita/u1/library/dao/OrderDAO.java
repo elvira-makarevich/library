@@ -2,6 +2,7 @@ package com.ita.u1.library.dao;
 
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.entity.Order;
+import com.ita.u1.library.entity.Violation;
 
 public interface OrderDAO {
 
@@ -10,4 +11,6 @@ public interface OrderDAO {
     boolean hasClientActiveOrder(Client client);
 
     Order findOrderInfo(Client client);
+
+    void indicateBookViolation(Violation violation);
 }

@@ -10,6 +10,7 @@ public class CopyBook implements Serializable {
     private BigDecimal costPerDay;
     private boolean availability;
     private String title;
+    private double rating;
 
     public CopyBook() {
     }
@@ -21,6 +22,11 @@ public class CopyBook implements Serializable {
 
     public CopyBook(int id) {
         this.id=id;
+    }
+
+    public CopyBook(int copyId, BigDecimal newCostPerDay) {
+        this.id=copyId;
+        this.costPerDay=newCostPerDay;
     }
 
     public int getId() {
@@ -63,6 +69,14 @@ public class CopyBook implements Serializable {
         this.title = title;
     }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,17 +87,22 @@ public class CopyBook implements Serializable {
         if (id != copyBook.id) return false;
         if (bookId != copyBook.bookId) return false;
         if (availability != copyBook.availability) return false;
+        if (Double.compare(copyBook.rating, rating) != 0) return false;
         if (costPerDay != null ? !costPerDay.equals(copyBook.costPerDay) : copyBook.costPerDay != null) return false;
         return title != null ? title.equals(copyBook.title) : copyBook.title == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result;
+        long temp;
+        result = id;
         result = 31 * result + bookId;
         result = 31 * result + (costPerDay != null ? costPerDay.hashCode() : 0);
         result = 31 * result + (availability ? 1 : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
+        temp = Double.doubleToLongBits(rating);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
@@ -95,7 +114,9 @@ public class CopyBook implements Serializable {
                 ", costPerDay=" + costPerDay +
                 ", availability=" + availability +
                 ", title='" + title + '\'' +
+                ", rating=" + rating +
                 '}';
     }
+
 }
 

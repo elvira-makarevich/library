@@ -15,4 +15,6 @@ public interface BookService {
 
     List<Book> findBook(String title);
 
+    void changeCostPerDay(CopyBook copyBook);
+
 }

@@ -392,7 +392,7 @@ function calculateTheNumberOfDays() {
     let today = new Date();
     let aMonthLater = new Date();
     aMonthLater.setMonth(today.getMonth() + 1);
-    let daysLag = Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24));
+    let daysLag = Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24))+1;
     return daysLag;
 }
 

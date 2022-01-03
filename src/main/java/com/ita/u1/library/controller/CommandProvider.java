@@ -35,6 +35,9 @@ public class CommandProvider {
         commands.put(CommandName.CHECK_CLIENT_ACTIVE_ORDER, new CheckClientActiveOrder());
         commands.put(CommandName.GO_TO_CLOSE_ORDER_PAGE, new GoToCloseOrderPage());
         commands.put(CommandName.FIND_ORDER_INFO, new FindOrderInfo());
+        commands.put(CommandName.GO_TO_BOOK_VIOLATION_PAGE, new GoToBookViolationPage());
+        commands.put(CommandName.INDICATE_BOOK_VIOLATION_AND_CHANGE_COST, new IndicateBookViolationAndChangeCost());
+        commands.put(CommandName.CLOSE_ORDER, new CloseOrder());
 
     }
 

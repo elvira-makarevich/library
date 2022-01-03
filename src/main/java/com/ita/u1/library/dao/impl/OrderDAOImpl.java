@@ -6,8 +6,10 @@ import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
+import com.ita.u1.library.entity.Violation;
 import com.ita.u1.library.exception.DAOException;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -111,9 +113,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         PreparedStatement psOrder = null;
         PreparedStatement psBooksOrder = null;
         PreparedStatement psBooks = null;
+        PreparedStatement psBooksCopies = null;
         ResultSet rsOrder = null;
         ResultSet rsBooksOrder = null;
         ResultSet rsBooks = null;
+        ResultSet rsBooksCopies = null;
 
         Order order = new Order();
         List<CopyBook> booksOrder = new ArrayList<>();
@@ -122,6 +126,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             psOrder = connection.prepareStatement("SELECT * FROM orders WHERE client_id=? and status=true ");
             psBooksOrder = connection.prepareStatement("SELECT * FROM books_orders WHERE order_id=?");
             psBooks = connection.prepareStatement("SELECT title FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?");
+            psBooksCopies = connection.prepareStatement("SELECT cost_per_day FROM books_copies where id=?");
 
             psOrder.setInt(1, client.getId());
             rsOrder = psOrder.executeQuery();
@@ -140,11 +145,21 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             while (rsBooksOrder.next()) {
                 CopyBook copy = new CopyBook();
                 copy.setId(rsBooksOrder.getInt(3));
-                psBooks.setInt(1,copy.getId());
-                rsBooks=psBooks.executeQuery();
-                while (rsBooks.next()){
+
+                psBooks.setInt(1, copy.getId());
+                rsBooks = psBooks.executeQuery();
+                while (rsBooks.next()) {
                     copy.setTitle(rsBooks.getString(1));
+
                 }
+
+                psBooksCopies.setInt(1, copy.getId());
+                rsBooksCopies = psBooksCopies.executeQuery();
+                while (rsBooksCopies.next()) {
+                    String cost = rsBooksCopies.getString(1).replace(',', '.');
+                    copy.setCostPerDay(new BigDecimal(cost.replace(" Br", "")));
+                }
+
                 booksOrder.add(copy);
             }
 
@@ -153,10 +168,51 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         } catch (SQLException e) {
             throw new DAOException("Method findOrderInfo() failed.", e);
         } finally {
-
+            close(psOrder, psBooksOrder, psBooksCopies, psBooks);
+            close(rsOrder, rsBooks, rsBooksCopies, rsBooksOrder);
             release(connection);
         }
 
         return order;
+    }
+
+    @Override
+    public void indicateBookViolation(Violation violation) {
+
+        Connection connection = take();
+        PreparedStatement psBooksOrder = null;
+        PreparedStatement psViolationImage = null;
+
+        try {
+            connection.setAutoCommit(false);
+            psBooksOrder = connection.prepareStatement("UPDATE books_orders SET violation=? WHERE order_id=? and copy_id=?");
+            psViolationImage = connection.prepareStatement("INSERT INTO violation_images (order_id, copy_id, image) VALUES (?,?,?)");
+
+            psBooksOrder.setString(1, violation.getMessage());
+            psBooksOrder.setInt(2, violation.getOrderId());
+            psBooksOrder.setInt(3, violation.getCopyId());
+            psBooksOrder.executeUpdate();
+
+
+            for (int i = 0; i < violation.getImages().size(); i++) {
+                psViolationImage.setInt(1, violation.getOrderId());
+                psViolationImage.setInt(2, violation.getCopyId());
+                psViolationImage.setBytes(3, violation.getImages().get(i));
+                psViolationImage.executeUpdate();
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null)
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new DAOException("Exception during rollback; operation: indicateBookViolationAndChangeCost().", ex);
+                }
+            throw new DAOException("Method indicateBookViolationAndChangeCost() failed.", e);
+        } finally {
+            close(psBooksOrder, psViolationImage);
+            release(connection);
+        }
     }
 }

@@ -43,4 +43,9 @@ public class BookServiceImpl implements BookService {
         List<Book> books = bookDAO.findBook(title);
         return books;
     }
+
+    @Override
+    public void changeCostPerDay(CopyBook copyBook) {
+        bookDAO.changeCostPerDay(copyBook);
+    }
 }

@@ -2,7 +2,6 @@ package com.ita.u1.library.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 

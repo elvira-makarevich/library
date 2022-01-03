@@ -57,6 +57,17 @@ public class Converter {
         }
     }
 
+    public static BigDecimal toBigDecimalOrNull(String s) throws ControllerValidationException {
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
+        try {
+            return new BigDecimal(s.replace(',', '.'));
+        } catch (NullPointerException | NumberFormatException e) {
+            throw new ControllerValidationException("Provided parameter [" + s + "] can't be converted to big decimal.", e);
+        }
+    }
+
     public static int toInt(String s) throws ControllerValidationException {
         try {
             return Integer.parseInt(s);
@@ -102,13 +113,13 @@ public class Converter {
         if (fileParts == null || fileParts.isEmpty()) {
             throw new ControllerValidationException("Provided values can not be empty.");
         }
-        List<byte[]> covers = new ArrayList<>();
+        List<byte[]> images = new ArrayList<>();
 
         for (Part filePart : fileParts) {
             InputStream inputStream = filePart.getInputStream();
-            covers.add(IOUtils.toByteArray(inputStream));
+            images.add(IOUtils.toByteArray(inputStream));
         }
-        return covers;
+        return images;
     }
 
     public static byte[] toBytes(Part part) throws ControllerValidationException, IOException {

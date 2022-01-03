@@ -250,5 +250,31 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         return books;
 
     }
+
+    @Override
+    public void changeCostPerDay(CopyBook copyBook) {
+        Connection connection = take();
+        PreparedStatement psBooksCopies = null;
+
+        try {
+            connection.setAutoCommit(false);
+            psBooksCopies = connection.prepareStatement("UPDATE books_copies SET cost_per_day=? WHERE id=?");
+            psBooksCopies.setBigDecimal(1, copyBook.getCostPerDay());
+            psBooksCopies.setInt(2, copyBook.getId());
+            psBooksCopies.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null)
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new DAOException("Exception during rollback; operation: changeCostPerDay().", ex);
+                }
+            throw new DAOException("Method changeCostPerDay() failed.", e);
+        } finally {
+            close(psBooksCopies);
+            release(connection);
+        }
+    }
 }
 
