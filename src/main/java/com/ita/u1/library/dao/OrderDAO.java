@@ -13,4 +13,6 @@ public interface OrderDAO {
     Order findOrderInfo(Client client);
 
     void indicateBookViolation(Violation violation);
+
+    void closeOrder(Order order);
 }

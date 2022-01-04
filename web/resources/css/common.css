@@ -3,7 +3,7 @@ body {
     background: #f9f9f9;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
-.registerBook, .registerClient, .saveOrder, .findClientArea, .findBookArea , .bookViolation{
+.registerBook, .registerClient, .saveOrder, .closeOrder, .findClientArea, .findBookArea , .bookViolation{
     width: 700px;
     background: #fff;
     padding: 15px 40px 40px;

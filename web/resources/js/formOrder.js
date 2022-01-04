@@ -11,7 +11,6 @@ function init() {
     document.getElementById('findClient').addEventListener('click', checkParamClient);
     document.getElementById('findBook').addEventListener('click', checkParamBook);
 
-
     let formSaveOrder = document.getElementById('saveOrder');
     formSaveOrder.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -84,39 +83,6 @@ function defineMaxReturnDate() {
     let maxReturnDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
     inputMaxReturnDate.value = maxReturnDate;
 
-}
-
-function checkParamClient() {
-
-    let initials = document.getElementById('initials').value;
-    if (initials.length < 2) {
-        alert("Enter the last name of the client to search!");
-    } else
-        findClientRequest();
-}
-
-async function findClientRequest() {
-    let initials = document.getElementById("initials").value;
-    let pageContext = document.getElementById('pageContext').value;
-    let command = "/Controller?command=find_client&";
-    let param = 'lastName=' + initials;
-    let url = pageContext + command + param;
-
-    let response = await fetch(url);
-
-    if (response.ok) {
-        let json = await response.json();
-
-        if (json == "") {
-            alert("No clients found. Add to database new client.");
-        } else {
-            viewInTableClients(json);
-        }
-
-    } else {
-        alert("Error while finding client.");
-        console.log("Response.status: " + response.status);
-    }
 }
 
 
@@ -201,41 +167,6 @@ function viewInTableClients(clients) {
     }
 }
 
-async function hasClientActiveOrder(id) {
-
-    let pageContext = document.getElementById('pageContext').value;
-    let param = 'clientId=' + id;
-    let url = pageContext + "/Controller?command=check_client_active_order&" + param;
-
-    let response = await fetch(url);
-
-    if (response.ok) {
-        let json = await response.json();
-        return json;
-
-    } else {
-        console.log("Response.status: " + response.status);
-    }
-}
-
-function removeTable(className) {
-    let table = document.getElementsByClassName(className)[0];
-    if (!table) {
-        return;
-    }
-    table.parentNode.removeChild(table);
-}
-
-function removeClient() {
-
-    let div = document.getElementById('realClientContainer');
-
-    while (div.firstChild) {
-        div.removeChild(div.firstChild);
-    }
-
-}
-
 function checkParamBook() {
 
     let title = document.getElementById('title').value;
@@ -271,32 +202,12 @@ async function findBookRequest() {
 
 function viewInTableBooks(books) {
     removeTable("table_books");
-    let table = document.createElement('table');
-    table.className = "table_books";
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('possibleBookContainer').appendChild(table);
-
-    let row_1 = document.createElement('tr');
-    let heading_1 = document.createElement('th');
-    heading_1.innerHTML = "Title";
-    let heading_2 = document.createElement('th');
-    heading_2.innerHTML = "Cost per day, Br";
-    let heading_3 = document.createElement('th');
-    heading_3.innerHTML = "";
-
-    row_1.appendChild(heading_1);
-    row_1.appendChild(heading_2);
-    row_1.appendChild(heading_3);
-    thead.appendChild(row_1);
+    createTableForBooks("table_books", "possibleBookContainer");
 
     let i;
     for (i in books) {
         for (let j = 0; i < books[i].copies.length; j++) {
-
+            let table_books = document.getElementsByClassName("table_books")[0];
             let row = document.createElement('tr');
             let row_data_1 = document.createElement('td');
             row_data_1.innerHTML = books[i].title;
@@ -317,12 +228,12 @@ function viewInTableBooks(books) {
             row.appendChild(row_data_2);
             row.appendChild(row_data_3);
 
-            tbody.appendChild(row);
+            table_books.appendChild(row);
 
             function addBook() {
 
                 if (!isTableExists("books_order")) {
-                    createTableForBooksOrder();
+                    createTableForBooks("books_order", "realBooksContainer");
                 }
 
                 if (!isItPossibleToAddABookToTheOrder()) {
@@ -369,6 +280,30 @@ function viewInTableBooks(books) {
     }
 }
 
+function createTableForBooks(tableClassName, booksContainer) {
+    let table = document.createElement('table');
+    table.className = tableClassName;
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.getElementById(booksContainer).appendChild(table);
+
+    let row_1 = document.createElement('tr');
+    let heading_1 = document.createElement('th');
+    heading_1.innerHTML = "Title";
+    let heading_2 = document.createElement('th');
+    heading_2.innerHTML = "Cost per day, Br";
+    let heading_3 = document.createElement('th');
+    heading_3.innerHTML = "";
+
+    row_1.appendChild(heading_1);
+    row_1.appendChild(heading_2);
+    row_1.appendChild(heading_3);
+    thead.appendChild(row_1);
+}
+
 function calculateTheOrderAmount() {
     let table = document.getElementsByClassName("books_order")[0];
     let daysNumber = calculateTheNumberOfDays();
@@ -392,32 +327,8 @@ function calculateTheNumberOfDays() {
     let today = new Date();
     let aMonthLater = new Date();
     aMonthLater.setMonth(today.getMonth() + 1);
-    let daysLag = Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24))+1;
+    let daysLag = Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 1;
     return daysLag;
-}
-
-function createTableForBooksOrder() {
-    let table = document.createElement('table');
-    table.className = "books_order";
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('realBooksContainer').appendChild(table);
-
-    let row_1 = document.createElement('tr');
-    let heading_1 = document.createElement('th');
-    heading_1.innerHTML = "Title";
-    let heading_2 = document.createElement('th');
-    heading_2.innerHTML = "Cost per day, Br";
-    let heading_3 = document.createElement('th');
-    heading_3.innerHTML = "";
-
-    row_1.appendChild(heading_1);
-    row_1.appendChild(heading_2);
-    row_1.appendChild(heading_3);
-    thead.appendChild(row_1);
 }
 
 function isThereDuplicationOfBooks(title) {
@@ -447,10 +358,3 @@ function deleteRow(r) {
     calculateTheOrderAmount();
 }
 
-function isTableExists(className) {
-    let table = document.getElementsByClassName(className)[0];
-    if (!table) {
-        return false;
-    }
-    return true;
-}

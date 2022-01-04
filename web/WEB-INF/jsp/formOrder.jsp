@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <link rel="stylesheet" type="text/css" href="resources/css/table.css">
     <script src="resources/js/formOrder.js"></script>
+    <script src="resources/js/formAndCloseOrder.js"></script>
 
 </head>
 <body>

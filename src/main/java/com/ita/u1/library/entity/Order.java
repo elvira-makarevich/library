@@ -12,6 +12,7 @@ public class Order implements Serializable {
     private List<CopyBook> books;
     private BigDecimal preliminaryCost;
     private BigDecimal totalCost;
+    private BigDecimal penalty;
     private LocalDate orderDate;
     private LocalDate possibleReturnDate;
     private LocalDate realReturnDate;
@@ -28,6 +29,16 @@ public class Order implements Serializable {
         this.possibleReturnDate = possibleReturnDate;
     }
 
+    public Order(int orderId, List<CopyBook> books, LocalDate orderDate, LocalDate possibleReturnDate, LocalDate realReturnDate, BigDecimal preliminaryCost, BigDecimal penalty, BigDecimal totalCost) {
+        this.id = orderId;
+        this.books = books;
+        this.orderDate = orderDate;
+        this.possibleReturnDate = possibleReturnDate;
+        this.realReturnDate = realReturnDate;
+        this.preliminaryCost = preliminaryCost;
+        this.penalty = penalty;
+        this.totalCost = totalCost;
+    }
 
     public int getId() {
         return id;
@@ -67,6 +78,14 @@ public class Order implements Serializable {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public BigDecimal getPenalty() {
+        return penalty;
+    }
+
+    public void setPenalty(BigDecimal penalty) {
+        this.penalty = penalty;
     }
 
     public LocalDate getOrderDate() {
@@ -115,6 +134,7 @@ public class Order implements Serializable {
         if (preliminaryCost != null ? !preliminaryCost.equals(order.preliminaryCost) : order.preliminaryCost != null)
             return false;
         if (totalCost != null ? !totalCost.equals(order.totalCost) : order.totalCost != null) return false;
+        if (penalty != null ? !penalty.equals(order.penalty) : order.penalty != null) return false;
         if (orderDate != null ? !orderDate.equals(order.orderDate) : order.orderDate != null) return false;
         if (possibleReturnDate != null ? !possibleReturnDate.equals(order.possibleReturnDate) : order.possibleReturnDate != null)
             return false;
@@ -128,6 +148,7 @@ public class Order implements Serializable {
         result = 31 * result + (books != null ? books.hashCode() : 0);
         result = 31 * result + (preliminaryCost != null ? preliminaryCost.hashCode() : 0);
         result = 31 * result + (totalCost != null ? totalCost.hashCode() : 0);
+        result = 31 * result + (penalty != null ? penalty.hashCode() : 0);
         result = 31 * result + (orderDate != null ? orderDate.hashCode() : 0);
         result = 31 * result + (possibleReturnDate != null ? possibleReturnDate.hashCode() : 0);
         result = 31 * result + (realReturnDate != null ? realReturnDate.hashCode() : 0);
@@ -143,10 +164,12 @@ public class Order implements Serializable {
                 ", books=" + books +
                 ", preliminaryCost=" + preliminaryCost +
                 ", totalCost=" + totalCost +
+                ", penalty=" + penalty +
                 ", orderDate=" + orderDate +
                 ", possibleReturnDate=" + possibleReturnDate +
                 ", realReturnDate=" + realReturnDate +
                 ", status=" + status +
                 '}';
     }
+
 }

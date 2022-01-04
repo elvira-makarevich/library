@@ -35,5 +35,10 @@ public class OrderServiceImpl implements OrderService {
         orderDAO.indicateBookViolation(violation);
     }
 
+    @Override
+    public void closeOrder(Order order) {
+        orderDAO.closeOrder(order);
+    }
+
 
 }
