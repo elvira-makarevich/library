@@ -3,10 +3,7 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.OrderDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
-import com.ita.u1.library.entity.Client;
-import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.entity.Order;
-import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.DAOException;
 
 import java.io.IOException;
@@ -175,7 +172,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             release(connection);
         }
 
-        optionalOrder=Optional.of(order);
+        optionalOrder = Optional.of(order);
         return optionalOrder;
     }
 
@@ -257,5 +254,38 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             close(psBooksOrder, psOrder);
             release(connection);
         }
+    }
+
+    @Override
+    public List<CopyBook> findCopyBookInfo(Order order) {
+
+        List<CopyBook> books = new ArrayList<>();
+        Connection connection = take();
+        PreparedStatement psCopyBook = null;
+        ResultSet rsBooksCopies = null;
+
+        try {
+            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies where id=?");
+            for (int i = 0; i < order.getBooks().size(); i++) {
+                psCopyBook.setInt(1, order.getBooks().get(i).getId());
+                rsBooksCopies = psCopyBook.executeQuery();
+                while (rsBooksCopies.next()) {
+                    CopyBook copy = new CopyBook();
+                    copy.setId(rsBooksCopies.getInt(1));
+                    copy.setBookId(rsBooksCopies.getInt(2));
+                    String cost = rsBooksCopies.getString(3).replace(',', '.');
+                    copy.setCostPerDay(new BigDecimal(cost.replace(" Br", "")));
+                    copy.setAvailability(rsBooksCopies.getBoolean(4));
+                    books.add(copy);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Method findCopyBookInfo() failed.", e);
+        } finally {
+            close(rsBooksCopies);
+            close(psCopyBook);
+            release(connection);
+        }
+        return books;
     }
 }

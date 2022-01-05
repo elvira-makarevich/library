@@ -128,14 +128,14 @@ async function findOrderBooks(clientId) {
 
     if (response.ok) {
         let json = await response.json();
-        viewOrderInfo(json);
+        createFormWithOrderInfo(json);
     } else {
         alert("Error while finding books.");
         console.log("Response.status: " + response.status);
     }
 }
 
-function viewOrderInfo(order) {
+function createFormWithOrderInfo(order) {
     document.getElementById('penalty').addEventListener('input', function () {
         let penalty = document.getElementById("penalty").value;
         let error = document.getElementById("penaltyError");
@@ -153,6 +153,7 @@ function viewOrderInfo(order) {
     indicateDates(order);
     calculateTheTotalRentalCost(order);
     indicateHiddenField("orderId", order.id);
+    indicateHiddenField("clientId", order.clientId);
     indicateHiddenField("preliminaryCost", order.preliminaryCost);
     indicateHiddenField("orderDate", formDate(order.orderDate));
     indicateHiddenField("possibleReturnDate", formDate(order.possibleReturnDate));

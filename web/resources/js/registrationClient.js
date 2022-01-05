@@ -255,7 +255,7 @@ function checkCountry() {
         error.textContent = "The field cannot be empty.";
         return false;
     } else {
-        let regex = /([a-zA-Z]{2,40}$)|(^[\p{L}]{2,40}$)/u;
+        let regex = /([a-zA-Z ]{2,40}$)|(^[\p{L} ]{2,40}$)/u;
         if (regex.test(country) === false) {
             error.textContent = "Enter the correct state.";
             return false;
@@ -273,7 +273,7 @@ function checkLocality() {
         error.textContent = "The field cannot be empty.";
         return false;
     } else {
-        let regex = /([a-zA-Z]{2,40}$)|(^[\p{L}]{2,40}$)/u;
+        let regex = /([a-zA-Z ]{2,40}$)|(^[\p{L} ]{2,40}$)/u;
         if (regex.test(locality) === false) {
             error.textContent = "Enter the correct locality.";
             return false;
@@ -291,7 +291,7 @@ function checkStreet() {
         error.textContent = "The field cannot be empty.";
         return false;
     } else {
-        let regex = /([a-zA-Z]{2,40}$)|(^[\p{L}]{2,40}$)/u;
+        let regex = /([a-zA-Z ]{2,40}$)|(^[\p{L} ]{2,40}$)/u;
         if (regex.test(street) === false) {
             error.textContent = "Enter the correct street.";
             return false;
@@ -343,9 +343,9 @@ function checkApartmentNumber() {
     if (apartmentNumber == "") {
         return true;
     } else {
-        let regex = /^[0-9]{1,4}$/;
+        let regex = /^[0-9]{1,4}$|(^\s*$)/;
         if (regex.test(apartmentNumber) === false) {
-            error.textContent = "Enter the correct building.";
+            error.textContent = "Enter the correct apartment number.";
             return false;
         }
     }

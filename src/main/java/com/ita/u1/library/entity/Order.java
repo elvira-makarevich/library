@@ -29,8 +29,9 @@ public class Order implements Serializable {
         this.possibleReturnDate = possibleReturnDate;
     }
 
-    public Order(int orderId, List<CopyBook> books, LocalDate orderDate, LocalDate possibleReturnDate, LocalDate realReturnDate, BigDecimal preliminaryCost, BigDecimal penalty, BigDecimal totalCost) {
+    public Order(int orderId, int clientId, List<CopyBook> books, LocalDate orderDate, LocalDate possibleReturnDate, LocalDate realReturnDate, BigDecimal preliminaryCost, BigDecimal penalty, BigDecimal totalCost) {
         this.id = orderId;
+        this.clientId = clientId;
         this.books = books;
         this.orderDate = orderDate;
         this.possibleReturnDate = possibleReturnDate;

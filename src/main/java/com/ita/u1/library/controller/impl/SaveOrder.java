@@ -25,9 +25,9 @@ public class SaveOrder implements Command {
         int clientId = Converter.toInt(request.getParameter("clientId"));
         BigDecimal preliminaryCost = Converter.toBigDecimal(request.getParameter("preliminaryCost"));
         List<CopyBook> books = Converter.toListCopies(request.getParameterValues("copyId"));
-        LocalDate today = LocalDate.now();
-        LocalDate possibleReturnDate = today.plusMonths(1);
-        Order order = new Order(clientId, preliminaryCost, books, today, possibleReturnDate);
+        LocalDate orderDate = LocalDate.now();
+        LocalDate possibleReturnDate = orderDate.plusMonths(1);
+        Order order = new Order(clientId, preliminaryCost, books, orderDate, possibleReturnDate);
 
         orderService.saveOrder(order);
 

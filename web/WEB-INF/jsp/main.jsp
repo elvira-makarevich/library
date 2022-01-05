@@ -10,17 +10,6 @@
 <body>
 
 <form method="post" action="Controller" >
-    <input type="hidden" name="command" value="go_to_author_info_page"/>
-      <button class="button">Author image</button>
-</form>
-<br>
-<br>
-<form method="post" action="Controller" >
-    <input type="hidden" name="command" value="go_to_add_new_author_page"/>
-    <button class="button">Add new author</button>
-</form>
-
-<form method="post" action="Controller" >
     <input type="hidden" name="command" value="go_to_add_new_book_page"/>
         <button class="button">Add new book</button>
 </form>

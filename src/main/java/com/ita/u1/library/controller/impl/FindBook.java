@@ -27,15 +27,6 @@ public class FindBook implements Command {
 
         try {
             List<Book> books = bookService.findBook(title);
-            for (Book b: books){
-
-    System.out.println(b);
-
-
-
-
-
-            }
 
             String json = new Gson().toJson(books);
             response.setHeader("Content-Type", "application/json; charset=UTF-8");

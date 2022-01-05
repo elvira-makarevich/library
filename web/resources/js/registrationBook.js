@@ -41,6 +41,15 @@ function init() {
 
 }
 
+function defineDate() {
+    let inputRegistrationDate = document.getElementById("registrationDate");
+    let today = new Date();
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let registrationDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
+    inputRegistrationDate.value = registrationDate;
+
+}
+
 async function submitValidForm() {
 
     let formData = new FormData(document.getElementById('saveBook'));
@@ -105,36 +114,20 @@ async function findAuthorRequest() {
 
 function viewInTableAuthors(authors) {
     removeTable("table_authors");
-    let table = document.createElement('table');
-    table.className = "table_authors";
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
+    createTableForAuthors("table_authors", "possibleAuthorContainer");
 
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('possibleAuthorContainer').appendChild(table);
-
-    let row_1 = document.createElement('tr');
-    let heading_1 = document.createElement('th');
-    heading_1.innerHTML = "Last name";
-    let heading_2 = document.createElement('th');
-    heading_2.innerHTML = "First name";
-    let heading_4 = document.createElement('th');
-    heading_4.innerHTML = "";
-
-    row_1.appendChild(heading_1);
-    row_1.appendChild(heading_2);
-    row_1.appendChild(heading_4);
-    thead.appendChild(row_1);
 
     let i;
     for (i in authors) {
-
+        let tableAuthors = document.getElementsByClassName("table_authors")[0];
+        let firstName = authors[i].firstName;
+        let lastName = authors[i].lastName;
+        let id = authors[i].id;
         let row = document.createElement('tr');
         let row_data_1 = document.createElement('td');
-        row_data_1.innerHTML = authors[i].lastName;
+        row_data_1.innerHTML = lastName;
         let row_data_2 = document.createElement('td');
-        row_data_2.innerHTML = authors[i].firstName;
+        row_data_2.innerHTML = firstName;
         let row_data_4 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
@@ -142,14 +135,10 @@ function viewInTableAuthors(authors) {
         buttonAdd.addEventListener('click', addAuthor);
         row_data_4.appendChild(buttonAdd);
 
-        let firstName = authors[i].firstName;
-        let lastName = authors[i].lastName;
-        let id = authors[i].id;
-
         row.appendChild(row_data_1);
         row.appendChild(row_data_2);
         row.appendChild(row_data_4);
-        tbody.appendChild(row);
+        tableAuthors.appendChild(row);
 
         async function addAuthor() {
             if (!isTableExists("book_authors")) {
@@ -235,12 +224,10 @@ function removeTable(className) {
     table.parentNode.removeChild(table);
 }
 
-function defineDate() {
-    let inputRegistrationDate = document.getElementById("registrationDate");
-    let today = new Date();
-    let registrationDate = today.getDate() + "." + (today.getMonth() + 1) + "." + today.getFullYear();
-    inputRegistrationDate.value = registrationDate;
-
+function deleteRow(r) {
+    let i = r.parentNode.parentNode.rowIndex;
+    document.getElementsByClassName("book_authors")[0].deleteRow(i);
+    checkAuthors();
 }
 
 function loadImages() {
@@ -355,7 +342,6 @@ function checkNumberOfCopies() {
     }
 }
 
-
 function checkCovers() {
 
     let covers = document.getElementById("files");
@@ -387,7 +373,6 @@ function checkPublishingYear() {
     }
 }
 
-
 function checkNumberOfPages() {
     let numberOfPages = document.getElementById("numberOfPages");
     let error = document.querySelector('#numberOfPages + span.error');
@@ -406,7 +391,6 @@ function checkNumberOfPages() {
     }
 }
 
-
 function checkGenres() {
 
     let result = false;
@@ -423,13 +407,6 @@ function checkGenres() {
     return result;
 }
 
-function deleteRow(r) {
-    let i = r.parentNode.parentNode.rowIndex;
-    document.getElementsByClassName("book_authors")[0].deleteRow(i);
-    checkAuthors();
-}
-
-
 function checkAuthors() {
 
     let error = document.getElementsByClassName("errorAuthor")[0];
@@ -441,7 +418,5 @@ function checkAuthors() {
         error.innerHTML = "Add author(s)!";
         return false;
     }
-
     return true;
-
 }

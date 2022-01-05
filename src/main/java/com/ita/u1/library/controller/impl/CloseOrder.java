@@ -4,6 +4,7 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
+import com.ita.u1.library.exception.ControllerValidationException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
 
@@ -23,6 +24,7 @@ public class CloseOrder implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         int orderId = Converter.toInt(request.getParameter("orderId"));
+        int clientId = Converter.toInt(request.getParameter("clientId"));
         LocalDate orderDate = Converter.toDate(request.getParameter("orderDate"));
         LocalDate possibleReturnDate = Converter.toDate(request.getParameter("possibleReturnDate"));
         BigDecimal preliminaryCost = Converter.toBigDecimal(request.getParameter("preliminaryCost"));
@@ -37,7 +39,13 @@ public class CloseOrder implements Command {
             books.get(i).setRating(ratingBook);
         }
 
-        Order order = new Order(orderId, books, orderDate, possibleReturnDate, realReturnDate, preliminaryCost, penalty, totalCost);
+        int clientIdInSession = (int) request.getSession().getAttribute("clientIdInSession");
+
+        if (clientId != clientIdInSession) {
+            throw new ControllerValidationException("Invalid order data.");
+        }
+
+        Order order = new Order(orderId, clientId, books, orderDate, possibleReturnDate, realReturnDate, preliminaryCost, penalty, totalCost);
         orderService.closeOrder(order);
     }
 }

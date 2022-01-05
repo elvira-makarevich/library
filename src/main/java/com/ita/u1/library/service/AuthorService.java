@@ -7,7 +7,9 @@ import java.util.List;
 public interface AuthorService {
 
     void addAuthor(Author author);
+
     List<Author> findAuthor(String lastName);
+
     Author findAuthorImage(int id);
 
 

@@ -5,6 +5,7 @@ import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
+import com.ita.u1.library.service.validator.ServiceValidator;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,13 +15,16 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
 
     private final BookDAO bookDAO;
+    private final ServiceValidator serviceValidator;
 
-    public BookServiceImpl(BookDAO bookDAO) {
+    public BookServiceImpl(BookDAO bookDAO, ServiceValidator serviceValidator) {
         this.bookDAO = bookDAO;
+        this.serviceValidator = serviceValidator;
     }
 
     @Override
     public void add(Book book) {
+        serviceValidator.validateBookRegistrationInfo(book);
         bookDAO.add(book);
     }
 
@@ -29,7 +33,7 @@ public class BookServiceImpl implements BookService {
 
         List<Book> books = bookDAO.getAllBooks(startFromBook, amountOfBooks);
         //  books.sort(Comparator.comparing(Book::getNumberOfAvailableCopies).thenComparing(Book::getTitle));
-        if (books.isEmpty()) {
+        if (books.isEmpty() || books == null) {
             return Collections.emptyList();
         }
 
@@ -50,7 +54,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> findBook(String title) {
 
         List<Book> books = bookDAO.findBook(title);
-        if (books.isEmpty()) {
+        if (books.isEmpty() || books == null) {
             return Collections.emptyList();
         }
         return books;
@@ -58,6 +62,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void changeCostPerDay(CopyBook copyBook) {
+        serviceValidator.validateCost(copyBook.getCostPerDay());
         bookDAO.changeCostPerDay(copyBook);
     }
 }

@@ -5,11 +5,9 @@ import com.ita.u1.library.dao.AuthorDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.entity.Author;
-import com.ita.u1.library.exception.NoSuchImageAuthorServiceException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

@@ -68,13 +68,13 @@
     <br>
     <div class="price">
         <label for="price">Price, BYN:</label>
-        <input type="text" name="price" id="price" pattern="^[0-9]{0,}[.,]?[0-9]{0,2}" required>
+        <input type="text" name="price" id="price" pattern="^[0-9]{1,}[.,]?[0-9]{0,2}" required>
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="costPerDay">
         <label for="costPerDay">Cost per day, BYN:</label>
-        <input type="text" name="costPerDay" id="costPerDay" pattern="^[0-9]{0,}[.,]?[0-9]{0,2}" required>
+        <input type="text" name="costPerDay" id="costPerDay" pattern="^[0-9]{1,}[.,]?[0-9]{0,2}" required>
         <span class="error" aria-live="polite"></span>
     </div>
     <br>

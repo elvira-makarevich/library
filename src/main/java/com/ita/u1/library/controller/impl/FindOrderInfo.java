@@ -12,6 +12,7 @@ import com.ita.u1.library.service.ServiceProvider;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,11 +26,8 @@ public class FindOrderInfo implements Command {
         int clientId = Converter.toInt(request.getParameter("clientId"));
         Client client = new Client(clientId);
         Order order = orderService.findOrderInfo(client);
-        System.out.println(order);
-        List<CopyBook> b = order.getBooks();
-        for (CopyBook c : b) {
-            System.out.println(c.getTitle());
-        }
+
+        request.getSession().setAttribute("clientIdInSession", client.getId());
 
         String json = new Gson().toJson(order);
         response.setHeader("Content-Type", "application/json; charset=UTF-8");
