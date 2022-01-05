@@ -85,6 +85,38 @@ function defineMaxReturnDate() {
 
 }
 
+function checkParamClient() {
+
+    let initials = document.getElementById('initials').value;
+    if (initials.length < 2) {
+        alert("Enter the last name of the client to search!");
+    } else
+        findClientRequest();
+}
+
+async function findClientRequest() {
+    let initials = document.getElementById("initials").value;
+    let pageContext = document.getElementById('pageContext').value;
+    let command = "/Controller?command=find_client&";
+    let param = 'lastName=' + initials;
+    let url = pageContext + command + param;
+
+    let response = await fetch(url);
+
+    if (response.ok) {
+        let json = await response.json();
+
+        if (json == "") {
+            alert("No clients found.");
+        } else {
+            viewInTableClients(json);
+        }
+
+    } else {
+        alert("Error while finding client.");
+        console.log("Response.status: " + response.status);
+    }
+}
 
 function viewInTableClients(clients) {
     removeTable("table_clients");
@@ -92,7 +124,6 @@ function viewInTableClients(clients) {
     table.className = "table_clients";
     let thead = document.createElement('thead');
     let tbody = document.createElement('tbody');
-
 
     table.appendChild(thead);
     table.appendChild(tbody);

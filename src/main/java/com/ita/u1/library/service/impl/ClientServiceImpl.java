@@ -2,8 +2,10 @@ package com.ita.u1.library.service.impl;
 
 import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.entity.Client;
+import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.ClientService;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ClientServiceImpl implements ClientService {
@@ -39,6 +41,9 @@ public class ClientServiceImpl implements ClientService {
     public int getNumberOfClients() {
 
         int number = clientDAO.getNumberOfClients();
+        if (number == 0) {
+            throw new ServiceException("There are no clients in the library!");
+        }
         return number;
 
     }
@@ -47,13 +52,18 @@ public class ClientServiceImpl implements ClientService {
     public List<Client> getAllClients(int startFromClient, int amountOfClients) {
 
         List<Client> clients = clientDAO.getAllClients(startFromClient, amountOfClients);
-
+        if (clients.isEmpty()) {
+            return Collections.emptyList();
+        }
         return clients;
     }
 
     @Override
     public List<Client> findClient(String lastName) {
         List<Client> clients = clientDAO.findClient(lastName);
+        if (clients.isEmpty()) {
+            return Collections.emptyList();
+        }
         return clients;
     }
 }

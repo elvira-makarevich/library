@@ -3,10 +3,9 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.AuthorDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
-import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.entity.Author;
-import com.ita.u1.library.exception.DAONoSuchImageAuthorException;
+import com.ita.u1.library.exception.NoSuchImageAuthorServiceException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -109,17 +108,14 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             close(ps);
             release(connection);
         }
-//перенести в сервис
-        if (authors.isEmpty()) {
-            return Collections.emptyList();
-        }
+
         return authors;
     }
 
     @Override
-    public Author findAuthorImage(int id) {
+    public Optional<Author> findAuthorImage(int id) {
 
-        Author author = null;
+        Author author = new Author();
         Optional<Author> optionalAuthor;
         Connection connection = take();
         PreparedStatement ps = null;
@@ -136,7 +132,7 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             }
         } catch (SQLException e) {
             //log
-            throw new DAOException("SQLException when finding the author's image.", e);
+            throw new DAOException("SQLException while finding the author's image.", e);
         } finally {
             close(rs);
             close(ps);
@@ -144,8 +140,7 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
         }
 
         optionalAuthor = Optional.of(author);
-        author = optionalAuthor.orElseThrow(() -> new DAONoSuchImageAuthorException("Image of the author with the id does not exist."));
-        return author;
+        return optionalAuthor;
     }
 
 }

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
@@ -108,7 +109,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public Order findOrderInfo(Client client) {
+    public Optional<Order> findOrderInfo(Client client) {
         Connection connection = take();
         PreparedStatement psOrder = null;
         PreparedStatement psBooksOrder = null;
@@ -119,6 +120,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         ResultSet rsBooks = null;
         ResultSet rsBooksCopies = null;
 
+        Optional<Order> optionalOrder;
         Order order = new Order();
         List<CopyBook> booksOrder = new ArrayList<>();
 
@@ -173,7 +175,8 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             release(connection);
         }
 
-        return order;
+        optionalOrder=Optional.of(order);
+        return optionalOrder;
     }
 
     @Override

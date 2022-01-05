@@ -5,11 +5,13 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <script src="resources/js/registrationClient.js"></script>
+    <script src="resources/js/registrationCommon.js"></script>
 </head>
 <body>
-<form id="registerClientForm" class="registerClient">
+<form id="registerClientForm" class="register">
     <input type="hidden" name="command" value="add_new_client"/>
 
+    <h1>New client</h1>
     <p id="fileError" class="error"></p>
     <div class="img-item">
         <img id="image" class="img-item"/>

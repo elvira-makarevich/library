@@ -13,6 +13,10 @@ function init() {
     document.getElementById("publishingYear").addEventListener('input', checkPublishingYear);
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
     document.getElementById("submitButton").addEventListener('click', changeValidation);
+    let url = document.getElementById("pageContextAddAuthor").value;
+    document.getElementById("addAuthor").addEventListener('click', () => {
+        window.open(url);
+    });
 
     defineDate();
 
@@ -37,28 +41,26 @@ function init() {
 
 }
 
-function submitValidForm() {
+async function submitValidForm() {
 
     let formData = new FormData(document.getElementById('saveBook'));
-    let xhr = new XMLHttpRequest();
-
     let pageContext = document.getElementById('pageContext').value;
     let url = pageContext + "/Controller?command=add_new_book";
     let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-    xhr.onloadend = function () {
-        if (xhr.status == 200) {
-            alert("The book was saved.");
-            window.location = urlRedirect;
-        } else if (xhr.status == 500) {
-            console.log("Error" + this.status);
-            alert("Check the correctness of the entered data.");
-        } else {
-            console.log("Error" + this.status);
-            alert("Try later.");
-        }
-    };
-    xhr.open("POST", url, true);
-    xhr.send(formData);
+
+    let response = await fetch(url, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (response.ok) {
+        alert("The order has been successfully completed.");
+        window.location = urlRedirect;
+    } else {
+        console.log("Error" + this.status);
+        alert("Check the correctness of the entered data.");
+    }
+
 }
 
 function changeValidation() {
@@ -67,7 +69,7 @@ function changeValidation() {
 }
 
 function checkParamAuthor() {
-    deleteItems();
+    removeTable("table_authors");
     let initials = document.getElementById('initials');
     let initialsValue = initials.value;
     if (initialsValue.length < 2) {
@@ -76,77 +78,161 @@ function checkParamAuthor() {
         findAuthorRequest();
 }
 
-function findAuthorRequest() {
-    let xhr = new XMLHttpRequest();
+async function findAuthorRequest() {
+
     let initialsValue = document.getElementById('initials').value;
     let param = 'lastName=' + initialsValue;
     let pageContext = document.getElementById('pageContext').value;
     let url = pageContext + "/Controller?command=find_author&" + param;
 
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 400) {
-            alert("Enter the last name of the author to search!");
-            return;
+    let response = await fetch(url);
+
+    if (response.ok) {
+        let json = await response.json();
+
+        if (json == "") {
+            alert("No authors found.");
+        } else {
+            viewInTableAuthors(json);
+            // createInputForAuthor(answer);
         }
 
-        if (this.readyState == 4 && this.status == 200) {
-            let answer = JSON.parse(xhr.response);
-            if (answer == "") {
-                alert("No authors found. Add the author to the database.");
-            } else {
-                createInputForAuthor(answer);
-            }
-        } else {
-            alert("Check the correctness of the entered data.");
-            console.log(this.status);
-        }
-    };
-    xhr.send();
+    } else {
+        alert("Error while finding author.");
+        console.log("Response.status: " + response.status);
+    }
 }
 
-function createInputForAuthor(authors) {
+function viewInTableAuthors(authors) {
+    removeTable("table_authors");
+    let table = document.createElement('table');
+    table.className = "table_authors";
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.getElementById('possibleAuthorContainer').appendChild(table);
+
+    let row_1 = document.createElement('tr');
+    let heading_1 = document.createElement('th');
+    heading_1.innerHTML = "Last name";
+    let heading_2 = document.createElement('th');
+    heading_2.innerHTML = "First name";
+    let heading_4 = document.createElement('th');
+    heading_4.innerHTML = "";
+
+    row_1.appendChild(heading_1);
+    row_1.appendChild(heading_2);
+    row_1.appendChild(heading_4);
+    thead.appendChild(row_1);
+
     let i;
-    let possibleAuthorContainer = document.getElementById("possibleAuthorContainer");
     for (i in authors) {
-        let input = document.createElement("input");
-        input.type = "text";
-        input.value = authors[i].lastName + " " + authors[i].firstName;
-        input.setAttribute("readonly", "readonly");
-        let initials = input.value;
-        possibleAuthorContainer.appendChild(input);
 
-        let inputHidden = document.createElement("input");
-        inputHidden.type = "hidden";
-        inputHidden.value = authors[i].id;
-        let id = inputHidden.value;
-        possibleAuthorContainer.appendChild(inputHidden);
+        let row = document.createElement('tr');
+        let row_data_1 = document.createElement('td');
+        row_data_1.innerHTML = authors[i].lastName;
+        let row_data_2 = document.createElement('td');
+        row_data_2.innerHTML = authors[i].firstName;
+        let row_data_4 = document.createElement('td');
 
-        let button = document.createElement("button");
-        button.innerHTML = "Add";
-        button.id = "addAuthor";
-        button.addEventListener('click', addAuthor);
-        possibleAuthorContainer.appendChild(button);
+        let buttonAdd = document.createElement('button');
+        buttonAdd.innerHTML = "Add";
+        buttonAdd.addEventListener('click', addAuthor);
+        row_data_4.appendChild(buttonAdd);
 
-        function addAuthor() {
-            let realAuthorContainer = document.getElementById("realAuthorContainer");
-            let input = document.createElement("input");
-            input.type = "text";
-            input.value = initials;
-            input.className = "realAuthorContainer";
-            input.setAttribute("readonly", "readonly");
-            realAuthorContainer.appendChild(input);
+        let firstName = authors[i].firstName;
+        let lastName = authors[i].lastName;
+        let id = authors[i].id;
+
+        row.appendChild(row_data_1);
+        row.appendChild(row_data_2);
+        row.appendChild(row_data_4);
+        tbody.appendChild(row);
+
+        async function addAuthor() {
+            if (!isTableExists("book_authors")) {
+                createTableForAuthors("book_authors", "realAuthorContainer");
+            }
+
+            let book_authors = document.getElementsByClassName("book_authors")[0];
+            let row = document.createElement('tr');
+            let row_data_1 = document.createElement('td');
+            row_data_1.innerHTML = lastName;
+            let row_data_2 = document.createElement('td');
+            row_data_2.innerHTML = firstName;
+            let row_data_3 = document.createElement('td');
 
             let inputHidden = document.createElement("input");
             inputHidden.type = "hidden";
             inputHidden.value = id;
             inputHidden.name = "authorId";
-            realAuthorContainer.appendChild(inputHidden);
-            checkAuthors();
-            deleteItems();
-        }
+            row_data_3.appendChild(inputHidden);
 
+            let row_data_4 = document.createElement('td');
+
+            let buttonRemove = document.createElement('button');
+            buttonRemove.innerHTML = "Delete";
+
+            let attr = document.createAttribute("onclick");
+            attr.value = "deleteRow(this);";
+            buttonRemove.setAttributeNode(attr);
+
+            row_data_4.appendChild(buttonRemove);
+
+            row.appendChild(row_data_1);
+            row.appendChild(row_data_2);
+            row.appendChild(row_data_3);
+            row.appendChild(row_data_4);
+            book_authors.appendChild(row);
+
+            removeTable("table_authors");
+            checkAuthors();
+
+        }
     }
+
+}
+
+function createTableForAuthors(tableClassName, authorContainer) {
+    let table = document.createElement('table');
+    table.className = tableClassName;
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.getElementById(authorContainer).appendChild(table);
+
+    let row_1 = document.createElement('tr');
+    let heading_1 = document.createElement('th');
+    heading_1.innerHTML = "Last name";
+    let heading_2 = document.createElement('th');
+    heading_2.innerHTML = "First name";
+    let heading_3 = document.createElement('th');
+    heading_3.innerHTML = "";
+
+    row_1.appendChild(heading_1);
+    row_1.appendChild(heading_2);
+    row_1.appendChild(heading_3);
+    thead.appendChild(row_1);
+}
+
+function isTableExists(className) {
+    let table = document.getElementsByClassName(className)[0];
+    if (!table) {
+        return false;
+    }
+    return true;
+}
+
+function removeTable(className) {
+    let table = document.getElementsByClassName(className)[0];
+    if (!table) {
+        return;
+    }
+    table.parentNode.removeChild(table);
 }
 
 function defineDate() {
@@ -157,20 +243,9 @@ function defineDate() {
 
 }
 
-function deleteItems() {
-    let container = document.getElementById('possibleAuthorContainer');
-    let deleteInput = container.querySelectorAll('input');
-    let deleteButton = container.querySelectorAll('button');
-    for (let i = 0; i < deleteInput.length; i++) {
-        deleteInput[i].remove();
-        deleteButton[i].remove();
-    }
-}
-
 function loadImages() {
-
-    let containerImages = document.getElementById("fileListDisplay");
     deleteImages();
+    let containerImages = document.getElementById("fileListDisplay");
     let fileInput = document.getElementById("files");
     let files = fileInput.files;
     let file;
@@ -180,13 +255,11 @@ function loadImages() {
         let reader = new FileReader();
         file = files[i];
         reader.onload = function () {
-
             image.className = "img-item";
             image.src = reader.result;
         };
         reader.readAsDataURL(file);
         containerImages.appendChild(image);
-
     }
     checkCovers();
 }
@@ -345,21 +418,30 @@ function checkGenres() {
         if (checkbox[i].checked) {
             return true;
         }
-
     }
     error.textContent = 'Please select at least one genre!';
     return result;
 }
 
+function deleteRow(r) {
+    let i = r.parentNode.parentNode.rowIndex;
+    document.getElementsByClassName("book_authors")[0].deleteRow(i);
+    checkAuthors();
+}
+
+
 function checkAuthors() {
 
-    let authors = document.getElementsByClassName("realAuthorContainer");
     let error = document.getElementsByClassName("errorAuthor")[0];
-    error.textContent = "";
-    if (authors.length === 0) {
-        error.textContent = "Add book authors!";
+    error.innerHTML = "";
+    if (!isTableExists("book_authors")) {
+        error.innerHTML = "Add author(s)!";
+        return false;
+    } else if (document.getElementsByClassName("book_authors")[0].rows.length == 1) {
+        error.innerHTML = "Add author(s)!";
         return false;
     }
+
     return true;
 
 }

@@ -3,22 +3,41 @@
 <html>
 <head>
     <title>Add new author</title>
-    <script src="resources/js/loadImage.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/css/common.css">
+    <script src="resources/js/registrationAuthor.js"></script>
+    <script src="resources/js/registrationCommon.js"></script>
 </head>
 <body>
 
-<form method="post" action="Controller" enctype="multipart/form-data">
+<form id="saveAuthor" class="register" method="post" action="Controller" enctype="multipart/form-data">
     <input type="hidden" name="command" value="add_new_author"/>
-    <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif"/>
-    <img id="image" width="150px" height="180px"/>
-    <br><br>
-    <input type="text" name="firstName" placeholder="Имя автора"
-           title="Имя должно содержать от 2 до 20 символов"/><br/>
-    <input type="text" name="lastName" placeholder="Фамилия автора"
-           title="Фамилия должна содержать от 2 до 20 символов"/><br/>
-    <button class="button">Add new author</button>
-</form>
+    <h1>New author</h1>
+    <p id="fileError" class="error"></p>
+    <div class="img-item">
+        <img id="image" class="img-item"/>
+    </div>
 
+    <div class="file">
+        <label for="file">Photo:</label>
+        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif"/>
+    </div>
+
+    <br>
+    <div class="fields">
+        <label for="firstName">First name:</label>
+        <input type="text" name="firstName" id="firstName">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br>
+
+    <div class="fields">
+        <label for="lastName">Last name:</label>
+        <input type="text" name="lastName" id="lastName">
+        <span class="error" aria-live="polite"></span>
+    </div>
+    <br><br>
+    <input type="submit" name="submit" id="submitButton" value="Save">
+</form>
 
 </body>
 </html>

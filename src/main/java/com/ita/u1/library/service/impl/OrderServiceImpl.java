@@ -5,7 +5,11 @@ import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
 import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.exception.NoActiveOrderServiceException;
+import com.ita.u1.library.exception.NoSuchImageAuthorServiceException;
 import com.ita.u1.library.service.OrderService;
+
+import java.util.Optional;
 
 public class OrderServiceImpl implements OrderService {
 
@@ -27,7 +31,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findOrderInfo(Client client) {
-        return orderDAO.findOrderInfo(client);
+
+        Optional<Order> optionalOrder = orderDAO.findOrderInfo(client);
+        Order order = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
+        return order;
+
     }
 
     @Override

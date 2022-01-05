@@ -246,9 +246,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         if (books.isEmpty()) {
             return Collections.emptyList();
         }
-
         return books;
-
     }
 
     @Override

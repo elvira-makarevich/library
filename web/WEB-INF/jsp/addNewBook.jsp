@@ -4,28 +4,32 @@
 <head>
     <title>Add new book</title>
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/table.css">
     <script src="resources/js/registrationBook.js"></script>
 
 </head>
 <body>
 
-<input id="initials" type="text" name="" placeholder="Enter last name">
-<button id="findAuthor" class="">Find author</button>
-<br>
-<br>
-<div id="possibleAuthorContainer">
-</div>
-<br>
 
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_add_new_author_page"/><br>
-    <button class="button">Save new author</button>
-</form>
+<div id="findAuthorArea" class="register">
+
+    <input id="initials" type="text" name="" placeholder="Enter last name">
+    <button id="findAuthor" class="" style="inline-size: auto;">Find author</button>
+    <button id="addAuthor" style="inline-size: auto;">Add author</button>
+    <br> <br>
+
+    <div id="possibleAuthorContainer">
+    </div>
+
+</div>
+
+
+
 
 <br> <br>
-<form id="saveBook" class="registerBook" action="Controller" method="post" name="registerBook"
+<form id="saveBook" class="register" action="Controller" method="post" name="registerBook"
       enctype="multipart/form-data">
-
+    <h1>New book</h1>
     <input type="hidden" name="command" value="add_new_book"/>
 
     <div id="realAuthorContainer">
@@ -107,6 +111,8 @@
     <input type="submit" name="submit" id="submitButton" value="Save">
 
 </form>
+<input id="pageContextAddAuthor" type="text" name=""
+       value="${pageContext.request.contextPath}/Controller?command=go_to_add_new_author_page" style="display: none;">
 
 <input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
 </body>
