@@ -24,10 +24,9 @@ public class FindOrderInfo implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         int clientId = Converter.toInt(request.getParameter("clientId"));
-        Client client = new Client(clientId);
-        Order order = orderService.findOrderInfo(client);
+        Order order = orderService.findOrderInfo(clientId);
 
-        request.getSession().setAttribute("clientIdInSession", client.getId());
+        request.getSession().setAttribute("clientIdInSession", clientId);
 
         String json = new Gson().toJson(order);
         response.setHeader("Content-Type", "application/json; charset=UTF-8");

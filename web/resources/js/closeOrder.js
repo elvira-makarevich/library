@@ -183,7 +183,8 @@ function indicateHiddenField(name, value) {
 function calculateTheTotalRentalCost(order) {
 
     let totalCost = document.getElementById("totalCost");
-    let penalty = document.getElementById("penalty").value * 1;
+    let penalty = document.getElementById("penalty").value;
+    penalty=penalty.replace(',','.')*1;
     let numberOfRentalDays = calculateTheNumberOfRentalDays(order);
     let numberOfPossibleRentalDays = calculateTheNumberOfPossibleRentalDays(order);
 
@@ -207,7 +208,7 @@ function checkPenalty() {
     let error = document.getElementById("penaltyError");
     error.innerHTML = "";
 
-    let regex = /(^[0-9]{0,}[.,]?[0-9]{0,2})$/;
+    let regex = /(^[0-9]{1,}[.,]?[0-9]{0,2})$/;
     if (regex.test(penalty) === false) {
         error.textContent = "Penalty cannot be negative, 2 decimal places are allowed.";
         return false;

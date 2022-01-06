@@ -23,6 +23,7 @@ public class ServiceValidator {
     public static final String PATTERN_ORIGINAL_TITLE = "(.{2,70}$)|(^\\s*$)";
     public static final String PATTERN_COST = "^[0-9]{1,}[.,]?[0-9]{0,2}";
 
+    public static final String PATTERN_VIOLATION_MESSAGE = ".{10,500}$";
 
     public void validateBookRegistrationInfo(Book book) {
         boolean result = checkTitle(book.getTitle()) &&
@@ -103,17 +104,31 @@ public class ServiceValidator {
             throw new ServiceException("Invalid order. The maximum number of books in an order is 5.");
         }
 
-        BigDecimal preCost = calculateTheCostOfTheOrder(order, copyBooks, numberOfBooks);
+        BigDecimal preCost = calculatePreliminaryCost(order, copyBooks, numberOfBooks);
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        double d1 = preCost.doubleValue();
-        double d2 = order.getPreliminaryCost().doubleValue();
-        double difference = Math.abs(d1 - d2);
-        System.out.println(difference);
+        compareCost(preCost, order.getPreliminaryCost());
 
-        if (difference > 0.3) {
-            throw new ServiceException("Invalid order.");
+    }
+
+    public void validateCloseOrder(Order order, Order orderInfoFromDB) {
+        checkDates(order, orderInfoFromDB);
+        checkPenaltyNullOrNotNegative(order.getPenalty());
+
+        BigDecimal totalCostValueDB = calculateTotalCostBasedOnDataFromDB(order, orderInfoFromDB);
+
+        BigDecimal totalCostValueWithoutPenalty;
+        if (order.getPenalty() == null) {
+            totalCostValueWithoutPenalty = order.getTotalCost();
+        } else {
+            totalCostValueWithoutPenalty = order.getTotalCost().subtract(order.getPenalty());
         }
+        compareCost(totalCostValueDB, totalCostValueWithoutPenalty);
+    }
 
+    public void validateViolationMessage(Violation violation) {
+        if (violation.getMessage().matches(PATTERN_VIOLATION_MESSAGE)) {
+            throw new ServiceException("Invalid message.");
+        }
     }
 
     private void checkTheDuplicationOfBooks(List<CopyBook> copyBooks) {
@@ -128,7 +143,7 @@ public class ServiceValidator {
         }
     }
 
-    private BigDecimal calculateTheCostOfTheOrder(Order order, List<CopyBook> copyBooks, int numberOfBooks) {
+    private BigDecimal calculatePreliminaryCost(Order order, List<CopyBook> copyBooks, int numberOfBooks) {
 
         long daysNumber = order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1;
 
@@ -152,6 +167,55 @@ public class ServiceValidator {
         preCost.setScale(2, BigDecimal.ROUND_UP);
 
         return preCost;
+    }
+
+    private void compareCost(BigDecimal cost1, BigDecimal cost2) {
+        //возможно поменяется на compareTo BigDecimal
+        double d1 = cost1.doubleValue();
+        double d2 = cost2.doubleValue();
+
+        double difference = Math.abs(d1 - d2);
+        System.out.println(difference);
+
+        if (difference > 0.3) {
+            throw new ServiceException("Invalid order cost.");
+        }
+    }
+
+    private void checkDates(Order order, Order orderInfoFromDB) {
+        if (order.getOrderDate().compareTo(orderInfoFromDB.getOrderDate()) != 0) {
+            throw new ServiceException("Invalid data while closing order.");
+        }
+
+        if (order.getPossibleReturnDate().compareTo(orderInfoFromDB.getPossibleReturnDate()) != 0) {
+            throw new ServiceException("Invalid data while closing order.");
+        }
+
+    }
+
+    private BigDecimal calculateTotalCostBasedOnDataFromDB(Order order, Order orderInfoFromDB) {
+        BigDecimal realNumberOfRentalDays = new BigDecimal(order.getRealReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
+        BigDecimal numberOfPossibleRentalDays = new BigDecimal(order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
+        BigDecimal totalCostValue;
+
+        if (isReturnDateViolated(order)) {
+            BigDecimal numberOfOverdueDays = realNumberOfRentalDays.subtract(numberOfPossibleRentalDays);
+            BigDecimal penaltyRate = new BigDecimal(0.01);
+            BigDecimal amountOfThePenalty = orderInfoFromDB.getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
+            totalCostValue = orderInfoFromDB.getPreliminaryCost().add(amountOfThePenalty);
+        } else {
+            BigDecimal rentalCostPerDay = orderInfoFromDB.getPreliminaryCost().divide(numberOfPossibleRentalDays);
+            totalCostValue = rentalCostPerDay.multiply(realNumberOfRentalDays);
+        }
+        return totalCostValue.setScale(2, BigDecimal.ROUND_UP);
+    }
+
+    private boolean isReturnDateViolated(Order order) {
+
+        if (order.getPossibleReturnDate().compareTo(order.getRealReturnDate()) < 0) {
+            return true;
+        }
+        return false;
     }
 
     private boolean checkFirstLastName(String name) {
@@ -209,6 +273,14 @@ public class ServiceValidator {
 
     private boolean checkCost(BigDecimal cost) {
         String c = cost + "";
+        return c.matches(PATTERN_COST);
+    }
+
+    private boolean checkPenaltyNullOrNotNegative(BigDecimal penalty) {
+        if (penalty == null) {
+            return true;
+        }
+        String c = penalty + "";
         return c.matches(PATTERN_COST);
     }
 

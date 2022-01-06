@@ -106,7 +106,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public Optional<Order> findOrderInfo(Client client) {
+    public Optional<Order> findOrderInfo(int clientId) {
         Connection connection = take();
         PreparedStatement psOrder = null;
         PreparedStatement psBooksOrder = null;
@@ -127,7 +127,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             psBooks = connection.prepareStatement("SELECT title FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?");
             psBooksCopies = connection.prepareStatement("SELECT cost_per_day FROM books_copies where id=?");
 
-            psOrder.setInt(1, client.getId());
+            psOrder.setInt(1, clientId);
             rsOrder = psOrder.executeQuery();
 
             while (rsOrder.next()) {
@@ -222,11 +222,13 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         Connection connection = take();
         PreparedStatement psOrder = null;
         PreparedStatement psBooksOrder = null;
+        PreparedStatement psBooksCopies = null;
 
         try {
             connection.setAutoCommit(false);
             psOrder = connection.prepareStatement("UPDATE orders SET total_cost=?, real_return_date=?, status=false, penalty=? WHERE id=?");
             psBooksOrder = connection.prepareStatement("UPDATE books_orders SET rating=? where order_id=? and copy_id=?");
+            psBooksCopies=connection.prepareStatement("UPDATE books_copies SET availability=true where id=?");
 
             psOrder.setBigDecimal(1, order.getTotalCost());
             psOrder.setDate(2, Date.valueOf(order.getRealReturnDate()));
@@ -241,6 +243,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 psBooksOrder.executeUpdate();
             }
 
+            for (int i = 0; i < order.getBooks().size(); i++) {
+                psBooksCopies.setInt(1,order.getBooks().get(i).getId());
+                psBooksCopies.executeUpdate();
+            }
+
             connection.commit();
         } catch (SQLException e) {
             if (connection != null)
@@ -251,7 +258,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 }
             throw new DAOException("Method closeOrder() failed.", e);
         } finally {
-            close(psBooksOrder, psOrder);
+            close(psBooksOrder, psOrder, psBooksCopies);
             release(connection);
         }
     }

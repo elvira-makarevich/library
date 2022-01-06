@@ -1,6 +1,8 @@
 package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.service.BookService;
+import com.ita.u1.library.service.ServiceProvider;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,10 +13,28 @@ import java.io.IOException;
 public class GoToMainPage implements Command {
 
     public static final String PATH_MAIN_PAGE = "/WEB-INF/jsp/main.jsp";
+    private final BookService bookService = ServiceProvider.getInstance().getBookService();
+
+    public static final String PARAM_PAGE = "currentPage";
+    public static final String PARAM_NUMBER_OF_PAGES = "numberOfPages";
+
+    public static final int DEFAULT_PAGE_NUMBER = 1;
+    public static final int RECORDS_PER_PAGE = 10;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        int numberOfRecords = bookService.getNumberOfBooks();
+        int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+
+        int page = DEFAULT_PAGE_NUMBER;
+
+        if (request.getParameter(PARAM_PAGE) != null) {
+            page = Integer.parseInt(request.getParameter(PARAM_PAGE));
+        }
+
+        request.setAttribute(PARAM_PAGE, page);
+        request.setAttribute(PARAM_NUMBER_OF_PAGES, numberOfPages);
         request.getRequestDispatcher(PATH_MAIN_PAGE).forward(request, response);
 
     }

@@ -6,7 +6,6 @@ import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
 import com.ita.u1.library.entity.Violation;
 import com.ita.u1.library.exception.NoActiveOrderServiceException;
-import com.ita.u1.library.exception.NoSuchImageAuthorServiceException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.validator.ServiceValidator;
 
@@ -36,23 +35,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOrderInfo(Client client) {
-
-        Optional<Order> optionalOrder = orderDAO.findOrderInfo(client);
+    public Order findOrderInfo(int clientId) {
+        Optional<Order> optionalOrder = orderDAO.findOrderInfo(clientId);
         Order order = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
         return order;
-
     }
 
     @Override
     public void indicateBookViolation(Violation violation) {
+        serviceValidator.validateViolationMessage(violation);
         orderDAO.indicateBookViolation(violation);
     }
 
     @Override
     public void closeOrder(Order order) {
+        Optional<Order> optionalOrder = orderDAO.findOrderInfo(order.getClientId());
+        Order orderInfoFromDB = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
+        serviceValidator.validateCloseOrder(order, orderInfoFromDB);
         orderDAO.closeOrder(order);
     }
-
-
 }

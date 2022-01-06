@@ -12,7 +12,7 @@ public interface OrderService {
 
     boolean hasClientActiveOrder(Client client);
 
-    Order findOrderInfo(Client client);
+    Order findOrderInfo(int clientId);
 
     void indicateBookViolation(Violation violation);
 

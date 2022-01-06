@@ -14,7 +14,7 @@ public interface OrderDAO {
 
     boolean hasClientActiveOrder(Client client);
 
-    Optional<Order> findOrderInfo(Client client);
+    Optional<Order> findOrderInfo(int clientId);
 
     void indicateBookViolation(Violation violation);
 

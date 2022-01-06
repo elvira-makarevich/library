@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>All books</title>
+    <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <link rel="stylesheet" type="text/css" href="resources/css/navigation.css">
     <link rel="stylesheet" type="text/css" href="resources/css/sortTable.css">
     <script src="resources/js/allBooksOrClients.js"></script>
@@ -20,14 +21,16 @@
 
 </head>
 <body>
-
+<div class="allBooksOrClients">
 <h1>All books</h1>
-
-<div id="booksTable"></div>
-<br>
-<div id="pagination"></div>
-<input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}/Controller?command=view_all_books&currentPage=" style="display: none;">
-<input id="numberOfPages" type="text" name="" value="${numberOfPages}" style="display: none;">
-<input id="currentPage" type="text" name="" value="${currentPage}" style="display: none;">
+    <div id="booksTable"></div>
+    <br>
+    <div id="pagination"></div>
+    <input id="pageContext" type="text" name=""
+           value="${pageContext.request.contextPath}/Controller?command=view_all_books&currentPage="
+           style="display: none;">
+    <input id="numberOfPages" type="text" name="" value="${numberOfPages}" style="display: none;">
+    <input id="currentPage" type="text" name="" value="${currentPage}" style="display: none;">
+</div>
 </body>
 </html>
