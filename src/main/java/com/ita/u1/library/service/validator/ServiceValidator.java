@@ -6,6 +6,7 @@ import com.ita.u1.library.exception.ServiceException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
 import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class ServiceValidator {
@@ -73,7 +74,7 @@ public class ServiceValidator {
         }
     }
 
-    public void validateTitle(String title){
+    public void validateTitle(String title) {
         boolean result = checkTitle(title);
         if (!result) {
             throw new ServiceException("Invalid title.");
@@ -169,7 +170,7 @@ public class ServiceValidator {
         double difference = Math.abs(d1 - d2);
         System.out.println(difference);
 
-        if (difference > 0.3) {
+        if (difference > 0.03) {
             throw new ServiceException("Invalid order cost.");
         }
     }
@@ -215,6 +216,9 @@ public class ServiceValidator {
     }
 
     private boolean checkPatronymic(String patronymic) {
+        if (patronymic == null) {
+            return true;
+        }
         return patronymic.matches(PATTERN_PATRONYMIC);
     }
 
@@ -223,6 +227,9 @@ public class ServiceValidator {
     }
 
     private boolean checkPassportNumber(String passportNumber) {
+        if (passportNumber == null) {
+            return true;
+        }
         return passportNumber.matches(PATTERN_PASSPORT_NUMBER);
     }
 
@@ -241,6 +248,9 @@ public class ServiceValidator {
     }
 
     private boolean checkHouseBuilding(String houseBuilding) {
+        if (houseBuilding == null) {
+            return true;
+        }
         return houseBuilding.matches(PATTERN_BUILDING);
     }
 
@@ -288,7 +298,7 @@ public class ServiceValidator {
     }
 
     private boolean checkPublishingYear(int publishingYear) {
-        if (publishingYear==0){
+        if (publishingYear == 0) {
             return true;
         }
         if (publishingYear < 868 || publishingYear > LocalDate.now().getYear()) {
