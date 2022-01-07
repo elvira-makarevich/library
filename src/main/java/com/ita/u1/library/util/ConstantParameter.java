@@ -91,4 +91,19 @@ public class ConstantParameter {
             SELECT_LIMIT_CLIENTS = "SELECT * FROM clients order by last_name LIMIT ? OFFSET ?",
             SELECT_CLIENTS_BY_LAST_NAME = "SELECT * FROM clients WHERE last_name = ?";
 
+    public final static String INSERT_ORDER = "INSERT INTO orders (client_id, preliminary_cost, order_date, possible_return_date) VALUES (?,?,?,?)",
+            INSERT_BOOKS_ORDER = "INSERT INTO books_orders (order_id, copy_id) VALUES (?,?)",
+            UPDATE_BOOKS_COPIES_AVAILABILITY_FALSE = "UPDATE books_copies SET availability = false WHERE id = ?",
+            SELECT_ACTIVE_CLIENT_ORDER = "SELECT * FROM orders WHERE client_id=? and status=true ",
+            SELECT_BOOKS_ORDER_BY_ID = "SELECT * FROM books_orders WHERE order_id=?",
+            SELECT_BOOKS_TITLE = "SELECT title FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?",
+            SELECT_BOOK_COPY_COST_PER_DAY = "SELECT cost_per_day FROM books_copies where id=?",
+            UPDATE_BOOKS_ORDER_WITH_VIOLATION = "UPDATE books_orders SET violation=? WHERE order_id=? and copy_id=?",
+            INSERT_VIOLATION_IMAGES = "INSERT INTO violation_images (order_id, copy_id, image) VALUES (?,?,?)",
+            UPDATE_ORDER_CLOSE = "UPDATE orders SET total_cost=?, real_return_date=?, status=false, penalty=? WHERE id=?",
+            UPDATE_BOOKS_ORDER_WITH_RATING = "UPDATE books_orders SET rating=? where order_id=? and copy_id=?",
+            UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET availability=true where id=?",
+            SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?";
+
+
 }

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ita.u1.library.util.ConstantParameter.*;
+
 public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
     public OrderDAOImpl(ConnectionPool connectionPool) {
@@ -30,9 +32,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
         try {
             connection.setAutoCommit(false);
-            psOrder = connection.prepareStatement("INSERT INTO orders (client_id, preliminary_cost, order_date, possible_return_date) VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            psBooksOrder = connection.prepareStatement("INSERT INTO books_orders (order_id, copy_id) VALUES (?,?)");
-            psBooksCopies = connection.prepareStatement("UPDATE books_copies SET availability = false WHERE id = ?");
+            psOrder = connection.prepareStatement(INSERT_ORDER, Statement.RETURN_GENERATED_KEYS);
+            psBooksOrder = connection.prepareStatement(INSERT_BOOKS_ORDER);
+            psBooksCopies = connection.prepareStatement(UPDATE_BOOKS_COPIES_AVAILABILITY_FALSE);
 
             psOrder.setInt(1, order.getClientId());
             psOrder.setBigDecimal(2, order.getPreliminaryCost());
@@ -86,7 +88,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         ResultSet rs = null;
 
         try {
-            psOrder = connection.prepareStatement("SELECT * FROM orders WHERE client_id=? and status=true ");
+            psOrder = connection.prepareStatement(SELECT_ACTIVE_CLIENT_ORDER);
             psOrder.setInt(1, client.getId());
 
             rs = psOrder.executeQuery();
@@ -122,10 +124,10 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         List<CopyBook> booksOrder = new ArrayList<>();
 
         try {
-            psOrder = connection.prepareStatement("SELECT * FROM orders WHERE client_id=? and status=true ");
-            psBooksOrder = connection.prepareStatement("SELECT * FROM books_orders WHERE order_id=?");
-            psBooks = connection.prepareStatement("SELECT title FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?");
-            psBooksCopies = connection.prepareStatement("SELECT cost_per_day FROM books_copies where id=?");
+            psOrder = connection.prepareStatement(SELECT_ACTIVE_CLIENT_ORDER);
+            psBooksOrder = connection.prepareStatement(SELECT_BOOKS_ORDER_BY_ID);
+            psBooks = connection.prepareStatement(SELECT_BOOKS_TITLE);
+            psBooksCopies = connection.prepareStatement(SELECT_BOOK_COPY_COST_PER_DAY);
 
             psOrder.setInt(1, clientId);
             rsOrder = psOrder.executeQuery();
@@ -185,8 +187,8 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
         try {
             connection.setAutoCommit(false);
-            psBooksOrder = connection.prepareStatement("UPDATE books_orders SET violation=? WHERE order_id=? and copy_id=?");
-            psViolationImage = connection.prepareStatement("INSERT INTO violation_images (order_id, copy_id, image) VALUES (?,?,?)");
+            psBooksOrder = connection.prepareStatement(UPDATE_BOOKS_ORDER_WITH_VIOLATION);
+            psViolationImage = connection.prepareStatement(INSERT_VIOLATION_IMAGES);
 
             psBooksOrder.setString(1, violation.getMessage());
             psBooksOrder.setInt(2, violation.getOrderId());
@@ -226,9 +228,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
         try {
             connection.setAutoCommit(false);
-            psOrder = connection.prepareStatement("UPDATE orders SET total_cost=?, real_return_date=?, status=false, penalty=? WHERE id=?");
-            psBooksOrder = connection.prepareStatement("UPDATE books_orders SET rating=? where order_id=? and copy_id=?");
-            psBooksCopies=connection.prepareStatement("UPDATE books_copies SET availability=true where id=?");
+            psOrder = connection.prepareStatement(UPDATE_ORDER_CLOSE);
+            psBooksOrder = connection.prepareStatement(UPDATE_BOOKS_ORDER_WITH_RATING);
+            psBooksCopies = connection.prepareStatement(UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE);
 
             psOrder.setBigDecimal(1, order.getTotalCost());
             psOrder.setDate(2, Date.valueOf(order.getRealReturnDate()));
@@ -244,7 +246,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             }
 
             for (int i = 0; i < order.getBooks().size(); i++) {
-                psBooksCopies.setInt(1,order.getBooks().get(i).getId());
+                psBooksCopies.setInt(1, order.getBooks().get(i).getId());
                 psBooksCopies.executeUpdate();
             }
 
@@ -272,7 +274,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         ResultSet rsBooksCopies = null;
 
         try {
-            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies where id=?");
+            psCopyBook = connection.prepareStatement(SELECT_BOOKS_COPIES_ORDER);
             for (int i = 0; i < order.getBooks().size(); i++) {
                 psCopyBook.setInt(1, order.getBooks().get(i).getId());
                 rsBooksCopies = psCopyBook.executeQuery();
