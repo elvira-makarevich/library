@@ -3,9 +3,7 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
-import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
 import com.ita.u1.library.entity.Book;
-import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
 import com.ita.u1.library.exception.DAOException;
@@ -16,6 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
@@ -35,11 +35,11 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         ResultSet generatedKeys = null;
 
         try {
-            psBook = connection.prepareStatement("INSERT INTO books (title, original_title, price, number_of_copies, publishing_year, registration_date, number_of_pages) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            psCover = connection.prepareStatement("INSERT INTO books_covers (book_id, cover) VALUES (?,?)");
-            psCopies = connection.prepareStatement("INSERT INTO books_copies (book_id, cost_per_day) VALUES (?,?)");
-            psGenres = connection.prepareStatement("INSERT INTO genres (book_id, genre) VALUES (?,?)");
-            psAuthors = connection.prepareStatement("INSERT INTO authors_books (author_id, book_id) VALUES (?,?)");
+            psBook = connection.prepareStatement(INSERT_BOOK, Statement.RETURN_GENERATED_KEYS);
+            psCover = connection.prepareStatement(INSERT_BOOK_COVERS);
+            psCopies = connection.prepareStatement(INSERT_BOOK_COPIES);
+            psGenres = connection.prepareStatement(INSERT_GENRES);
+            psAuthors = connection.prepareStatement(INSERT_BOOK_AUTHORS);
 
             connection.setAutoCommit(false);
 
@@ -124,8 +124,8 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         ResultSet rsGenres = null;
 
         try {
-            psBooks = connection.prepareStatement("SELECT books.*, count(availability) as available FROM books inner join books_copies on books.id=books_copies.book_id where  books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ");
-            psBooksGenres = connection.prepareStatement("SELECT * FROM genres where book_id=?");
+            psBooks = connection.prepareStatement(SELECT_LIMIT_BOOKS);
+            psBooksGenres = connection.prepareStatement(SELECT_BOOKS_GENRES);
 
             //  PreparedStatement psBooksAvailable = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true")
             psBooks.setInt(1, amountOfBooks);
@@ -139,7 +139,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                 book.setTitle(rsBooks.getString(2));
                 book.setNumberOfCopies(rsBooks.getInt(5));
                 book.setPublishingYear(rsBooks.getInt(6));
-                book.setNumberOfAvailableCopies(rsBooks.getInt("available"));
+                book.setNumberOfAvailableCopies(rsBooks.getInt(AVAILABLE));
                 psBooksGenres.setInt(1, book.getId());
                 //     psBooksAvailable.setInt(1, book.getId());
 
@@ -177,15 +177,21 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
         int numberOfRecords = 0;
         Connection connection = take();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM books", ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE); ResultSet rs = ps.executeQuery()) {
+        try {
+            ps = connection.prepareStatement(COUNT_NUMBER_OF_AVAILABLE_BOOKS, ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE);
+            rs = ps.executeQuery();
             rs.last();
             numberOfRecords = rs.getRow();
 
         } catch (SQLException e) {
             throw new DAOException("Method getNumberOfRecords() failed.", e);
         } finally {
+            close(rs);
+            close(ps);
             release(connection);
         }
 
@@ -203,8 +209,8 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         ResultSet rsCopyBook = null;
 
         try {
-            psBook = connection.prepareStatement("SELECT * FROM books WHERE title = ?");
-            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true");
+            psBook = connection.prepareStatement(SELECT_BOOK_BY_TITLE);
+            psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_BOOKS);
 
             psBook.setString(1, title);
             rsBook = psBook.executeQuery();
@@ -256,7 +262,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
         try {
             connection.setAutoCommit(false);
-            psBooksCopies = connection.prepareStatement("UPDATE books_copies SET cost_per_day=? WHERE id=?");
+            psBooksCopies = connection.prepareStatement(UPDATE_COST_PER_DAY);
             psBooksCopies.setBigDecimal(1, copyBook.getCostPerDay());
             psBooksCopies.setInt(2, copyBook.getId());
             psBooksCopies.executeUpdate();

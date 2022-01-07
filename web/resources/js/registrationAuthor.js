@@ -32,8 +32,10 @@ async function submitValidFormAndCloseWindow() {
     if (response.ok) {
         alert("The information was saved.");
         close();
-    } else {
+    } else if (response.status==500) {
         console.log("Error" + this.status);
-        alert("Check the correctness of the entered data.");
+        alert("Database error. Try later.");
+    }else if (response.status==400) {
+        alert("Invalid author data.");
     }
 }

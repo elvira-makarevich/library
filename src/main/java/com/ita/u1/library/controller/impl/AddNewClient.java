@@ -5,21 +5,20 @@ import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Address;
 import com.ita.u1.library.entity.Client;
+import com.ita.u1.library.exception.ControllerException;
+import com.ita.u1.library.exception.DAOConnectionPoolException;
+import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
-import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
+
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class AddNewClient implements Command {
 
@@ -28,25 +27,35 @@ public class AddNewClient implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = Validator.assertNotNullOrEmpty(request.getParameter("firstName"));
-        String lastName = Validator.assertNotNullOrEmpty(request.getParameter("lastName"));
-        String patronymic = Converter.toNullIfEmpty(request.getParameter("patronymic"));
-        String passportNumber = Converter.toNullIfEmpty(request.getParameter("passportNumber"));
-        String email = Validator.assertNotNullOrEmpty(request.getParameter("email"));
-        LocalDate dateOfBirth = Converter.toDate(request.getParameter("dateOfBirth"));
-        int postcode = Converter.toInt(request.getParameter("postcode"));
-        String country = Validator.assertNotNullOrEmpty(request.getParameter("country"));
-        String locality = Validator.assertNotNullOrEmpty(request.getParameter("locality"));
-        String street = Validator.assertNotNullOrEmpty(request.getParameter("street"));
-        int houseNumber = Converter.toInt(request.getParameter("houseNumber"));
-        String building = Converter.toNullIfEmpty(request.getParameter("building"));
-        int apartmentNumber = Converter.toNullIfEmptyOrInt(request.getParameter("apartmentNumber"));
-        byte[] bytesImage = Converter.toBytes(request.getPart("file"));
+        String firstName = Validator.assertNotNullOrEmpty(request.getParameter(FIRST_NAME));
+        String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
+        String patronymic = Converter.toNullIfEmpty(request.getParameter(PATRONYMIC));
+        String passportNumber = Converter.toNullIfEmpty(request.getParameter(PASSPORT_NUMBER));
+        String email = Validator.assertNotNullOrEmpty(request.getParameter(EMAIL));
+        LocalDate dateOfBirth = Converter.toDate(request.getParameter(DATE_OF_BIRTH));
+        int postcode = Converter.toInt(request.getParameter(POSTCODE));
+        String country = Validator.assertNotNullOrEmpty(request.getParameter(COUNTRY));
+        String locality = Validator.assertNotNullOrEmpty(request.getParameter(LOCALITY));
+        String street = Validator.assertNotNullOrEmpty(request.getParameter(STREET));
+        int houseNumber = Converter.toInt(request.getParameter(HOUSE_NUMBER));
+        String building = Converter.toNullIfEmpty(request.getParameter(BUILDING));
+        int apartmentNumber = Converter.toNullIfEmptyOrInt(request.getParameter(APARTMENT_NUMBER));
+        byte[] bytesImage = Converter.toBytes(request.getPart(FILE));
 
         Address clientAddress = new Address(postcode, country, locality, street, houseNumber, building, apartmentNumber);
         Client client = new Client(firstName, lastName, patronymic, passportNumber, email, dateOfBirth, clientAddress, bytesImage);
 
-        clientService.add(client);
-
+        try {
+            clientService.add(client);
+        } catch (DAOConnectionPoolException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database connection error. Command: AddNewClient.", e);
+        } catch (DAOException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database error. Command: AddNewClient.", e);
+        } catch (ServiceException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("Invalid client data.", e);
+        }
     }
 }

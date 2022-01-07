@@ -6,12 +6,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class GoToAddNewAuthorPage implements Command {
-
-    public static final String PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp";
-
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

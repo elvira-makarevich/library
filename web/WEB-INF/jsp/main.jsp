@@ -14,16 +14,10 @@
     <button class="button">Add new book</button>
 </form>
 
-<br>
-<br>
-
 <form method="post" action="Controller">
     <input type="hidden" name="command" value="go_to_add_new_client_page"/>
     <button class="button">Add new client</button>
 </form>
-
-<br>
-<br>
 
 <form method="post" action="Controller">
     <input type="hidden" name="command" value="go_to_all_books_page"/>
@@ -44,7 +38,6 @@
     <input type="hidden" name="command" value="go_to_close_order_page"/>
     <button class="button">Close order</button>
 </form>
-
 
     <jsp:include page="/WEB-INF/jsp/allBooks.jsp"/>
 

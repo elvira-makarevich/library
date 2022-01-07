@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
-
+import static com.ita.u1.library.util.ConstantParameter.*;
 public class GoToAddNewBookPage implements Command {
-
-    public static final String PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

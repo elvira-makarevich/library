@@ -38,6 +38,6 @@
     <br><br>
     <input type="submit" name="submit" id="submitButton" value="Save">
 </form>
-
+<input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
 </body>
 </html>

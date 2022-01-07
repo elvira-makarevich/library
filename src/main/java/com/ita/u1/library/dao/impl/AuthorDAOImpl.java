@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ita.u1.library.util.ConstantParameter.*;
+
 public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
 
     public AuthorDAOImpl(ConnectionPool connectionPool) {
@@ -28,8 +30,8 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
         try {
             connection.setAutoCommit(false);
 
-            psAuthor = connection.prepareStatement("INSERT INTO authors (first_name, last_name) VALUES (?,?) ", Statement.RETURN_GENERATED_KEYS);
-            psImage = connection.prepareStatement("INSERT INTO authors_images (author_id, image) VALUES (?,?)");
+            psAuthor = connection.prepareStatement(INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS);
+            psImage = connection.prepareStatement(INSERT_AUTHOR_IMAGE);
 
             psAuthor.setString(1, author.getFirstName());
             psAuthor.setString(2, author.getLastName());
@@ -67,7 +69,7 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             close(psAuthor, psImage);
             if (connection != null) {
                 try {
-                    connection.setAutoCommit(true);// Восстановление по умолчанию
+                    connection.setAutoCommit(true);
                 } catch (SQLException ex) {
                     throw new DAOException("Creating author failed.", ex);
                 }
@@ -85,7 +87,7 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
         ResultSet rs = null;
 
         try {
-            ps = connection.prepareStatement("SELECT * FROM authors WHERE last_name = ?");
+            ps = connection.prepareStatement(SELECT_AUTHOR_BY_LAST_NAME);
             ps.setString(1, lastName);
 
             rs = ps.executeQuery();
@@ -120,7 +122,7 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
         ResultSet rs = null;
 
         try {
-            ps = connection.prepareStatement("SELECT image FROM authors_images WHERE author_id = ?");
+            ps = connection.prepareStatement(SELECT_AUTHOR_IMAGE);
             ps.setInt(1, id);
             rs = ps.executeQuery();
             if (rs != null) {

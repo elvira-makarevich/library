@@ -12,7 +12,7 @@
 
 
 <div id="findAuthorArea" class="register">
-
+    <h3>Find author(s) area</h3>
     <input id="initials" type="text" name="" placeholder="Enter last name">
     <button id="findAuthor" class="" style="inline-size: auto;">Find author</button>
     <button id="addAuthor" style="inline-size: auto;">Add author</button>
@@ -22,8 +22,6 @@
     </div>
 
 </div>
-
-
 
 
 <br> <br>

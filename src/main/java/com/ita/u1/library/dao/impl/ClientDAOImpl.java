@@ -4,7 +4,6 @@ import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.entity.Address;
-import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DAOException;
 
@@ -12,6 +11,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
@@ -29,8 +30,8 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
         try {
             connection.setAutoCommit(false);
-            psClient = connection.prepareStatement("INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            psClientImage = connection.prepareStatement("INSERT INTO clients_images (client_id, image) VALUES (?,?)");
+            psClient = connection.prepareStatement(INSERT_CLIENT, Statement.RETURN_GENERATED_KEYS);
+            psClientImage = connection.prepareStatement(INSERT_CLIENT_IMAGE);
 
             psClient.setString(1, client.getFirstName());
             psClient.setString(2, client.getLastName());
@@ -94,7 +95,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         ResultSet rs = null;
 
         try {
-            psClient = connection.prepareStatement("SELECT * FROM clients WHERE passport_number=? ");
+            psClient = connection.prepareStatement(SELECT_CLIENT_BY_PASSPORT_NUMBER);
             psClient.setString(1, passportNumber);
 
             rs = psClient.executeQuery();
@@ -121,7 +122,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         ResultSet rs = null;
 
         try {
-            psClient = connection.prepareStatement("SELECT * FROM clients WHERE email=? ");
+            psClient = connection.prepareStatement(SELECT_CLIENT_BY_EMAIL);
             psClient.setString(1, email);
 
             rs = psClient.executeQuery();
@@ -150,7 +151,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         ResultSet rs = null;
 
         try {
-            ps = connection.prepareStatement("SELECT * FROM clients", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            ps = connection.prepareStatement(SELECT_ALL_CLIENTS, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs = ps.executeQuery();
             rs.last();
             numberOfRecords = rs.getRow();
@@ -174,7 +175,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         ResultSet rs = null;
 
         try {
-            psClients = connection.prepareStatement("SELECT * FROM clients order by last_name LIMIT ? OFFSET ?");
+            psClients = connection.prepareStatement(SELECT_LIMIT_CLIENTS);
             psClients.setInt(1, amountOfClients);
             psClients.setInt(2, startFromClient);
 
@@ -212,7 +213,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         ResultSet rs = null;
 
         try {
-            ps = connection.prepareStatement("SELECT * FROM clients WHERE last_name = ?");
+            ps = connection.prepareStatement(SELECT_CLIENTS_BY_LAST_NAME);
             ps.setString(1, lastName);
             rs = ps.executeQuery();
             if (rs != null) {

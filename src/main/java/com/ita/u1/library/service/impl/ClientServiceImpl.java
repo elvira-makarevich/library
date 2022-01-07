@@ -44,7 +44,7 @@ public class ClientServiceImpl implements ClientService {
 
         int number = clientDAO.getNumberOfClients();
         if (number == 0) {
-            throw new ServiceException("There are no clients in the library!");
+            throw new ServiceException("There are no clients in the library.");
         }
         return number;
 
@@ -55,13 +55,14 @@ public class ClientServiceImpl implements ClientService {
 
         List<Client> clients = clientDAO.getAllClients(startFromClient, amountOfClients);
         if (clients.isEmpty() || clients == null) {
-            return Collections.emptyList();
+            throw new ServiceException("There are no clients in the library.");
         }
         return clients;
     }
 
     @Override
     public List<Client> findClient(String lastName) {
+        serviceValidator.validateLastName(lastName);
         List<Client> clients = clientDAO.findClient(lastName);
         if (clients.isEmpty() || clients == null) {
             return Collections.emptyList();

@@ -4,9 +4,10 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Book;
-import com.ita.u1.library.entity.Client;
+import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.ita.u1.library.util.ConstantParameter.*;
+
 public class FindBook implements Command {
 
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
@@ -23,7 +26,7 @@ public class FindBook implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String title = Validator.assertNotNullOrEmpty(request.getParameter("title"));
+        String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
 
         try {
             List<Book> books = bookService.findBook(title);
@@ -33,11 +36,14 @@ public class FindBook implements Command {
             response.getWriter().write(json);
 
         } catch (DAOConnectionPoolException e) {
-            //перевести на страницу с сообщением:проблемы доступа к бд
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database connection error. Command: FindBook.", e);
         } catch (DAOException e) {
-            //перевести на страницу с сообщением: проблемы при запросе информации из бд
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database error. Command: FindBook.", e);
+        } catch (ServiceException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("Invalid book title.", e);
         }
     }
 }

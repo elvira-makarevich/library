@@ -3,6 +3,7 @@ package com.ita.u1.library.controller.impl;
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Validator;
+import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.ClientService;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.ita.u1.library.util.ConstantParameter.*;
+
 public class CheckUniquenessEmail implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
@@ -20,7 +23,7 @@ public class CheckUniquenessEmail implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String email = Validator.assertNotNullOrEmpty(request.getParameter("email"));
+        String email = Validator.assertNotNullOrEmpty(request.getParameter(EMAIL));
 
         try {
             boolean result = clientService.checkUniquenessEmail(email);
@@ -29,11 +32,11 @@ public class CheckUniquenessEmail implements Command {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);
         } catch (DAOConnectionPoolException e) {
-
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database connection error. Command: CheckUniquenessEmail.", e);
         } catch (DAOException e) {
-
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database error. Command: CheckUniquenessEmail.", e);
         }
     }
 

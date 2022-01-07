@@ -63,7 +63,7 @@ async function submitValidForm() {
     });
 
     if (response.ok) {
-        alert("The order has been successfully completed.");
+        alert("Book was saved.");
         window.location = urlRedirect;
     } else {
         console.log("Error" + this.status);
@@ -103,7 +103,6 @@ async function findAuthorRequest() {
             alert("No authors found.");
         } else {
             viewInTableAuthors(json);
-            // createInputForAuthor(answer);
         }
 
     } else {
@@ -115,7 +114,6 @@ async function findAuthorRequest() {
 function viewInTableAuthors(authors) {
     removeTable("table_authors");
     createTableForAuthors("table_authors", "possibleAuthorContainer");
-
 
     let i;
     for (i in authors) {
@@ -160,14 +158,12 @@ function viewInTableAuthors(authors) {
             row_data_3.appendChild(inputHidden);
 
             let row_data_4 = document.createElement('td');
-
             let buttonRemove = document.createElement('button');
             buttonRemove.innerHTML = "Delete";
 
             let attr = document.createAttribute("onclick");
             attr.value = "deleteRow(this);";
             buttonRemove.setAttributeNode(attr);
-
             row_data_4.appendChild(buttonRemove);
 
             row.appendChild(row_data_1);
@@ -178,10 +174,8 @@ function viewInTableAuthors(authors) {
 
             removeTable("table_authors");
             checkAuthors();
-
         }
     }
-
 }
 
 function createTableForAuthors(tableClassName, authorContainer) {

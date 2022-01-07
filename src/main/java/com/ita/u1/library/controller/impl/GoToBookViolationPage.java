@@ -7,16 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class GoToBookViolationPage implements Command {
+import static com.ita.u1.library.util.ConstantParameter.*;
 
-    public static final String PATH_BOOK_VIOLATION_PAGE = "/WEB-INF/jsp/bookViolation.jsp";
+public class GoToBookViolationPage implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("title", request.getParameter("title"));
-        request.setAttribute("costPerDay", request.getParameter("costPerDay"));
-        request.setAttribute("copyId", request.getParameter("copyId"));
-        request.setAttribute("orderId", request.getParameter("orderId"));
+        request.setAttribute(TITLE, request.getParameter(TITLE));
+        request.setAttribute(COST_PER_DAY, request.getParameter(COST_PER_DAY));
+        request.setAttribute(COPY_ID, request.getParameter(COPY_ID));
+        request.setAttribute(ORDER_ID, request.getParameter(ORDER_ID));
         request.getRequestDispatcher(PATH_BOOK_VIOLATION_PAGE).forward(request, response);
     }
 }

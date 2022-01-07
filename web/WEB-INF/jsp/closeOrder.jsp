@@ -11,7 +11,7 @@
 <body>
 
 <div id="findClientArea" class="findClientArea">
-
+    <h3>Find client area</h3>
     <input id="initials" type="text" name="" placeholder="Enter last name">
     <button id="findClient" class="" style="inline-size: auto;">Find client</button>
 

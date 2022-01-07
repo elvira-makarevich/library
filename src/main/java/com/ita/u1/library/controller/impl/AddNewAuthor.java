@@ -4,20 +4,20 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Author;
+import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
-import org.apache.commons.io.IOUtils;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
 import java.io.IOException;
-import java.io.InputStream;
+
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class AddNewAuthor implements Command {
 
@@ -26,22 +26,23 @@ public class AddNewAuthor implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = Validator.assertNotNullOrEmpty(request.getParameter("firstName"));
-        String lastName = Validator.assertNotNullOrEmpty(request.getParameter("lastName"));
-        byte[] bytesImage = Converter.toBytes(request.getPart("file"));
+        String firstName = Validator.assertNotNullOrEmpty(request.getParameter(FIRST_NAME));
+        String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
+        byte[] bytesImage = Converter.toBytes(request.getPart(FILE));
 
         Author author = new Author(firstName, lastName, bytesImage);
 
         try {
             authorService.addAuthor(author);
-            response.sendRedirect("Controller?command=Go_To_Main_Page");
         } catch (DAOConnectionPoolException e) {
-            //перевести на страницу с сообщением:проблемы доступа с соединением
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database connection error. Command: AddNewAuthor.", e);
         } catch (DAOException e) {
-            //перевести на страницу с сообщением: проблемы с созданием автора
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database error. Command: AddNewAuthor.", e);
+        } catch (ServiceException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("Invalid author data.", e);
         }
-
     }
 }

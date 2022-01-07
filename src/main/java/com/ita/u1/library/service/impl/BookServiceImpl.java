@@ -34,7 +34,7 @@ public class BookServiceImpl implements BookService {
         List<Book> books = bookDAO.getAllBooks(startFromBook, amountOfBooks);
         //  books.sort(Comparator.comparing(Book::getNumberOfAvailableCopies).thenComparing(Book::getTitle));
         if (books.isEmpty() || books == null) {
-            return Collections.emptyList();
+            throw new ServiceException("There are no books in the library!");
         }
 
         return books;
@@ -52,7 +52,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findBook(String title) {
-
+        serviceValidator.validateTitle(title);
         List<Book> books = bookDAO.findBook(title);
         if (books.isEmpty() || books == null) {
             return Collections.emptyList();

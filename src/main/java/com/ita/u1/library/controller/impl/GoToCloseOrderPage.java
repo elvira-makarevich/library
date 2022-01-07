@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class GoToCloseOrderPage implements Command {
+import static com.ita.u1.library.util.ConstantParameter.*;
 
-    public static final String PATH_CLOSE_ORDER_PAGE = "/WEB-INF/jsp/closeOrder.jsp";
+public class GoToCloseOrderPage implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

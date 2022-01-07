@@ -6,24 +6,9 @@ import com.ita.u1.library.exception.ServiceException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class ServiceValidator {
-
-    public static final String PATTERN_FIRST_NAME_LAST_NAME = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)";
-    public static final String PATTERN_PATRONYMIC = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)|(^\\s*$)";
-    public static final String PATTERN_EMAIL = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$";
-    public static final String PATTERN_PASSPORT_NUMBER = "([A-Z]{2}[0-9]{7}$)|(^\\s*$)";
-    public static final String PATTERN_POST_CODE = "^[0-9]{6}$";
-    public static final String PATTERN_COUNTRY_LOCALITY_STREET = "([a-zA-Z ]{2,40}$)|(^[\\p{L} ]{2,40}$)";
-    public static final String PATTERN_HOUSE_NUMBER = "^[0-9]{1,3}$";
-    public static final String PATTERN_BUILDING = "(^[0-9A-Za-z]$)|(^\\s*$)";
-    public static final String PATTERN_APARTMENT_NUMBER = "^[0-9]{1,4}$|(^\\s*$)";
-
-    public static final String PATTERN_TITLE = ".{2,70}$";
-    public static final String PATTERN_ORIGINAL_TITLE = "(.{2,70}$)|(^\\s*$)";
-    public static final String PATTERN_COST = "^[0-9]{1,}[.,]?[0-9]{0,2}";
-
-    public static final String PATTERN_VIOLATION_MESSAGE = ".{10,500}$";
 
     public void validateBookRegistrationInfo(Book book) {
         boolean result = checkTitle(book.getTitle()) &&
@@ -85,6 +70,13 @@ public class ServiceValidator {
         boolean result = checkFirstLastName(lastName);
         if (!result) {
             throw new ServiceException("Invalid last name.");
+        }
+    }
+
+    public void validateTitle(String title){
+        boolean result = checkTitle(title);
+        if (!result) {
+            throw new ServiceException("Invalid title.");
         }
     }
 
@@ -268,6 +260,9 @@ public class ServiceValidator {
     }
 
     private boolean checkOriginalTitle(String originalTitle) {
+        if (originalTitle == null) {
+            return true;
+        }
         return originalTitle.matches(PATTERN_ORIGINAL_TITLE);
     }
 
@@ -293,6 +288,9 @@ public class ServiceValidator {
     }
 
     private boolean checkPublishingYear(int publishingYear) {
+        if (publishingYear==0){
+            return true;
+        }
         if (publishingYear < 868 || publishingYear > LocalDate.now().getYear()) {
             return false;
         }

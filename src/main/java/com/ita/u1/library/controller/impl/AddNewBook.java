@@ -7,23 +7,24 @@ import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
+import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
-import org.apache.commons.io.IOUtils;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class AddNewBook implements Command {
 
@@ -32,16 +33,16 @@ public class AddNewBook implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        List<Author> authors = Converter.toListAuthors(request.getParameterValues("authorId"));
-        String title = Validator.assertNotNullOrEmpty(request.getParameter("title"));
-        String originalTitle = Converter.toNullIfEmpty(request.getParameter("originalTitle"));
-        List<Genre> genres = Converter.toListGenres(request.getParameterValues("genres"));
-        BigDecimal price = Converter.toBigDecimal(request.getParameter("price"));
-        BigDecimal costPerDay = Converter.toBigDecimal(request.getParameter("costPerDay"));
-        int numberOfCopies = Converter.toInt(request.getParameter("numberOfCopies"));
-        int publishingYear = Converter.toNullIfEmptyOrInt(request.getParameter("publishingYear"));
-        int numberOfPages = Converter.toNullIfEmptyOrInt(request.getParameter("numberOfPages"));
-        List<byte[]> covers = Converter.toListBytes(request.getParts().stream().filter(part -> "covers".equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
+        List<Author> authors = Converter.toListAuthors(request.getParameterValues(AUTHOR_ID));
+        String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
+        String originalTitle = Converter.toNullIfEmpty(request.getParameter(ORIGINAL_TITLE));
+        List<Genre> genres = Converter.toListGenres(request.getParameterValues(GENRES));
+        BigDecimal price = Converter.toBigDecimal(request.getParameter(PRICE));
+        BigDecimal costPerDay = Converter.toBigDecimal(request.getParameter(COST_PER_DAY));
+        int numberOfCopies = Converter.toInt(request.getParameter(NUMBER_OF_COPIES));
+        int publishingYear = Converter.toNullIfEmptyOrInt(request.getParameter(PUBLISHING_YEAR));
+        int numberOfPages = Converter.toNullIfEmptyOrInt(request.getParameter(NUMBER_OF_PAGES));
+        List<byte[]> covers = Converter.toListBytes(request.getParts().stream().filter(part -> COVERS.equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
 
         CopyBook[] copies = new CopyBook[numberOfCopies];
         for (int i = 0; i < numberOfCopies; i++) {
@@ -52,15 +53,15 @@ public class AddNewBook implements Command {
 
         try {
             bookService.add(book);
-
         } catch (DAOConnectionPoolException e) {
-            //перевести на страницу с сообщением:проблемы доступа с соединением
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database connection error. Command: AddNewBook.", e);
         } catch (DAOException e) {
-            //перевести на страницу с сообщением: проблемы с созданием книги
-            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ControllerException("Database error. Command: AddNewBook.", e);
+        } catch (ServiceException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("Invalid book data.", e);
         }
-
-
     }
 }
