@@ -9,7 +9,7 @@
 
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <div id="findClientArea" class="findClientArea">
     <h3>Find client area</h3>
     <input id="initials" type="text" name="" placeholder="Enter last name">

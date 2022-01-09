@@ -4,10 +4,7 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -52,6 +49,10 @@ public class SaveOrder implements Command {
             log.error("Invalid order data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid order data.", e);
+        }catch (ActiveOrderServiceException e) {
+            log.error("Client has active order.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("Client has active order.", e);
         }
     }
 }

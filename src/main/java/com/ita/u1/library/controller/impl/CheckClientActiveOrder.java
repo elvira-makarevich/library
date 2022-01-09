@@ -3,7 +3,6 @@ package com.ita.u1.library.controller.impl;
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
-import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
@@ -28,10 +27,9 @@ public class CheckClientActiveOrder implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         int clientId = Converter.toInt(request.getParameter(CLIENT_ID));
-        Client client = new Client(clientId);
 
         try {
-            boolean result = orderService.hasClientActiveOrder(client);
+            boolean result = orderService.hasClientActiveOrder(clientId);
             String json = new Gson().toJson(result);
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);

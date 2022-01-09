@@ -2,44 +2,50 @@
 <html>
 <head>
 
-    <title>Главная</title>
+    <title>Main page</title>
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
 
 </head>
 
 <body>
-
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_add_new_book_page"/>
-    <button class="button">Add new book</button>
-</form>
-
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_add_new_client_page"/>
-    <button class="button">Add new client</button>
-</form>
-
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_all_books_page"/>
-    <button class="button">All books</button>
-</form>
-
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_all_clients_page"/>
-    <button class="button">All clients</button>
-</form>
-
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_new_order_page"/>
-    <button class="button">New order</button>
-</form>
-
-<form method="post" action="Controller">
-    <input type="hidden" name="command" value="go_to_close_order_page"/>
-    <button class="button">Close order</button>
-</form>
-
-    <jsp:include page="/WEB-INF/jsp/allBooks.jsp"/>
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_add_new_book_page"/>
+        <button class="button">Add new book</button>
+    </form>
+</div>
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_add_new_client_page"/>
+        <button class="button">Add new client</button>
+    </form>
+</div>
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_all_books_page"/>
+        <button class="button">All books</button>
+    </form>
+</div>
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_all_clients_page"/>
+        <button class="button">All clients</button>
+    </form>
+</div>
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_new_order_page"/>
+        <button class="button">New order</button>
+    </form>
+</div>
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_close_order_page"/>
+        <button class="button">Close order</button>
+    </form>
+</div>
+<jsp:include page="/WEB-INF/jsp/allBooks.jsp"/>
 
 </body>
 </html>

@@ -8,6 +8,7 @@
     <script src="resources/js/registrationCommon.js"></script>
 </head>
 <body>
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <form id="registerClientForm" class="register">
     <input type="hidden" name="command" value="add_new_client"/>
 

@@ -5,6 +5,7 @@ import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
 import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.exception.ActiveOrderServiceException;
 import com.ita.u1.library.exception.NoActiveOrderServiceException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.validator.ServiceValidator;
@@ -24,14 +25,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void saveOrder(Order order) {
+        if(orderDAO.hasClientActiveOrder(order.getClientId())){
+            throw new ActiveOrderServiceException("Client has active order.");
+        }
         List<CopyBook> copyBooks = orderDAO.findCopyBookInfo(order);
         serviceValidator.validateSaveOrder(order, copyBooks);
         orderDAO.saveOrder(order);
     }
 
     @Override
-    public boolean hasClientActiveOrder(Client client) {
-        return orderDAO.hasClientActiveOrder(client);
+    public boolean hasClientActiveOrder(int clientId) {
+        return orderDAO.hasClientActiveOrder(clientId);
     }
 
     @Override

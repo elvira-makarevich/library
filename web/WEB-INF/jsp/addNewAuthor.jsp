@@ -8,7 +8,7 @@
     <script src="resources/js/registrationCommon.js"></script>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <form id="saveAuthor" class="register" method="post" action="Controller" enctype="multipart/form-data">
     <input type="hidden" name="command" value="add_new_author"/>
     <h1>New author</h1>

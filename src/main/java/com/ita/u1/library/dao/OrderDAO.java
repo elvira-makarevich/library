@@ -12,7 +12,7 @@ public interface OrderDAO {
 
     void saveOrder(Order order);
 
-    boolean hasClientActiveOrder(Client client);
+    boolean hasClientActiveOrder(int clientId);
 
     Optional<Order> findOrderInfo(int clientId);
 

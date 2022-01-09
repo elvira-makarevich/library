@@ -82,14 +82,14 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public boolean hasClientActiveOrder(Client client) {
+    public boolean hasClientActiveOrder(int clientId) {
         Connection connection = take();
         PreparedStatement psOrder = null;
         ResultSet rs = null;
 
         try {
             psOrder = connection.prepareStatement(SELECT_ACTIVE_CLIENT_ORDER);
-            psOrder.setInt(1, client.getId());
+            psOrder.setInt(1, clientId);
 
             rs = psOrder.executeQuery();
 

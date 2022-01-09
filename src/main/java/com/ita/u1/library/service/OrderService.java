@@ -10,7 +10,7 @@ public interface OrderService {
 
     void saveOrder(Order order);
 
-    boolean hasClientActiveOrder(Client client);
+    boolean hasClientActiveOrder(int clientId);
 
     Order findOrderInfo(int clientId);
 

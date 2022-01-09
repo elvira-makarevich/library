@@ -20,6 +20,7 @@
 
 </head>
 <body>
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <div class="allBooksOrClients">
     <h1>Readers</h1>
 

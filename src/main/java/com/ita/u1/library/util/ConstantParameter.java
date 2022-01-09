@@ -75,7 +75,7 @@ public class ConstantParameter {
             INSERT_BOOK_COPIES = "INSERT INTO books_copies (book_id, cost_per_day) VALUES (?,?)",
             INSERT_GENRES = "INSERT INTO genres (book_id, genre) VALUES (?,?)",
             INSERT_BOOK_AUTHORS = "INSERT INTO authors_books (author_id, book_id) VALUES (?,?)",
-            SELECT_LIMIT_BOOKS = "SELECT books.*, count(availability) as available FROM books inner join books_copies on books.id=books_copies.book_id where  books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ",
+            SELECT_LIMIT_BOOKS = "SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ",
             SELECT_BOOKS_GENRES = "SELECT * FROM genres where book_id=?",
             AVAILABLE = "available",
             COUNT_NUMBER_OF_AVAILABLE_BOOKS = "SELECT Count(id) FROM books_copies where availability=true group by book_id",

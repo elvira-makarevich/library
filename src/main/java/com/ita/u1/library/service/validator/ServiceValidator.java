@@ -149,10 +149,9 @@ public class ServiceValidator {
         ////////////////////////////////////////////////
         for (int i = 0; i < copyBooks.size(); i++) {
             int bookId = copyBooks.get(i).getBookId();
-            String title = copyBooks.get(i).getTitle();
             for (int j = 0; j < copyBooks.size(); j++) {
                 if (i == j) continue;
-                if (bookId == copyBooks.get(j).getBookId() || title.equals(copyBooks.get(j).getTitle())) {
+                if (bookId == copyBooks.get(j).getBookId()) {
                     throw new ServiceException("The order contains the same books.");
                 }
             }

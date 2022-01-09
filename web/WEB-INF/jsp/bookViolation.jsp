@@ -8,6 +8,7 @@
 
 </head>
 <body>
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <form id="bookViolation" class="bookViolation" action="Controller" method="post">
     <input type="hidden" name="command" value="indicate_book_violation_and_change_cost"/>
     <h1>Book violation</h1>

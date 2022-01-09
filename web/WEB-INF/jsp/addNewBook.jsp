@@ -9,7 +9,7 @@
 
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
 <div id="findAuthorArea" class="register">
     <h3>Find author(s) area</h3>
