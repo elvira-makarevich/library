@@ -11,6 +11,8 @@ import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 public class AddNewClient implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
+    private static final Logger log = LogManager.getLogger(AddNewClient.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -48,12 +51,15 @@ public class AddNewClient implements Command {
         try {
             clientService.add(client);
         } catch (DAOConnectionPoolException e) {
+            log.error("Database connection error. Command: AddNewClient.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: AddNewClient.", e);
         } catch (DAOException e) {
+            log.error("Database error. Command: AddNewClient.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: AddNewClient.", e);
         } catch (ServiceException e) {
+            log.error("Invalid client data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid client data.", e);
         }

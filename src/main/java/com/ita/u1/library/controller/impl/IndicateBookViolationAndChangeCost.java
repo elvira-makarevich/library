@@ -12,6 +12,8 @@ import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ public class IndicateBookViolationAndChangeCost implements Command {
 
     private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
+    private static final Logger log = LogManager.getLogger(IndicateBookViolationAndChangeCost.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,12 +50,15 @@ public class IndicateBookViolationAndChangeCost implements Command {
             }
 
         } catch (DAOConnectionPoolException e) {
+            log.error("Database connection error. Command: IndicateBookViolationAndChangeCost.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: IndicateBookViolationAndChangeCost.", e);
         } catch (DAOException e) {
+            log.error("Database error. Command: IndicateBookViolationAndChangeCost.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: IndicateBookViolationAndChangeCost.", e);
         } catch (ServiceException e) {
+            log.error("Invalid violation data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid violation data.", e);
         }

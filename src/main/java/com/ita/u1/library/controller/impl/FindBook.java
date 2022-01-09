@@ -10,6 +10,8 @@ import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,8 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 public class FindBook implements Command {
 
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
+    private static final Logger log = LogManager.getLogger(FindBook.class);
+
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,12 +40,15 @@ public class FindBook implements Command {
             response.getWriter().write(json);
 
         } catch (DAOConnectionPoolException e) {
+            log.error("Database connection error. Command: FindBook.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: FindBook.", e);
         } catch (DAOException e) {
+            log.error("Database error. Command: FindBook.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: FindBook.", e);
         } catch (ServiceException e) {
+            log.error("Invalid book title.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid book title.", e);
         }

@@ -7,6 +7,9 @@ import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
 import com.ita.u1.library.exception.DAOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -241,7 +244,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             }
 
         } catch (SQLException e) {
-            //log
             throw new DAOException("DAOException: method findBook() failed.", e);
         } finally {
             close(rsBook, rsCopyBook);

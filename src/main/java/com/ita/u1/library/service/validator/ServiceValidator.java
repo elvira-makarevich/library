@@ -2,6 +2,8 @@ package com.ita.u1.library.service.validator;
 
 import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.ServiceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,7 +13,10 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class ServiceValidator {
 
+    private static final Logger log = LogManager.getLogger(ServiceValidator.class);
+
     public void validateBookRegistrationInfo(Book book) {
+        log.info("Start validate book registration info.");
         boolean result = checkTitle(book.getTitle()) &&
                 checkOriginalTitle(book.getOriginalTitle()) &&
                 checkCost(book.getPrice()) &&
@@ -22,17 +27,21 @@ public class ServiceValidator {
         if (!result) {
             throw new ServiceException("Invalid book data.");
         }
+        log.info("Book registration info validated.");
     }
 
     public void validateAuthorRegistrationInfo(Author author) {
+        log.info("Start validate author registration info.");
         boolean result = checkFirstLastName(author.getFirstName()) &&
                 checkFirstLastName(author.getLastName());
         if (!result) {
             throw new ServiceException("Invalid author data.");
         }
+        log.info("Author registration info validated.");
     }
 
     public void validateClientRegistrationInfo(Client client) {
+        log.info("Start validate client registration info.");
         boolean result = checkFirstLastName(client.getFirstName()) &&
                 checkFirstLastName(client.getLastName()) &&
                 checkPatronymic(client.getPatronymic()) &&
@@ -46,69 +55,78 @@ public class ServiceValidator {
                 checkHouseBuilding(client.getAddress().getBuilding()) &&
                 checkApartmentNumber(client.getAddress().getApartmentNumber()) &&
                 checkDateOfBirth(client.getDateOfBirth());
-
         if (!result) {
             throw new ServiceException("Invalid client data.");
         }
+        log.info("Client registration info validated.");
     }
 
     public void validatePassportNumber(String passportNumber) {
+        log.info("Start validate passport number.");
         boolean result = checkPassportNumber(passportNumber);
         if (!result) {
             throw new ServiceException("Invalid passport number.");
         }
-
+        log.info("Passport number validated.");
     }
 
     public void validateEmail(String email) {
+        log.info("Start validate passport email.");
         boolean result = checkEmail(email);
         if (!result) {
             throw new ServiceException("Invalid email.");
         }
+        log.info("Email validated.");
     }
 
     public void validateLastName(String lastName) {
+        log.info("Start validate last name.");
         boolean result = checkFirstLastName(lastName);
         if (!result) {
             throw new ServiceException("Invalid last name.");
         }
+        log.info("Last name validated.");
     }
 
     public void validateTitle(String title) {
+        log.info("Start validate title.");
         boolean result = checkTitle(title);
         if (!result) {
             throw new ServiceException("Invalid title.");
         }
+        log.info("Title validated.");
     }
 
     public void validateCost(BigDecimal cost) {
+        log.info("Start validate cost.");
         boolean result = checkCost(cost);
         if (!result) {
             throw new ServiceException("Invalid cost.");
         }
+        log.info("Cost validated.");
     }
 
     public void validateSaveOrder(Order order, List<CopyBook> copyBooks) {
-
+        log.info("Start validate order info.");
         checkTheDuplicationOfBooks(copyBooks);
 
         int numberOfBooks = order.getBooks().size();
         if (numberOfBooks > 5) {
             throw new ServiceException("Invalid order. The maximum number of books in an order is 5.");
         }
-
+//достать стоимость из бд
         BigDecimal preCost = calculatePreliminaryCost(order, copyBooks, numberOfBooks);
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         compareCost(preCost, order.getPreliminaryCost());
-
+        log.info("Order info validated.");
     }
 
     public void validateCloseOrder(Order order, Order orderInfoFromDB) {
+        log.info("Start validate close order info.");
         checkDates(order, orderInfoFromDB);
         checkPenaltyNullOrNotNegative(order.getPenalty());
 
         BigDecimal totalCostValueDB = calculateTotalCostBasedOnDataFromDB(order, orderInfoFromDB);
-
         BigDecimal totalCostValueWithoutPenalty;
         if (order.getPenalty() == null) {
             totalCostValueWithoutPenalty = order.getTotalCost();
@@ -116,20 +134,25 @@ public class ServiceValidator {
             totalCostValueWithoutPenalty = order.getTotalCost().subtract(order.getPenalty());
         }
         compareCost(totalCostValueDB, totalCostValueWithoutPenalty);
+        log.info("Order closing info validated.");
     }
 
     public void validateViolationMessage(Violation violation) {
+        log.info("Start validate violation message.");
         if (violation.getMessage().matches(PATTERN_VIOLATION_MESSAGE)) {
             throw new ServiceException("Invalid message.");
         }
+        log.info("Violation message validated.");
     }
 
     private void checkTheDuplicationOfBooks(List<CopyBook> copyBooks) {
+        ////////////////////////////////////////////////
         for (int i = 0; i < copyBooks.size(); i++) {
             int bookId = copyBooks.get(i).getBookId();
+            String title = copyBooks.get(i).getTitle();
             for (int j = 0; j < copyBooks.size(); j++) {
                 if (i == j) continue;
-                if (bookId == copyBooks.get(j).getBookId()) {
+                if (bookId == copyBooks.get(j).getBookId() || title.equals(copyBooks.get(j).getTitle())) {
                     throw new ServiceException("The order contains the same books.");
                 }
             }
@@ -138,9 +161,7 @@ public class ServiceValidator {
 
     private BigDecimal calculatePreliminaryCost(Order order, List<CopyBook> copyBooks, int numberOfBooks) {
 
-        long daysNumber = order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1;
-
-        BigDecimal daysRentNumber = new BigDecimal(daysNumber);
+        BigDecimal daysRentNumber = new BigDecimal(order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
         BigDecimal maxDiscount = new BigDecimal(0.85);
         BigDecimal discount = new BigDecimal(0.9);
         BigDecimal dayCostAllBooksWithoutDiscount = new BigDecimal(0);

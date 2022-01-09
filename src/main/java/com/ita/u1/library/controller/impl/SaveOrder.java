@@ -10,6 +10,8 @@ import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 public class SaveOrder implements Command {
 
     private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
+    private static final Logger log = LogManager.getLogger(SaveOrder.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,12 +41,15 @@ public class SaveOrder implements Command {
         try {
             orderService.saveOrder(order);
         } catch (DAOConnectionPoolException e) {
+            log.error("Database connection error. Command: SaveOrder.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: SaveOrder.", e);
         } catch (DAOException e) {
+            log.error("Database error. Command: SaveOrder.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: SaveOrder.", e);
         } catch (ServiceException e) {
+            log.error("Invalid order data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid order data.", e);
         }

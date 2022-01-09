@@ -1,6 +1,7 @@
 package com.ita.u1.library.dao;
 
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
+import com.ita.u1.library.exception.DAOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public abstract class AbstractDAO {
                     try {
                         resultSet.close();
                     } catch (SQLException e) {
-                        //log
+                        throw new DAOException("Closing  ResultSet failed.", e);
                     }
                 }
             }
@@ -45,7 +46,7 @@ public abstract class AbstractDAO {
                     try {
                         preparedStatement.close();
                     } catch (SQLException e) {
-                        //log
+                        throw new DAOException("Closing PreparedStatement failed.", e);
                     }
                 }
             }

@@ -105,5 +105,4 @@ public class ConstantParameter {
             UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET availability=true where id=?",
             SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?";
 
-
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <properties>
+        <Property name="patternLayout">%d{HH:mm:ss:SSS} [%-5p] (%F:%L) - %m%n</Property>
+    </properties>
+    <appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="${patternLayout}" />
+        </Console>
+    </appenders>
+    <loggers>
+        <logger name="com.ita.u1.library" additivity="false">
+            <appender-ref ref="STDOUT" />
+
+        </logger>
+        <root level="info">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </loggers>
+</configuration>

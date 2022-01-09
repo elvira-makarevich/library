@@ -10,6 +10,8 @@ import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 public class ViewAllClients implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
+    private static final Logger log = LogManager.getLogger(ViewAllClients.class);
 
     public static final int DEFAULT_PAGE_NUMBER = 1;
     public static final int RECORDS_PER_PAGE = 10;
@@ -48,12 +51,15 @@ public class ViewAllClients implements Command {
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);
         } catch (DAOConnectionPoolException e) {
+            log.error("Database connection error. Command: ViewAllClients.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: ViewAllClients.", e);
         } catch (DAOException e) {
+            log.error("Database error. Command: ViewAllClients.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: ViewAllClients.", e);
         } catch (ServiceException e) {
+            log.error("There are no clients in the library.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("There are no clients in the library.", e);
         }

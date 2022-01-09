@@ -227,7 +227,6 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
                 }
             }
         } catch (SQLException e) {
-            //log
             throw new DAOException("DAOException: method findClient() failed.", e);
         } finally {
             close(rs);

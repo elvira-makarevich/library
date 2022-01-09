@@ -55,7 +55,7 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            //log
+
             if (connection != null) {
                 try {
                     connection.rollback();
@@ -101,7 +101,6 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
                 }
             }
         } catch (SQLException e) {
-            //log
             throw new DAOException("SQLException when finding the authors.", e);
         } finally {
             close(rs);
@@ -131,7 +130,6 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
                 }
             }
         } catch (SQLException e) {
-            //log
             throw new DAOException("SQLException while finding the author's image.", e);
         } finally {
             close(rs);

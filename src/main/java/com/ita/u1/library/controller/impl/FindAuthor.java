@@ -7,6 +7,8 @@ import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 public class FindAuthor implements Command {
 
     private final AuthorService authorService = ServiceProvider.getInstance().getAuthorService();
+    private static final Logger log = LogManager.getLogger(FindAuthor.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,12 +36,15 @@ public class FindAuthor implements Command {
             response.getWriter().write(json);
 
         } catch (DAOConnectionPoolException e) {
+            log.error("Database connection error. Command: FindAuthor.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: FindAuthor.", e);
         } catch (DAOException e) {
+            log.error("Database connection error. Command: FindAuthor.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database connection error. Command: FindAuthor.", e);
         } catch (ServiceException e) {
+            log.error("Invalid author data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid author data.", e);
         }
