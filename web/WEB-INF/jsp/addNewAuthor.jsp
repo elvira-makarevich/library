@@ -14,7 +14,7 @@
     <h1>New author</h1>
     <p id="fileError" class="error"></p>
     <div class="img-item">
-        <img id="image" class="img-item"/>
+        <img id="image" class="img-item" />
     </div>
 
     <div class="file">

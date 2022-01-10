@@ -40,6 +40,7 @@ public class ConstantParameter {
             VIOLATION_MESSAGE = "violationMessage",
             NEW_COST_PER_DAY = "newCostPerDay",
             IMAGES = "images",
+            ID = "id",
             PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp",
             PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp",
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",
@@ -107,6 +108,7 @@ public class ConstantParameter {
             UPDATE_ORDER_CLOSE = "UPDATE orders SET total_cost=?, real_return_date=?, status=false, penalty=? WHERE id=?",
             UPDATE_BOOKS_ORDER_WITH_RATING = "UPDATE books_orders SET rating=? where order_id=? and copy_id=?",
             UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET availability=true where id=?",
-            SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?";
+            SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?",
+            SELECT_COPY_BOOK_FROM_ORDER = "SELECT * FROM books_orders WHERE order_id=? and copy_id=? ";
 
 }

@@ -6,6 +6,7 @@ import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Order;
 import com.ita.u1.library.entity.Violation;
 import com.ita.u1.library.exception.ActiveOrderServiceException;
+import com.ita.u1.library.exception.MissingOrderServiceException;
 import com.ita.u1.library.exception.NoActiveOrderServiceException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.validator.ServiceValidator;
@@ -25,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void saveOrder(Order order) {
-        if(orderDAO.hasClientActiveOrder(order.getClientId())){
+        if (orderDAO.hasClientActiveOrder(order.getClientId())) {
             throw new ActiveOrderServiceException("Client has active order.");
         }
         List<CopyBook> copyBooks = orderDAO.findCopyBookInfo(order);
@@ -48,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void indicateBookViolation(Violation violation) {
         serviceValidator.validateViolationMessage(violation);
+        if (!orderDAO.doesTheOrderExist(violation.getOrderId(), violation.getCopyId())) {
+            throw new MissingOrderServiceException("The order does not exist!");
+        }
         orderDAO.indicateBookViolation(violation);
     }
 

@@ -21,4 +21,6 @@ public interface OrderDAO {
     void closeOrder(Order order);
 
     List<CopyBook> findCopyBookInfo(Order order);
+
+    boolean doesTheOrderExist(int orderId, int copyId);
 }

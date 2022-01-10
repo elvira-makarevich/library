@@ -293,6 +293,33 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         return books;
     }
 
+    @Override
+    public boolean doesTheOrderExist(int orderId, int copyId) {
+        Connection connection = take();
+        PreparedStatement psOrder = null;
+        ResultSet rs = null;
+
+        try {
+            psOrder = connection.prepareStatement(SELECT_COPY_BOOK_FROM_ORDER);
+            psOrder.setInt(1, orderId);
+            psOrder.setInt(2, copyId);
+
+            rs = psOrder.executeQuery();
+
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method doesTheOrderExist() failed.", e);
+        } finally {
+            close(rs);
+            close(psOrder);
+            release(connection);
+        }
+        return false;
+    }
+
     private BigDecimal convertToBigDecimal(String money) {
         String cost = money.replace(',', '.');
         BigDecimal bigDecimalCost = new BigDecimal(cost.replace(" Br", ""));

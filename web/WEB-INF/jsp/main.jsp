@@ -46,7 +46,8 @@
         <button class="button">Close order</button>
     </form>
 </div>
-<div class="mostPopularBooks">
-<jsp:include page="/WEB-INF/jsp/mostPopular.jsp"/></div>
+<div class="mostPopularBooksArea">
+<jsp:include page="/WEB-INF/jsp/mostPopular.jsp"/>
+</div>
 </body>
 </html>

@@ -15,12 +15,13 @@
     <h1>New client</h1>
     <p id="fileError" class="error"></p>
     <div class="img-item">
-        <img id="image" class="img-item"/>
+        <img id="image" class="img-item" />
     </div>
 
     <div class="file">
         <label for="file">Photo:</label>
-        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif"/>
+
+        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif" hidden/>
     </div>
 
     <br>

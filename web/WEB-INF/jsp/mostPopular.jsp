@@ -31,6 +31,8 @@
 
     function viewInTableMostPopular(books) {
 
+        let rate = "Rating: ";
+        let readers = "Readers number: ";
         let table = document.createElement('table');
         let thead = document.createElement('thead');
         let tbody = document.createElement('tbody');
@@ -68,11 +70,11 @@
 
         let row2 = document.createElement('tr');
         let row2_data_1 = document.createElement('td');
-        row2_data_1.innerHTML = books[0].numberOfPeopleWhoRead;
+        row2_data_1.innerHTML = readers + books[0].numberOfPeopleWhoRead;
         let row2_data_2 = document.createElement('td');
-        row2_data_2.innerHTML = books[1].numberOfPeopleWhoRead;
+        row2_data_2.innerHTML = readers + books[1].numberOfPeopleWhoRead;
         let row2_data_3 = document.createElement('td');
-        row2_data_3.innerHTML = books[2].numberOfPeopleWhoRead;
+        row2_data_3.innerHTML = readers + books[2].numberOfPeopleWhoRead;
 
         row2.appendChild(row2_data_1);
         row2.appendChild(row2_data_2);
@@ -82,11 +84,11 @@
 
         let row3 = document.createElement('tr');
         let row3_data_1 = document.createElement('td');
-        row3_data_1.innerHTML = books[0].rating;
+        row3_data_1.innerHTML = rate + books[0].rating;
         let row3_data_2 = document.createElement('td');
-        row3_data_2.innerHTML = books[1].rating;
+        row3_data_2.innerHTML = rate + books[1].rating;
         let row3_data_3 = document.createElement('td');
-        row3_data_3.innerHTML = books[2].rating;
+        row3_data_3.innerHTML = rate + books[2].rating;
 
         row3.appendChild(row3_data_1);
         row3.appendChild(row3_data_2);
@@ -98,8 +100,8 @@
     }
 
 </script>
-
-<div id="mostPopularBooks"><h2 style="padding: 0 0 0 15px;">Most popular books</h2>
+<h2 style="padding: 0 0 0 15px;">Most popular books</h2>
+<div id="mostPopularBooks">
 </div>
 </body>
 </html>

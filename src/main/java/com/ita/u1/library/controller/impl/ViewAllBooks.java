@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Book;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +56,7 @@ public class ViewAllBooks implements Command {
             log.error("Database error. Command: ViewAllBooks.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: ViewAllBooks.", e);
-        } catch (ServiceException e) {
+        } catch (MissingBooksServiceException e) {
             log.error("There are no books in the library.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("There are no books in the library.", e);

@@ -5,10 +5,7 @@ import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Address;
 import com.ita.u1.library.entity.Client;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -58,6 +55,14 @@ public class AddNewClient implements Command {
             log.error("Database error. Command: AddNewClient.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: AddNewClient.", e);
+        } catch (DublicateEmailException e) {
+            log.error("The client with the entered email is already registered!", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("The client with the entered email is already registered!", e);
+        } catch (DublicatePassportNumberException e) {
+            log.error("The client with the entered passport number is already registered!", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ControllerException("The client with the entered passport number is already registered!", e);
         } catch (ServiceException e) {
             log.error("Invalid client data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);

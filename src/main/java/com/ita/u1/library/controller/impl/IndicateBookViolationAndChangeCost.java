@@ -5,10 +5,7 @@ import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Violation;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
@@ -57,10 +54,10 @@ public class IndicateBookViolationAndChangeCost implements Command {
             log.error("Database error. Command: IndicateBookViolationAndChangeCost.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: IndicateBookViolationAndChangeCost.", e);
-        } catch (ServiceException e) {
-            log.error("Invalid violation data.", e);
+        } catch (MissingOrderServiceException e) {
+            log.error("The order does not exist!", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid violation data.", e);
+            throw new ControllerException("The order does not exist!", e);
         }
 
     }

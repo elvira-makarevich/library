@@ -21,4 +21,5 @@ public interface BookDAO {
     List<Book> findTheMostPopularBooks();
 
     Optional<Book> findBookCover(int id);
+
 }

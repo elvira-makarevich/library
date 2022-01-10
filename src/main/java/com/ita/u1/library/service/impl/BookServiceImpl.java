@@ -3,6 +3,8 @@ package com.ita.u1.library.service.impl;
 import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
+import com.ita.u1.library.exception.MissingBooksServiceException;
+import com.ita.u1.library.exception.MissingMostPopularBooksServiceException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.validator.ServiceValidator;
@@ -35,9 +37,8 @@ public class BookServiceImpl implements BookService {
         List<Book> books = bookDAO.getAllBooks(startFromBook, amountOfBooks);
         //  books.sort(Comparator.comparing(Book::getNumberOfAvailableCopies).thenComparing(Book::getTitle));
         if (books.isEmpty() || books == null) {
-            throw new ServiceException("There are no books in the library!");
+            throw new MissingBooksServiceException("There are no books in the library!");
         }
-
         return books;
     }
 
@@ -46,7 +47,7 @@ public class BookServiceImpl implements BookService {
 
         int numberOfRecords = bookDAO.getNumberOfBooks();
         if (numberOfRecords == 0) {
-            throw new ServiceException("There are no books in the library!");
+            throw new MissingBooksServiceException("There are no books in the library!");
         }
         return numberOfRecords;
     }
@@ -71,7 +72,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> findTheMostPopularBooks() {
         List<Book> books = bookDAO.findTheMostPopularBooks();
         if (books.isEmpty() || books == null) {
-            return Collections.emptyList();
+            throw new MissingMostPopularBooksServiceException("Nobody borrowed books from the library!");
         }
         return books;
     }

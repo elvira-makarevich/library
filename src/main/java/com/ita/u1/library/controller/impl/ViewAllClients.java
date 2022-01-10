@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Client;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +55,7 @@ public class ViewAllClients implements Command {
             log.error("Database error. Command: ViewAllClients.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: ViewAllClients.", e);
-        } catch (ServiceException e) {
+        } catch (MissingClientsServiceException e) {
             log.error("There are no clients in the library.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("There are no clients in the library.", e);

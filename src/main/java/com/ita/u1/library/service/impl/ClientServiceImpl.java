@@ -2,6 +2,8 @@ package com.ita.u1.library.service.impl;
 
 import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.entity.Client;
+import com.ita.u1.library.exception.DublicateEmailException;
+import com.ita.u1.library.exception.DublicatePassportNumberException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.validator.ServiceValidator;
@@ -21,6 +23,12 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void add(Client client) {
+        if (clientDAO.checkUniquenessPassportNumber(client.getPassportNumber())) {
+            throw new DublicatePassportNumberException("The client with the entered passport number is already registered!");
+        }
+        if (clientDAO.checkUniquenessEmail(client.getEmail())) {
+            throw new DublicateEmailException("The client with the entered email is already registered!");
+        }
         serviceValidator.validateClientRegistrationInfo(client);
         clientDAO.add(client);
     }
