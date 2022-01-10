@@ -322,7 +322,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
     private BigDecimal convertToBigDecimal(String money) {
         String cost = money.replace(',', '.');
-        BigDecimal bigDecimalCost = new BigDecimal(cost.replace(" Br", ""));
+        BigDecimal bigDecimalCost = new BigDecimal(cost.replace(BR, EMPTY));
         return bigDecimalCost;
     }
 

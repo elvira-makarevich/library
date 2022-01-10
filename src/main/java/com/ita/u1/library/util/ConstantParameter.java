@@ -41,6 +41,8 @@ public class ConstantParameter {
             NEW_COST_PER_DAY = "newCostPerDay",
             IMAGES = "images",
             ID = "id",
+            BR = " Br",
+            EMPTY = "",
             PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp",
             PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp",
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",
@@ -85,8 +87,9 @@ public class ConstantParameter {
             SELECT_BOOK_BY_TITLE = "SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true and books.title = ? group by books.id ",
             SELECT_AVAILABLE_BOOKS = "SELECT * FROM books_copies where book_id=? and availability=true",
             UPDATE_COST_PER_DAY = "UPDATE books_copies SET cost_per_day=? WHERE id=?",
-            SELECT_MOST_POPULAR_BOOKS = "SELECT books_copies.book_id, avg(rating) as rating_book, count(copy_id) as numberPeopleRead FROM books_copies inner join books_orders on books_copies.id=books_orders.copy_id  where rating>-1 group by books_copies.book_id order by numberPeopleRead DESC limit 3",
-            SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1";
+            SELECT_MOST_POPULAR_BOOKS = "SELECT books_copies.book_id, avg(rating) as rating_book, count(copy_id) as numberPeopleRead FROM books_copies inner join books_orders on books_copies.id=books_orders.copy_id  where rating>-1 and books_orders.order_id>? group by books_copies.book_id order by numberPeopleRead DESC limit 3",
+            SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1",
+            SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO = "select id from orders where order_date>? limit 1";
 
     public final static String INSERT_CLIENT = "INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             INSERT_CLIENT_IMAGE = "INSERT INTO clients_images (client_id, image) VALUES (?,?)",

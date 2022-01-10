@@ -283,12 +283,27 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
     @Override
     public List<Book> findTheMostPopularBooks() {
         Connection connection = take();
+        PreparedStatement psOrder = null;
         PreparedStatement psBooks = null;
+        ResultSet rsOrder = null;
         ResultSet rsBook = null;
 
         List<Book> books = new ArrayList<>();
         try {
+            LocalDate threeMonthAgo = LocalDate.now().minusMonths(3);
+            int minOrderIdThreeMonthAgo = 0;
+            System.out.println(threeMonthAgo);
+            psOrder = connection.prepareStatement(SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO);
+            psOrder.setDate(1, Date.valueOf(threeMonthAgo));
+            rsOrder = psOrder.executeQuery();
+
+            while (rsOrder.next()) {
+                minOrderIdThreeMonthAgo = rsOrder.getInt(1);
+            }
+
             psBooks = connection.prepareStatement(SELECT_MOST_POPULAR_BOOKS);
+            psBooks.setInt(1, minOrderIdThreeMonthAgo);
+
             rsBook = psBooks.executeQuery();
             while (rsBook.next()) {
                 Book book = new Book(rsBook.getInt(1));
@@ -341,7 +356,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
     private BigDecimal convertToBigDecimal(String money) {
         String cost = money.replace(',', '.');
-        BigDecimal copyCost = new BigDecimal(cost.replace(" Br", ""));
+        BigDecimal copyCost = new BigDecimal(cost.replace(BR, EMPTY));
         return copyCost;
     }
 }
