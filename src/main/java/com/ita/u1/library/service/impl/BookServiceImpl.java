@@ -10,6 +10,7 @@ import com.ita.u1.library.service.validator.ServiceValidator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 public class BookServiceImpl implements BookService {
@@ -64,5 +65,21 @@ public class BookServiceImpl implements BookService {
     public void changeCostPerDay(CopyBook copyBook) {
         serviceValidator.validateCost(copyBook.getCostPerDay());
         bookDAO.changeCostPerDay(copyBook);
+    }
+
+    @Override
+    public List<Book> findTheMostPopularBooks() {
+        List<Book> books = bookDAO.findTheMostPopularBooks();
+        if (books.isEmpty() || books == null) {
+            return Collections.emptyList();
+        }
+        return books;
+    }
+
+    @Override
+    public Book findBookCover(int id) {
+        Optional<Book> optionalBook = bookDAO.findBookCover(id);
+        Book book = optionalBook.orElse(new Book());
+        return book;
     }
 }

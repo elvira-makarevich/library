@@ -38,6 +38,8 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_BOOK_VIOLATION_PAGE, new GoToBookViolationPage());
         commands.put(CommandName.INDICATE_BOOK_VIOLATION_AND_CHANGE_COST, new IndicateBookViolationAndChangeCost());
         commands.put(CommandName.CLOSE_ORDER, new CloseOrder());
+        commands.put(CommandName.FIND_THE_MOST_POPULAR_BOOKS, new FindTheMostPopularBooks());
+        commands.put(CommandName.FIND_BOOK_COVER, new FindBookCover());
 
     }
 

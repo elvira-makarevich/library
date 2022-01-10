@@ -78,10 +78,14 @@ public class ConstantParameter {
             SELECT_LIMIT_BOOKS = "SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ",
             SELECT_BOOKS_GENRES = "SELECT * FROM genres where book_id=?",
             AVAILABLE = "available",
+            RATING_BOOK = "rating_book",
+            NUMBER_OF_PEOPLE_WHO_READ = "numberPeopleRead",
             COUNT_NUMBER_OF_AVAILABLE_BOOKS = "SELECT Count(id) FROM books_copies where availability=true group by book_id",
-            SELECT_BOOK_BY_TITLE = "SELECT * FROM books WHERE title = ?",
+            SELECT_BOOK_BY_TITLE = "SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true and books.title = ? group by books.id ",
             SELECT_AVAILABLE_BOOKS = "SELECT * FROM books_copies where book_id=? and availability=true",
-            UPDATE_COST_PER_DAY = "UPDATE books_copies SET cost_per_day=? WHERE id=?";
+            UPDATE_COST_PER_DAY = "UPDATE books_copies SET cost_per_day=? WHERE id=?",
+            SELECT_MOST_POPULAR_BOOKS = "SELECT books_copies.book_id, avg(rating) as rating_book, count(copy_id) as numberPeopleRead FROM books_copies inner join books_orders on books_copies.id=books_orders.copy_id  where rating>-1 group by books_copies.book_id order by numberPeopleRead DESC limit 3",
+            SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1";
 
     public final static String INSERT_CLIENT = "INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             INSERT_CLIENT_IMAGE = "INSERT INTO clients_images (client_id, image) VALUES (?,?)",

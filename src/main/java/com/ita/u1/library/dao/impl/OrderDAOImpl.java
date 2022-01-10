@@ -6,7 +6,6 @@ import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.DAOException;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -134,8 +133,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
             while (rsOrder.next()) {
                 order.setId(rsOrder.getInt(1));
-                String preliminaryCost = rsOrder.getString(3).replace(',', '.');
-                order.setPreliminaryCost(new BigDecimal(preliminaryCost.replace(" Br", "")));
+                order.setPreliminaryCost(convertToBigDecimal(rsOrder.getString(3)));
                 order.setOrderDate(rsOrder.getDate(5).toLocalDate());
                 order.setPossibleReturnDate(rsOrder.getDate(6).toLocalDate());
             }
@@ -157,8 +155,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 psBooksCopies.setInt(1, copy.getId());
                 rsBooksCopies = psBooksCopies.executeQuery();
                 while (rsBooksCopies.next()) {
-                    String cost = rsBooksCopies.getString(1).replace(',', '.');
-                    copy.setCostPerDay(new BigDecimal(cost.replace(" Br", "")));
+                    copy.setCostPerDay(convertToBigDecimal(rsBooksCopies.getString(1)));
                 }
 
                 booksOrder.add(copy);
@@ -194,7 +191,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             psBooksOrder.setInt(2, violation.getOrderId());
             psBooksOrder.setInt(3, violation.getCopyId());
             psBooksOrder.executeUpdate();
-
 
             for (int i = 0; i < violation.getImages().size(); i++) {
                 psViolationImage.setInt(1, violation.getOrderId());
@@ -282,8 +278,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                     CopyBook copy = new CopyBook();
                     copy.setId(rsBooksCopies.getInt(1));
                     copy.setBookId(rsBooksCopies.getInt(2));
-                    String cost = rsBooksCopies.getString(3).replace(',', '.');
-                    copy.setCostPerDay(new BigDecimal(cost.replace(" Br", "")));
+                    copy.setCostPerDay(convertToBigDecimal(rsBooksCopies.getString(3)));
                     copy.setAvailability(rsBooksCopies.getBoolean(4));
                     books.add(copy);
                 }
@@ -297,4 +292,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         }
         return books;
     }
+
+    private BigDecimal convertToBigDecimal(String money) {
+        String cost = money.replace(',', '.');
+        BigDecimal bigDecimalCost = new BigDecimal(cost.replace(" Br", ""));
+        return bigDecimalCost;
+    }
+
 }

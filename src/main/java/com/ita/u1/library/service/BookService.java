@@ -17,4 +17,8 @@ public interface BookService {
 
     void changeCostPerDay(CopyBook copyBook);
 
+    List<Book> findTheMostPopularBooks();
+
+    Book findBookCover(int id);
+
 }

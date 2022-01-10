@@ -23,6 +23,7 @@ public class Book implements Serializable {
     private int numberOfPages;
     private double rating;
     private CopyBook[] copies;
+    private int numberOfPeopleWhoRead;
 
     public Book() {
     }
@@ -44,6 +45,10 @@ public class Book implements Serializable {
         this.id = id;
         this.title = title;
         this.numberOfCopies = copiesNumber;
+    }
+
+    public Book(int id) {
+        this.id = id;
     }
 
     public int getId() {
@@ -158,6 +163,14 @@ public class Book implements Serializable {
         this.copies = copies;
     }
 
+    public int getNumberOfPeopleWhoRead() {
+        return numberOfPeopleWhoRead;
+    }
+
+    public void setNumberOfPeopleWhoRead(int numberOfPeopleWhoRead) {
+        this.numberOfPeopleWhoRead = numberOfPeopleWhoRead;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -171,6 +184,7 @@ public class Book implements Serializable {
         if (publishingYear != book.publishingYear) return false;
         if (numberOfPages != book.numberOfPages) return false;
         if (Double.compare(book.rating, rating) != 0) return false;
+        if (numberOfPeopleWhoRead != book.numberOfPeopleWhoRead) return false;
         if (title != null ? !title.equals(book.title) : book.title != null) return false;
         if (originalTitle != null ? !originalTitle.equals(book.originalTitle) : book.originalTitle != null)
             return false;
@@ -203,6 +217,7 @@ public class Book implements Serializable {
         temp = Double.doubleToLongBits(rating);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + Arrays.hashCode(copies);
+        result = 31 * result + numberOfPeopleWhoRead;
         return result;
     }
 
@@ -223,6 +238,7 @@ public class Book implements Serializable {
                 ", numberOfPages=" + numberOfPages +
                 ", rating=" + rating +
                 ", copies=" + Arrays.toString(copies) +
+                ", numberOfPeopleWhoRead=" + numberOfPeopleWhoRead +
                 '}';
     }
 }

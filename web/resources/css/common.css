@@ -3,7 +3,8 @@ body {
     background: #f9f9f9;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
-.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea , .bookViolation{
+
+.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea, .bookViolation {
     width: 700px;
     background: #fff;
     padding: 15px 40px 40px;
@@ -12,7 +13,7 @@ body {
     border-radius: 5px;
 }
 
-.allBooksOrClients{
+.allBooksOrClients {
     width: 77%;
     background: #fff;
     padding: 15px 40px 40px;
@@ -60,18 +61,22 @@ body {
 }
 
 .button:hover {
-
     border-color: lightslategray;
     background-color: #b61e3c;
     color: #ffffff;
 }
 
-.logoDiv{
+.logoDiv {
     background: #dde2e8;
     width: 100%;
     height: 100px;
 }
-.logoImage{
+
+.logoImage {
     padding: 5px;
     height: 90px;
+}
+
+.mostPopularBooks {
+    padding: 5px 40px 40px 77px;
 }

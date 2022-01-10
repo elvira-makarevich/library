@@ -4,6 +4,7 @@ import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookDAO {
 
@@ -16,4 +17,8 @@ public interface BookDAO {
     List<Book> findBook(String title);
 
     void changeCostPerDay(CopyBook copyBook);
+
+    List<Book> findTheMostPopularBooks();
+
+    Optional<Book> findBookCover(int id);
 }

@@ -9,6 +9,7 @@
 
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
+
 <div class="button_in_line">
     <form method="post" action="Controller">
         <input type="hidden" name="command" value="go_to_add_new_book_page"/>
@@ -45,7 +46,7 @@
         <button class="button">Close order</button>
     </form>
 </div>
-<jsp:include page="/WEB-INF/jsp/allBooks.jsp"/>
-
+<div class="mostPopularBooks">
+<jsp:include page="/WEB-INF/jsp/mostPopular.jsp"/></div>
 </body>
 </html>

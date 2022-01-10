@@ -24,7 +24,6 @@ public class AuthorServiceImpl implements AuthorService {
     public void addAuthor(Author author) {
         serviceValidator.validateAuthorRegistrationInfo(author);
         authorDAO.addAuthor(author);
-
     }
 
     @Override

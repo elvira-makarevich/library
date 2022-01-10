@@ -3,13 +3,11 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
+import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
 import com.ita.u1.library.exception.DAOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -17,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
@@ -197,7 +196,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             close(ps);
             release(connection);
         }
-
         return numberOfRecords;
     }
 
@@ -224,7 +222,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                     book.setId(rsBook.getInt(1));
                     book.setTitle(rsBook.getString(2));
 
-                    int numberOfCopies = rsBook.getInt(5);
+                    int numberOfCopies = rsBook.getInt(AVAILABLE);
                     CopyBook[] copies = new CopyBook[numberOfCopies];
                     psCopyBook.setInt(1, book.getId());
 
@@ -233,8 +231,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                         for (int i = 0; i < copies.length; i++) {
                             CopyBook copy = new CopyBook();
                             copy.setId(rsCopyBook.getInt(1));
-                            String cost = rsCopyBook.getString(3).replace(',', '.');
-                            copy.setCostPerDay(new BigDecimal(cost.replace(" Br", "")));
+                            copy.setCostPerDay(convertToBigDecimal(rsCopyBook.getString(3)));
                             copies[i] = copy;
                         }
                     }
@@ -281,6 +278,71 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             close(psBooksCopies);
             release(connection);
         }
+    }
+
+    @Override
+    public List<Book> findTheMostPopularBooks() {
+        Connection connection = take();
+        PreparedStatement psBooks = null;
+        ResultSet rsBook = null;
+
+        List<Book> books = new ArrayList<>();
+        try {
+            psBooks = connection.prepareStatement(SELECT_MOST_POPULAR_BOOKS);
+            rsBook = psBooks.executeQuery();
+            while (rsBook.next()) {
+                Book book = new Book(rsBook.getInt(1));
+                book.setRating(cutOffNumbers(rsBook.getDouble(RATING_BOOK)));
+                book.setNumberOfPeopleWhoRead(rsBook.getInt(NUMBER_OF_PEOPLE_WHO_READ));
+                books.add(book);
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method findTheMostPopularBooks() failed.", e);
+        } finally {
+            close(rsBook);
+            close(psBooks);
+            release(connection);
+        }
+        return books;
+    }
+
+    @Override
+    public Optional<Book> findBookCover(int id) {
+        Connection connection = take();
+        PreparedStatement psBookCover = null;
+        ResultSet rsBookCover = null;
+        Optional<Book> optionalBook;
+        Book book = new Book();
+        try {
+            psBookCover = connection.prepareStatement(SELECT_BOOK_COVER);
+            psBookCover.setInt(1, id);
+            rsBookCover = psBookCover.executeQuery();
+            while (rsBookCover.next()) {
+                book.setCovers(new ArrayList<>(Collections.singleton(rsBookCover.getBytes(1))));
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method findBookCover() failed.", e);
+        } finally {
+            close(rsBookCover);
+            close(psBookCover);
+            release(connection);
+        }
+        optionalBook = Optional.of(book);
+        return optionalBook;
+    }
+
+    private double cutOffNumbers(double rating) {
+        double scale = Math.pow(10, 1);
+        double result = Math.ceil(rating * scale) / scale;
+        return result;
+    }
+
+    private BigDecimal convertToBigDecimal(String money) {
+        String cost = money.replace(',', '.');
+        BigDecimal copyCost = new BigDecimal(cost.replace(" Br", ""));
+        return copyCost;
     }
 }
 
