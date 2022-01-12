@@ -172,6 +172,21 @@ function checkDateOfBirth() {
         return false;
     }
 
+    if (year == todayYear && (month > todayMonth && day == todayDay)) {
+        error.textContent = errorMessage;
+        return false;
+    }
+
+    if (year == todayYear && (month > todayMonth && day < todayDay)) {
+        error.textContent = errorMessage;
+        return false;
+    }
+
+    if (year == todayYear && (month > todayMonth && day > todayDay)) {
+        error.textContent = errorMessage;
+        return false;
+    }
+
     if (isNaN(parseInt(day)) ||
         isNaN(parseInt(month)) ||
         isNaN(parseInt(year))) {

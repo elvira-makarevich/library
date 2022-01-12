@@ -40,7 +40,8 @@ public class CommandProvider {
         commands.put(CommandName.CLOSE_ORDER, new CloseOrder());
         commands.put(CommandName.FIND_THE_MOST_POPULAR_BOOKS, new FindTheMostPopularBooks());
         commands.put(CommandName.FIND_BOOK_COVER, new FindBookCover());
-
+        commands.put(CommandName.GO_TO_PROFITABILITY_PAGE, new GoToProfitabilityPage());
+        commands.put(CommandName.CHECK_PROFITABILITY, new CheckProfitability());
     }
 
     public Command findCommand(String name) {

@@ -1,9 +1,6 @@
 package com.ita.u1.library.service;
 
-import com.ita.u1.library.entity.Client;
-import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.entity.Order;
-import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.entity.*;
 
 
 public interface OrderService {
@@ -17,4 +14,6 @@ public interface OrderService {
     void indicateBookViolation(Violation violation);
 
     void closeOrder(Order order);
+
+    Profitability checkProfitability (Profitability profitabilityDates);
 }

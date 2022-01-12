@@ -1,9 +1,6 @@
 package com.ita.u1.library.dao;
 
-import com.ita.u1.library.entity.Client;
-import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.entity.Order;
-import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.entity.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +20,6 @@ public interface OrderDAO {
     List<CopyBook> findCopyBookInfo(Order order);
 
     boolean doesTheOrderExist(int orderId, int copyId);
+
+    Profitability checkProfitability (Profitability profitabilityDates);
 }

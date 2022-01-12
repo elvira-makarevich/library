@@ -320,6 +320,38 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         return false;
     }
 
+    @Override
+    public Profitability checkProfitability(Profitability profitabilityDates) {
+        Connection connection = take();
+        PreparedStatement psOrder = null;
+        ResultSet rs = null;
+        Profitability profitability = new Profitability();
+
+        try {
+            psOrder = connection.prepareStatement(SELECT_SUM_TOTAL_COST_FROM_TO);
+            psOrder.setDate(1, Date.valueOf(profitabilityDates.getFrom()));
+            psOrder.setDate(2, Date.valueOf(profitabilityDates.getTo()));
+            rs = psOrder.executeQuery();
+
+            while (rs.next()) {
+                if (rs.getString(SUM) == null) {
+                    profitability.setProfit(new BigDecimal(0));
+                } else {
+                    profitability.setProfit(convertToBigDecimal(rs.getString(SUM)));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method checkProfitability() failed.", e);
+        } finally {
+            close(rs);
+            close(psOrder);
+            release(connection);
+        }
+
+        return profitability;
+    }
+
     private BigDecimal convertToBigDecimal(String money) {
         String cost = money.replace(',', '.');
         BigDecimal bigDecimalCost = new BigDecimal(cost.replace(BR, EMPTY));

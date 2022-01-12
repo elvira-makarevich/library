@@ -1,16 +1,14 @@
 package com.ita.u1.library.service.impl;
 
 import com.ita.u1.library.dao.OrderDAO;
-import com.ita.u1.library.entity.Client;
-import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.entity.Order;
-import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.ActiveOrderServiceException;
 import com.ita.u1.library.exception.MissingOrderServiceException;
 import com.ita.u1.library.exception.NoActiveOrderServiceException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.validator.ServiceValidator;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,5 +59,13 @@ public class OrderServiceImpl implements OrderService {
         Order orderInfoFromDB = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
         serviceValidator.validateCloseOrder(order, orderInfoFromDB);
         orderDAO.closeOrder(order);
+    }
+
+    @Override
+    public Profitability checkProfitability(Profitability profitabilityDates) {
+        //валидация дат
+        Profitability profitability = orderDAO.checkProfitability(profitabilityDates);
+
+        return profitability;
     }
 }

@@ -20,8 +20,7 @@
 
     <div class="file">
         <label for="file">Photo:</label>
-
-        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif" hidden/>
+        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif"/>
     </div>
 
     <br>

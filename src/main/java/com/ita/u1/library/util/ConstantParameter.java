@@ -43,6 +43,7 @@ public class ConstantParameter {
             ID = "id",
             BR = " Br",
             EMPTY = "",
+            SUM = "sum",
             PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp",
             PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp",
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",
@@ -52,7 +53,8 @@ public class ConstantParameter {
             PATH_BOOK_VIOLATION_PAGE = "/WEB-INF/jsp/bookViolation.jsp",
             PATH_CLOSE_ORDER_PAGE = "/WEB-INF/jsp/closeOrder.jsp",
             PATH_MAIN_PAGE = "/WEB-INF/jsp/main.jsp",
-            PATH_ORDER_PAGE = "/WEB-INF/jsp/formOrder.jsp";
+            PATH_ORDER_PAGE = "/WEB-INF/jsp/formOrder.jsp",
+            PATH_PROFITABILITY_PAGE = "/WEB-INF/jsp/profitability.jsp";
 
     public static final String PATTERN_FIRST_NAME_LAST_NAME = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)",
             PATTERN_PATRONYMIC = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)|(^\\s*$)",
@@ -112,6 +114,7 @@ public class ConstantParameter {
             UPDATE_BOOKS_ORDER_WITH_RATING = "UPDATE books_orders SET rating=? where order_id=? and copy_id=?",
             UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET availability=true where id=?",
             SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?",
-            SELECT_COPY_BOOK_FROM_ORDER = "SELECT * FROM books_orders WHERE order_id=? and copy_id=? ";
+            SELECT_COPY_BOOK_FROM_ORDER = "SELECT * FROM books_orders WHERE order_id=? and copy_id=? ",
+            SELECT_SUM_TOTAL_COST_FROM_TO = "select sum(total_cost) from orders where real_return_date >? and real_return_date<?";
 
 }
