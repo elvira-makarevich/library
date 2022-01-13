@@ -1,7 +1,7 @@
 window.onload = () => init();
 
 function init() {
-    setMaxDateOfBirth();
+
     document.getElementById("file").addEventListener('change', loadImage);
     document.getElementById("file").addEventListener('submit', checkImage);
     document.getElementById("firstName").addEventListener('input', checkFirstName);
@@ -31,47 +31,39 @@ function init() {
         checkStreet();
         checkHouseNumber();
 
-        if (checkImage() && checkFirstName() && checkLastName() && checkEmail() && checkDateOfBirth() && checkPostcode() && checkCountry() && checkLocality() && checkStreet() && checkHouseNumber() && checkPatronymic() && checkBuilding() && checkApartmentNumber()) {
+        if (checkImage() && checkFirstName() && checkLastName() && checkEmail() && checkDateOfBirth() && checkPostcode() &&
+            checkCountry() && checkLocality() && checkStreet() && checkHouseNumber() && checkPatronymic() && checkBuilding() &&
+            checkApartmentNumber()) {
             submitValidForm();
         }
     })
 }
 
-function submitValidForm() {
+async function submitValidForm() {
 
     let formData = new FormData(document.getElementById('registerClientForm'));
-    let xhr = new XMLHttpRequest();
 
     let pageContext = document.getElementById('pageContext').value;
     let url = pageContext + "/Controller?command=add_new_client";
     let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-    xhr.onloadend = function () {
-        if (xhr.status == 200) {
-            alert("The reader was saved.");
-            window.location = urlRedirect;
-        } else if (xhr.status == 500) {
-            console.log("Error" + this.status);
-            alert("Check the correctness of the entered data.");
-        } else {
-            console.log("Error" + this.status);
-            alert("Connection problems. Try later.");
-        }
-    };
-    xhr.open("POST", url, true);
-    xhr.send(formData);
 
-}
+    let response = await fetch(url, {
+        method: 'POST',
+        body: formData
+    });
 
-
-function setMaxDateOfBirth() {
-
-    let dateOfBirth = document.getElementById('dateOfBirth');
-    let d = new Date();
-    let day = d.getDate();
-    let month = d.getMonth() + 1;
-    let year = d.getFullYear();
-    let today = year + "-" + month + "-" + day;
-    dateOfBirth.setAttribute('max', today);
+    if (response.ok) {
+        alert("The reader was saved.");
+        window.location = urlRedirect;
+    } else if (response.status === 400) {
+        alert("Invalid data.");
+        console.log("Response.status: " + response.status);
+    } else if (response.status === 500) {
+        alert("Database connection error.");
+        console.log("Response.status: " + response.status);
+    } else {
+        console.log("Response.status: " + response.status);
+    }
 }
 
 function checkPatronymic() {
@@ -120,6 +112,43 @@ async function checkUniquenessEmail() {
     let pageContext = document.getElementById('pageContext').value;
     let param = 'email=' + email;
     let url = pageContext + "/Controller?command=check_uniqueness_email&" + param;
+
+    let response = await fetch(url);
+
+    if (response.ok) {
+        let json = await response.json();
+        return json;
+    } else {
+        console.log("Response.status: " + response.status);
+    }
+
+}
+
+async function checkPassportNumber() {
+    let passportNumber = document.getElementById("passportNumber").value;
+    let error = document.querySelector('#passportNumber + span.error');
+    error.textContent = "";
+
+    if (passportNumber == '') {
+        return true;
+    } else {
+        let regex = /([A-Z]{2}[0-9]{7}$)|(^\s*$)/;
+        if (regex.test(passportNumber) === false) {
+            error.textContent = "Please enter the correct passport number.";
+            return false;
+        } else if (await checkUniquenessPassportNumber() === true) {
+            error.textContent = "This passport number already exists.";
+            return false;
+        }
+    }
+    return true;
+}
+
+async function checkUniquenessPassportNumber() {
+    let passport = document.getElementById("passportNumber").value;
+    let pageContext = document.getElementById('pageContext').value;
+    let param = 'passportNumber=' + passport;
+    let url = pageContext + "/Controller?command=check_uniqueness_passport_number&" + param;
 
     let response = await fetch(url);
 
@@ -203,44 +232,6 @@ function checkDateOfBirth() {
         return false;
     }
     return true;
-}
-
-async function checkPassportNumber() {
-    let passportNumber = document.getElementById("passportNumber").value;
-    let error = document.querySelector('#passportNumber + span.error');
-    error.textContent = "";
-
-    if (passportNumber == '') {
-        return true;
-    } else {
-        let regex = /([A-Z]{2}[0-9]{7}$)|(^\s*$)/;
-        if (regex.test(passportNumber) === false) {
-            error.textContent = "Please enter the correct passport number.";
-            return false;
-        } else if (await checkUniquenessPassportNumber() == true) {
-            error.textContent = "This passport number already exists.";
-            return false;
-        }
-    }
-    return true;
-}
-
-async function checkUniquenessPassportNumber() {
-    let passport = document.getElementById("passportNumber").value;
-    let pageContext = document.getElementById('pageContext').value;
-    let param = 'passportNumber=' + passport;
-    let url = pageContext + "/Controller?command=check_uniqueness_passport_number&" + param;
-
-    let response = await fetch(url);
-
-    if (response.ok) {
-        let json = await response.json();
-        return json;
-
-    } else {
-        console.log("Response.status: " + response.status);
-    }
-
 }
 
 function checkPostcode() {

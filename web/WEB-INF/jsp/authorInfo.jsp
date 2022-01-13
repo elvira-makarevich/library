@@ -16,6 +16,6 @@
 
 <input id="hiddenId" type="hidden" name="id" value="1"/>
 <img id="imageAuthor" width="150px" height="180px">
-
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 </body>
 </html>

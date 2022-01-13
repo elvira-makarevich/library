@@ -3,7 +3,6 @@ window.onload = () => init();
 function init() {
     let page = document.getElementById('currentPage').value;
     getList(page);
-   // findPBooks();
 
 }
 

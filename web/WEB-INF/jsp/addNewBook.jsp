@@ -50,7 +50,7 @@
     <br>
     <div class="genres">
         <div><span class="errorGenre" aria-live="polite"></span></div>
-        <br><label>Genre(s):</label><br>
+        <br><label>Genre(s):</label><br><br>
         <input type="checkbox" class="genre" name="genres" value="Fiction">Fiction<br>
         <input type="checkbox" class="genre" name="genres" value="Non_fiction">Non-fiction<br>
         <input type="checkbox" class="genre" name="genres" value="Business">Business<br>
@@ -113,5 +113,6 @@
        value="${pageContext.request.contextPath}/Controller?command=go_to_add_new_author_page" style="display: none;">
 
 <input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 </body>
 </html>

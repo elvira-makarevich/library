@@ -4,8 +4,21 @@ body {
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
+footer {
+    background: #7e7e7e;
+    color: #dbdbdb;
+    font-size: 15px;
+}
+
+.container {
+    margin:70px 35px 35px 35px;
+    padding: 5px 0px 5px 3px;
+    color: #fcfafa;
+    text-align: center;
+}
+
 .register, .saveOrder, .closeOrder, .findClientArea, .findBookArea, .bookViolation, .profitability, .edit {
-    width: 700px;
+    width: 60%;
     background: #fff;
     padding: 15px 40px 40px;
     border: 3px solid #ccc;
@@ -52,12 +65,12 @@ body {
     background-color: white;
     color: lightslategray;
     text-align: center;
-    font-size: 16px;
+    font-size: 17px;
     cursor: pointer;
     border-radius: 35px;
     border-right: none;
     margin: 6px;
-    padding: 6px 12px 6px 12px;
+    padding: 10px 16px 10px 16px;
 }
 
 .button:hover {

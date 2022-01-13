@@ -30,12 +30,15 @@ async function submitValidFormAndCloseWindow() {
     });
 
     if (response.ok) {
-        alert("The information was saved.");
+        alert("The author was saved.");
         close();
-    } else if (response.status==500) {
-        console.log("Error" + this.status);
-        alert("Database error. Try later.");
-    }else if (response.status==400) {
-        alert("Invalid author data.");
+    } else if (response.status === 400) {
+        alert("Invalid data.");
+        console.log("Response.status: " + response.status);
+    } else if (response.status === 500) {
+        alert("Database connection error.");
+        console.log("Response.status: " + response.status);
+    } else {
+        console.log("Response.status: " + response.status);
     }
 }

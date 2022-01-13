@@ -42,7 +42,6 @@ async function hasClientActiveOrder(id) {
     if (response.ok) {
         let json = await response.json();
         return json;
-
     } else {
         console.log("Response.status: " + response.status);
     }

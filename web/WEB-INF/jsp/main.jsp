@@ -56,5 +56,7 @@
 <div class="mostPopularBooksArea">
 <jsp:include page="/WEB-INF/jsp/mostPopular.jsp"/>
 </div>
+
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 </body>
 </html>

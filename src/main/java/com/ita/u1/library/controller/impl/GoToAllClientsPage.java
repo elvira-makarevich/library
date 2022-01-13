@@ -23,7 +23,7 @@ public class GoToAllClientsPage implements Command {
     private static final Logger log = LogManager.getLogger(GoToAllClientsPage.class);
 
     public static final int DEFAULT_PAGE_NUMBER = 1;
-    public static final int RECORDS_PER_PAGE = 10;
+    public static final int RECORDS_PER_PAGE = 20;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

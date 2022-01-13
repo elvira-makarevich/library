@@ -24,7 +24,7 @@ public class ViewAllBooks implements Command {
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
     private static final Logger log = LogManager.getLogger(ViewAllBooks.class);
 
-    public static final int RECORDS_PER_PAGE = 10;
+    public static final int RECORDS_PER_PAGE = 20;
     public static final int DEFAULT_PAGE_NUMBER = 1;
 
     @Override

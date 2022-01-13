@@ -23,7 +23,6 @@ function init() {
     let formSaveBook = document.getElementById('saveBook');
     formSaveBook.addEventListener('submit', function (event) {
         event.preventDefault();
-
         checkTitle();
         checkPrice();
         checkCostPerDay();
@@ -41,15 +40,6 @@ function init() {
 
 }
 
-function defineDate() {
-    let inputRegistrationDate = document.getElementById("registrationDate");
-    let today = new Date();
-    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    let registrationDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
-    inputRegistrationDate.value = registrationDate;
-
-}
-
 async function submitValidForm() {
 
     let formData = new FormData(document.getElementById('saveBook'));
@@ -63,7 +53,7 @@ async function submitValidForm() {
     });
 
     if (response.ok) {
-        alert("Book was saved.");
+        alert("The book was saved.");
         window.location = urlRedirect;
     } else {
         console.log("Error" + this.status);
@@ -105,8 +95,13 @@ async function findAuthorRequest() {
             viewInTableAuthors(json);
         }
 
+    } else if (response.status === 400) {
+        alert("Invalid data.");
+        console.log("Response.status: " + response.status);
+    } else if (response.status === 500) {
+        alert("Database connection error.");
+        console.log("Response.status: " + response.status);
     } else {
-        alert("Error while finding author.");
         console.log("Response.status: " + response.status);
     }
 }
@@ -413,4 +408,13 @@ function checkAuthors() {
         return false;
     }
     return true;
+}
+
+function defineDate() {
+    let inputRegistrationDate = document.getElementById("registrationDate");
+    let today = new Date();
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let registrationDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
+    inputRegistrationDate.value = registrationDate;
+
 }

@@ -68,5 +68,7 @@
        value="${pageContext.request.contextPath}/Controller?command=go_to_add_new_client_page" style="display: none;">
 
 <input id="pageContext" type="text" name=""
-       value="${pageContext.request.contextPath}" style="display: none;"></body>
+       value="${pageContext.request.contextPath}" style="display: none;">
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+</body>
 </html>
