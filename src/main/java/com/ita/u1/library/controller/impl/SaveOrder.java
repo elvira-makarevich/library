@@ -49,7 +49,7 @@ public class SaveOrder implements Command {
             log.error("Invalid order data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid order data.", e);
-        }catch (ActiveOrderServiceException e) {
+        } catch (ActiveOrderServiceException e) {
             log.error("Client has active order.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Client has active order.", e);

@@ -315,25 +315,38 @@ function viewBooksInfo(order) {
             event.preventDefault();
             let pageContext = document.getElementById('pageContext').value;
             let command = "/Controller?command=go_to_book_violation_page&";
-            let params = 'orderId=' + orderId + '&copyId=' + copyId + '&title=' + title + '&costPerDay=' + costPerDay;
+            let params = 'orderId=' + orderId + '&copyId=' + copyId + '&title=' + title;
             let url = pageContext + command + params;
             window.open(url);
         });
         row_data_4.appendChild(buttonAdd);
 
         let row_data_5 = document.createElement('td');
+        let buttonChange = document.createElement('button');
+        buttonChange.innerHTML = "Change cost";
+        buttonChange.addEventListener('click', function (event) {
+            event.preventDefault();
+            let pageContext = document.getElementById('pageContext').value;
+            let command = "/Controller?command=go_to_copy_book_edit_page&";
+            let params = 'copyId=' + copyId + '&title=' + title + '&costPerDay=' + costPerDay;
+            let url = pageContext + command + params;
+            window.open(url);
+        });
+        row_data_5.appendChild(buttonChange);
 
+        let row_data_6 = document.createElement('td');
         let inputHidden = document.createElement("input");
         inputHidden.type = "hidden";
         inputHidden.value = copyId;
         inputHidden.name = "copyId";
-        row_data_5.appendChild(inputHidden);
+        row_data_6.appendChild(inputHidden);
 
         row.appendChild(row_data_1);
         row.appendChild(row_data_2);
         row.appendChild(row_data_3);
         row.appendChild(row_data_4);
         row.appendChild(row_data_5);
+        row.appendChild(row_data_6);
         tbody.appendChild(row);
     }
 }

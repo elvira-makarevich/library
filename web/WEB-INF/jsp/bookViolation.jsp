@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Indicate violation</title>
-
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <script src="resources/js/bookViolation.js"></script>
 
@@ -10,7 +9,7 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <form id="bookViolation" class="bookViolation" action="Controller" method="post">
-    <input type="hidden" name="command" value="indicate_book_violation_and_change_cost"/>
+    <input type="hidden" name="command" value="indicate_book_violation"/>
     <h1>Book violation</h1>
     <input type="hidden" name="copyId" value="${copyId}"/>
     <input type="hidden" name="orderId" value="${orderId}"/>
@@ -18,14 +17,7 @@
         <input type="text" value="${title}" readonly>
     </div>
     <br> <br>
-    <div><label>Old cost per day, Br: </label>
-        <input type="text" value="${costPerDay}" readonly>
-    </div>
-    <br> <br>
-    <div><label>New cost per day, Br: </label>
-        <input type="text" value="" name="newCostPerDay">
-    </div>
-    <br> <br>
+
     <p id="messageError" class="error"></p>
     <div><label>Violation: </label><br><br>
         <textarea id="violationMessage" rows="10" cols="60" name="violationMessage"></textarea>

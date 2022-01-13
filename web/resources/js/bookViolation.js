@@ -19,7 +19,7 @@ async function submitValidFormAndCloseWindow() {
 
     let formData = new FormData(document.getElementById('bookViolation'));
     let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=indicate_book_violation_and_change_cost";
+    let url = pageContext + "/Controller?command=indicate_book_violation";
 
     let response = await fetch(url, {
         method: 'POST',

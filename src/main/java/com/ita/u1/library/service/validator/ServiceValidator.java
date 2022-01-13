@@ -114,7 +114,7 @@ public class ServiceValidator {
         if (numberOfBooks > 5) {
             throw new ServiceException("Invalid order. The maximum number of books in an order is 5.");
         }
-//достать стоимость из бд
+
         BigDecimal preCost = calculatePreliminaryCost(order, copyBooks, numberOfBooks);
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         compareCost(preCost, order.getPreliminaryCost());
@@ -143,6 +143,12 @@ public class ServiceValidator {
             throw new ServiceException("Invalid message.");
         }
         log.info("Violation message validated.");
+    }
+
+    public void validateProfitabilityDates(Profitability profitabilityDates){
+        if(profitabilityDates.getFrom().isAfter(profitabilityDates.getTo())){
+            throw new ServiceException("Invalid dates to check profitability.");
+        }
     }
 
     private void checkTheDuplicationOfBooks(List<CopyBook> copyBooks) {
@@ -196,11 +202,11 @@ public class ServiceValidator {
     }
 
     private void checkDates(Order order, Order orderInfoFromDB) {
-        if (order.getOrderDate().compareTo(orderInfoFromDB.getOrderDate()) != 0) {
+        if (!order.getOrderDate().isEqual(orderInfoFromDB.getOrderDate())) {
             throw new ServiceException("Invalid data while closing order.");
         }
 
-        if (order.getPossibleReturnDate().compareTo(orderInfoFromDB.getPossibleReturnDate()) != 0) {
+        if (!order.getPossibleReturnDate().isEqual(orderInfoFromDB.getPossibleReturnDate())) {
             throw new ServiceException("Invalid data while closing order.");
         }
 

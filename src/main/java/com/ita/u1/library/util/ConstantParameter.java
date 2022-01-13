@@ -54,7 +54,8 @@ public class ConstantParameter {
             PATH_CLOSE_ORDER_PAGE = "/WEB-INF/jsp/closeOrder.jsp",
             PATH_MAIN_PAGE = "/WEB-INF/jsp/main.jsp",
             PATH_ORDER_PAGE = "/WEB-INF/jsp/formOrder.jsp",
-            PATH_PROFITABILITY_PAGE = "/WEB-INF/jsp/profitability.jsp";
+            PATH_PROFITABILITY_PAGE = "/WEB-INF/jsp/profitability.jsp",
+            PATH_COPY_BOOK_EDIT_PAGE = "/WEB-INF/jsp/editCopyBook.jsp";
 
     public static final String PATTERN_FIRST_NAME_LAST_NAME = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)",
             PATTERN_PATRONYMIC = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)|(^\\s*$)",

@@ -63,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Profitability checkProfitability(Profitability profitabilityDates) {
-        //валидация дат
+        serviceValidator.validateProfitabilityDates(profitabilityDates);
         Profitability profitability = orderDAO.checkProfitability(profitabilityDates);
 
         return profitability;

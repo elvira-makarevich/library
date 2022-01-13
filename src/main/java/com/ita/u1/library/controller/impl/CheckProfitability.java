@@ -28,13 +28,10 @@ public class CheckProfitability implements Command {
 
         LocalDate from = Converter.toDate(request.getParameter("from")).minusDays(1);
         LocalDate to = Converter.toDate(request.getParameter("to")).plusDays(1);
-        System.out.println(from);
-        System.out.println(to);
         Profitability profitabilityDates = new Profitability(from, to);
 
         try {
             Profitability profitability = orderService.checkProfitability(profitabilityDates);
-            System.out.println(profitability.getProfit());
             String json = new Gson().toJson(profitability);
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.getWriter().write(json);

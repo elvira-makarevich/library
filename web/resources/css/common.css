@@ -4,7 +4,7 @@ body {
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
-.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea, .bookViolation, .profitability {
+.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea, .bookViolation, .profitability, .edit {
     width: 700px;
     background: #fff;
     padding: 15px 40px 40px;

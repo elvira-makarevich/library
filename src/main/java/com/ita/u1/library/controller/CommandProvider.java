@@ -36,12 +36,14 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_CLOSE_ORDER_PAGE, new GoToCloseOrderPage());
         commands.put(CommandName.FIND_ORDER_INFO, new FindOrderInfo());
         commands.put(CommandName.GO_TO_BOOK_VIOLATION_PAGE, new GoToBookViolationPage());
-        commands.put(CommandName.INDICATE_BOOK_VIOLATION_AND_CHANGE_COST, new IndicateBookViolationAndChangeCost());
+        commands.put(CommandName.INDICATE_BOOK_VIOLATION, new IndicateBookViolation());
         commands.put(CommandName.CLOSE_ORDER, new CloseOrder());
         commands.put(CommandName.FIND_THE_MOST_POPULAR_BOOKS, new FindTheMostPopularBooks());
         commands.put(CommandName.FIND_BOOK_COVER, new FindBookCover());
         commands.put(CommandName.GO_TO_PROFITABILITY_PAGE, new GoToProfitabilityPage());
         commands.put(CommandName.CHECK_PROFITABILITY, new CheckProfitability());
+        commands.put(CommandName.GO_TO_COPY_BOOK_EDIT_PAGE, new GoToCopyBookEditPage());
+        commands.put(CommandName.CHANGE_COST_PER_DAY, new ChangeCostPerDay());
     }
 
     public Command findCommand(String name) {
