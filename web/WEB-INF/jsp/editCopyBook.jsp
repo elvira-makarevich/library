@@ -32,6 +32,9 @@
 
 <input id="pageContext" type="text" name=""
        value="${pageContext.request.contextPath}" style="display: none;">
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+<footer>
+    <div class="editcontainer">© Lab iTechArt
+    </div>
+</footer>
 </body>
 </html>

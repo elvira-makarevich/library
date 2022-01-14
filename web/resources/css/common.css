@@ -11,14 +11,30 @@ footer {
 }
 
 .container {
-    margin:70px 35px 35px 35px;
+    margin:70px 35px 0px 35px;
     padding: 5px 0px 5px 3px;
     color: #fcfafa;
     text-align: center;
 }
 
-.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea, .bookViolation, .profitability, .edit {
+.editcontainer {
+    margin:150px 35px 0px 35px;
+    padding: 5px 0px 5px 3px;
+    color: #fcfafa;
+    text-align: center;
+}
+
+.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea {
     width: 60%;
+    background: #fff;
+    padding: 15px 40px 40px;
+    border: 3px solid #ccc;
+    margin: 40px auto 0;
+    border-radius: 5px;
+}
+
+.bookViolation, .profitability, .edit{
+    width: 700px;
     background: #fff;
     padding: 15px 40px 40px;
     border: 3px solid #ccc;

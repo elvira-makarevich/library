@@ -2,10 +2,7 @@ package com.ita.u1.library.dao;
 
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.dao.connection_pool.ConnectionPoolImpl;
-import com.ita.u1.library.dao.impl.AuthorDAOImpl;
-import com.ita.u1.library.dao.impl.BookDAOImpl;
-import com.ita.u1.library.dao.impl.ClientDAOImpl;
-import com.ita.u1.library.dao.impl.OrderDAOImpl;
+import com.ita.u1.library.dao.impl.*;
 
 public class DAOProvider {
 
@@ -16,6 +13,7 @@ public class DAOProvider {
     private final BookDAO bookDAO = new BookDAOImpl(connectionPool);
     private final ClientDAO clientDAO = new ClientDAOImpl(connectionPool);
     private final OrderDAO orderDAO = new OrderDAOImpl(connectionPool);
+    private final EmailDAO emailDAO = new EmailDAOImpl(connectionPool);
 
     private DAOProvider() {
     }
@@ -38,5 +36,9 @@ public class DAOProvider {
 
     public OrderDAO getOrderDAO() {
         return orderDAO;
+    }
+
+    public EmailDAO getEmailDAO() {
+        return emailDAO;
     }
 }
