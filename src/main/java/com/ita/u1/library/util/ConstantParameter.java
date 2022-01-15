@@ -2,7 +2,17 @@ package com.ita.u1.library.util;
 
 public class ConstantParameter {
 
-    public static final String FIRST_NAME = "firstName",
+    public static final String MAIL_RESOURCE = "mail/mail",
+            MAIL_HOST = "mail.smtp.host",
+            MAIL_PORT = "mail.smtp.port",
+            MAIL_FROM = "mail.from",
+            MAIL_PASSWORD = "mail.smtp.password",
+            MAIL_AUTH = "mail.smtp.auth",
+            MAIL_STARTTLS_ENABLE = "mail.smtp.starttls.enable",
+            MAIL_MESSAGE_SUBJECT = "Violation of the deadline for the return of books";
+
+    public static final String REQUEST_PARAM_COMMAND = "command",
+            FIRST_NAME = "firstName",
             LAST_NAME = "lastName",
             FILE = "file",
             AUTHOR_ID = "authorId",
@@ -71,12 +81,12 @@ public class ConstantParameter {
             PATTERN_COST = "^[0-9]{1,}[.,]?[0-9]{0,2}",
             PATTERN_VIOLATION_MESSAGE = ".{10,500}$";
 
-    public final static String INSERT_AUTHOR = "INSERT INTO authors (first_name, last_name) VALUES (?,?) ",
+    public static final String INSERT_AUTHOR = "INSERT INTO authors (first_name, last_name) VALUES (?,?) ",
             INSERT_AUTHOR_IMAGE = "INSERT INTO authors_images (author_id, image) VALUES (?,?)",
             SELECT_AUTHOR_BY_LAST_NAME = "SELECT * FROM authors WHERE last_name = ?",
             SELECT_AUTHOR_IMAGE = "SELECT image FROM authors_images WHERE author_id = ?";
 
-    public final static String INSERT_BOOK = "INSERT INTO books (title, original_title, price, number_of_copies, publishing_year, registration_date, number_of_pages) VALUES (?,?,?,?,?,?,?)",
+    public static final String INSERT_BOOK = "INSERT INTO books (title, original_title, price, number_of_copies, publishing_year, registration_date, number_of_pages) VALUES (?,?,?,?,?,?,?)",
             INSERT_BOOK_COVERS = "INSERT INTO books_covers (book_id, cover) VALUES (?,?)",
             INSERT_BOOK_COPIES = "INSERT INTO books_copies (book_id, cost_per_day) VALUES (?,?)",
             INSERT_GENRES = "INSERT INTO genres (book_id, genre) VALUES (?,?)",
@@ -94,7 +104,7 @@ public class ConstantParameter {
             SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1",
             SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO = "select id from orders where order_date>? limit 1";
 
-    public final static String INSERT_CLIENT = "INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    public static final String INSERT_CLIENT = "INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             INSERT_CLIENT_IMAGE = "INSERT INTO clients_images (client_id, image) VALUES (?,?)",
             SELECT_CLIENT_BY_PASSPORT_NUMBER = "SELECT * FROM clients WHERE passport_number=?",
             SELECT_CLIENT_BY_EMAIL = "SELECT * FROM clients WHERE email=? ",
@@ -102,7 +112,7 @@ public class ConstantParameter {
             SELECT_LIMIT_CLIENTS = "SELECT * FROM clients order by last_name LIMIT ? OFFSET ?",
             SELECT_CLIENTS_BY_LAST_NAME = "SELECT * FROM clients WHERE last_name = ?";
 
-    public final static String INSERT_ORDER = "INSERT INTO orders (client_id, preliminary_cost, order_date, possible_return_date) VALUES (?,?,?,?)",
+    public static final String INSERT_ORDER = "INSERT INTO orders (client_id, preliminary_cost, order_date, possible_return_date) VALUES (?,?,?,?)",
             INSERT_BOOKS_ORDER = "INSERT INTO books_orders (order_id, copy_id) VALUES (?,?)",
             UPDATE_BOOKS_COPIES_AVAILABILITY_FALSE = "UPDATE books_copies SET availability = false WHERE id = ?",
             SELECT_ACTIVE_CLIENT_ORDER = "SELECT * FROM orders WHERE client_id=? and status=true ",
@@ -117,5 +127,15 @@ public class ConstantParameter {
             SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?",
             SELECT_COPY_BOOK_FROM_ORDER = "SELECT * FROM books_orders WHERE order_id=? and copy_id=? ",
             SELECT_SUM_TOTAL_COST_FROM_TO = "select sum(total_cost) from orders where real_return_date >? and real_return_date<?";
+
+    public static final String BOOKS_TO_RETURN = "Books to return: \n",
+            HYPHENATION = "\n",
+            AMOUNT_OF_PENALTY_FOR_DELAYING = "Amount of penalty for delaying: ",
+            SELECT_ORDERS_OF_FRESH_RETURN_VIOLATIONS = "select id, client_id from orders where possible_return_date=? and status=true",
+            SELECT_CLIENTS_EMAIL_BY_ID = "select email from clients where id=?",
+            SELECT_COPY_BOOK_OF_ORDER_BY_ID = "select copy_id from books_orders where order_id =?",
+            SELECT_TITLES_COPY_BOOKS_ORDER = "select title from books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?",
+            SELECT_ORDERS_OF_OLD_RETURN_VIOLATIONS = "select client_id, preliminary_cost, possible_return_date from orders where possible_return_date<? and status=true";
+
 
 }

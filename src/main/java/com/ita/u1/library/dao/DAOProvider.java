@@ -13,7 +13,7 @@ public class DAOProvider {
     private final BookDAO bookDAO = new BookDAOImpl(connectionPool);
     private final ClientDAO clientDAO = new ClientDAOImpl(connectionPool);
     private final OrderDAO orderDAO = new OrderDAOImpl(connectionPool);
-    private final EmailDAO emailDAO = new EmailDAOImpl(connectionPool);
+    private final MailDAO mailDAO = new MailDAOImpl(connectionPool);
 
     private DAOProvider() {
     }
@@ -38,7 +38,7 @@ public class DAOProvider {
         return orderDAO;
     }
 
-    public EmailDAO getEmailDAO() {
-        return emailDAO;
+    public MailDAO getMailDAO() {
+        return mailDAO;
     }
 }

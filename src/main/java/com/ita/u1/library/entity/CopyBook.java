@@ -21,12 +21,16 @@ public class CopyBook implements Serializable {
     }
 
     public CopyBook(int id) {
-        this.id=id;
+        this.id = id;
     }
 
     public CopyBook(int copyId, BigDecimal newCostPerDay) {
-        this.id=copyId;
-        this.costPerDay=newCostPerDay;
+        this.id = copyId;
+        this.costPerDay = newCostPerDay;
+    }
+
+    public CopyBook(String title) {
+        this.title = title;
     }
 
     public int getId() {

@@ -15,7 +15,7 @@ public class ServiceProvider {
     private final ClientService clientService = new ClientServiceImpl(daoProvider.getClientDAO(), serviceValidator);
     private final BookService bookService = new BookServiceImpl(daoProvider.getBookDAO(), serviceValidator);
     private final OrderService orderService = new OrderServiceImpl(daoProvider.getOrderDAO(), serviceValidator);
-    private final EmailService emailService = new EmailServiceImpl(daoProvider.getEmailDAO());
+    private final MailService mailService = new MailServiceImpl(daoProvider.getMailDAO());
 
     private ServiceProvider() {
     }
@@ -40,8 +40,8 @@ public class ServiceProvider {
         return orderService;
     }
 
-    public EmailService getEmailService() {
-        return emailService;
+    public MailService getMailService() {
+        return mailService;
     }
 }
 
