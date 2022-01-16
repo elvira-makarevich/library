@@ -24,4 +24,6 @@ public interface BookDAO {
 
     List<CopyBook> findBooksForWritingOff(String title);
 
+    void writeBooksOff(List<CopyBook> copyBooks);
+
 }

@@ -93,4 +93,10 @@ public class BookServiceImpl implements BookService {
         }
         return copyBooks;
     }
+
+    @Override
+    public void writeBooksOff(List<CopyBook> copyBooks) {
+        serviceValidator.validateTheDuplicationOfCopyBooks(copyBooks);
+        bookDAO.writeBooksOff(copyBooks);
+    }
 }

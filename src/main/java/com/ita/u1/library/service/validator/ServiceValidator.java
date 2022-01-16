@@ -151,6 +151,19 @@ public class ServiceValidator {
         }
     }
 
+    public void validateTheDuplicationOfCopyBooks(List<CopyBook> copyBooks) {
+
+        for (int i = 0; i < copyBooks.size(); i++) {
+            int bookId = copyBooks.get(i).getBookId();
+            for (int j = 0; j < copyBooks.size(); j++) {
+                if (i == j) continue;
+                if (bookId == copyBooks.get(j).getBookId()) {
+                    throw new ServiceException("The list contains copy books with the same id.");
+                }
+            }
+        }
+    }
+
     private void checkTheDuplicationOfBooks(List<CopyBook> copyBooks) {
         ////////////////////////////////////////////////
         for (int i = 0; i < copyBooks.size(); i++) {

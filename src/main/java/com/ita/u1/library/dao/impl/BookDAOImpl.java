@@ -269,6 +269,13 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                 }
             throw new DAOException("Method changeCostPerDay() failed.", e);
         } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    throw new DAOException("Method changeCostPerDay() failed.", ex);
+                }
+            }
             close(psBooksCopies);
             release(connection);
         }
@@ -395,6 +402,43 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             release(connection);
         }
         return copyBooks;
+    }
+
+    @Override
+    public void writeBooksOff(List<CopyBook> copyBooks) {
+        Connection connection = take();
+        PreparedStatement psBooksCopies = null;
+        LocalDate today = LocalDate.now();
+
+        try {
+            connection.setAutoCommit(false);
+            psBooksCopies = connection.prepareStatement("UPDATE books_copies SET availability=false, existence=false, date_of_writing_off=? WHERE id=?");
+            psBooksCopies.setDate(1, Date.valueOf(today));
+
+            for (CopyBook copy : copyBooks) {
+                psBooksCopies.setInt(2, copy.getId());
+                psBooksCopies.executeUpdate();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null)
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new DAOException("Exception during rollback; operation: writeBooksOff().", ex);
+                }
+            throw new DAOException("Method writeBooksOff() failed.", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    throw new DAOException("Method writeBooksOff() failed.", ex);
+                }
+            }
+            close(psBooksCopies);
+            release(connection);
+        }
     }
 
     private double cutOffNumbers(double rating) {

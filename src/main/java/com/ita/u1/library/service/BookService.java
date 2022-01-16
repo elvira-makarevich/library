@@ -23,4 +23,6 @@ public interface BookService {
 
     List<CopyBook> findBooksForWritingOff(String title);
 
+    void writeBooksOff(List<CopyBook> copyBooks);
+
 }
