@@ -53,6 +53,13 @@
         <button class="button">Check profitability</button>
     </form>
 </div>
+
+<div class="button_in_line">
+    <form method="post" action="Controller">
+        <input type="hidden" name="command" value="go_to_writing_off_books_page"/>
+        <button class="button">Writing off books</button>
+    </form>
+</div>
 <div class="mostPopularBooksArea">
 <jsp:include page="/WEB-INF/jsp/mostPopular.jsp"/>
 </div>

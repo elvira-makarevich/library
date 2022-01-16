@@ -9,10 +9,10 @@ import java.io.IOException;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class GoToProfitabilityPage implements Command {
+public class GoToWritingOffBooksPage implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher(PATH_PROFITABILITY_PAGE).forward(request, response);
+        request.getRequestDispatcher(PATH_WRITING_OFF_BOOKS_PAGE).forward(request, response);
     }
 }

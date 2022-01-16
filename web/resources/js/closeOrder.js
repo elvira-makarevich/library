@@ -81,7 +81,7 @@ function viewInTableClients(clients) {
         row_data_4.appendChild(buttonAdd);
 
         let initials = clients[i].lastName + " " + clients[i].firstName;
-        let id = clients[i].id;
+        let idClient = clients[i].id;
 
         row.appendChild(row_data_1);
         row.appendChild(row_data_2);
@@ -91,7 +91,7 @@ function viewInTableClients(clients) {
         tbody.appendChild(row);
 
         async function addClient() {
-            if (await hasClientActiveOrder(id) === true) {
+            if (await hasClientActiveOrder(idClient) === true) {
                 removeClient();
                 let realClientContainer = document.getElementById("realClientContainer");
                 let input = document.createElement("input");
@@ -103,12 +103,12 @@ function viewInTableClients(clients) {
 
                 let inputHidden = document.createElement("input");
                 inputHidden.type = "hidden";
-                inputHidden.value = id;
+                inputHidden.value = idClient;
                 inputHidden.name = "clientId";
                 realClientContainer.appendChild(inputHidden);
                 removeTable("table_clients");
                 checkClient();
-                findOrderBooks(id);
+                findOrderBooks(idClient);
 
             } else {
                 alert("The reader has no orders!");

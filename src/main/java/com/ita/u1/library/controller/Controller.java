@@ -20,7 +20,7 @@ public class Controller extends HttpServlet {
     public void init() {
 
         SimpleExecutorService simpleExecutorService = new SimpleExecutorService();
-
+        
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

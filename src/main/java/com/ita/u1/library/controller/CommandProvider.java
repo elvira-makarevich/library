@@ -44,6 +44,9 @@ public class CommandProvider {
         commands.put(CommandName.CHECK_PROFITABILITY, new CheckProfitability());
         commands.put(CommandName.GO_TO_COPY_BOOK_EDIT_PAGE, new GoToCopyBookEditPage());
         commands.put(CommandName.CHANGE_COST_PER_DAY, new ChangeCostPerDay());
+        commands.put(CommandName.GO_TO_WRITING_OFF_BOOKS_PAGE, new GoToWritingOffBooksPage());
+        commands.put(CommandName.FIND_BOOKS_FOR_WRITING_OFF, new FindBooksForWritingOff());
+        commands.put(CommandName.WRITE_OFF_BOOKS, new WriteOffBooks());
     }
 
     public Command findCommand(String name) {

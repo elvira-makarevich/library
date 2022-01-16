@@ -24,7 +24,7 @@ footer {
     text-align: center;
 }
 
-.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea {
+.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea, .writeOff {
     width: 60%;
     background: #fff;
     padding: 15px 40px 40px;

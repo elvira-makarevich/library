@@ -15,10 +15,14 @@ public class Violation implements Serializable {
     }
 
     public Violation(int orderId, int copyId, String message, List<byte[]> images) {
-        this.orderId=orderId;
-        this.copyId=copyId;
-        this.message=message;
-        this.images=images;
+        this.orderId = orderId;
+        this.copyId = copyId;
+        this.message = message;
+        this.images = images;
+    }
+
+    public Violation(String message) {
+        this.message = message;
     }
 
     public int getId() {

@@ -2,6 +2,7 @@ package com.ita.u1.library.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class CopyBook implements Serializable {
 
@@ -11,6 +12,8 @@ public class CopyBook implements Serializable {
     private boolean availability;
     private String title;
     private double rating;
+    private List<Violation> copyBooksViolations;
+    private boolean existence;
 
     public CopyBook() {
     }
@@ -81,6 +84,22 @@ public class CopyBook implements Serializable {
         this.rating = rating;
     }
 
+    public List<Violation> getCopyBooksViolations() {
+        return copyBooksViolations;
+    }
+
+    public void setCopyBooksViolations(List<Violation> copyBooksViolations) {
+        this.copyBooksViolations = copyBooksViolations;
+    }
+
+    public boolean isExistence() {
+        return existence;
+    }
+
+    public void setExistence(boolean existence) {
+        this.existence = existence;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,8 +111,10 @@ public class CopyBook implements Serializable {
         if (bookId != copyBook.bookId) return false;
         if (availability != copyBook.availability) return false;
         if (Double.compare(copyBook.rating, rating) != 0) return false;
+        if (existence != copyBook.existence) return false;
         if (costPerDay != null ? !costPerDay.equals(copyBook.costPerDay) : copyBook.costPerDay != null) return false;
-        return title != null ? title.equals(copyBook.title) : copyBook.title == null;
+        if (title != null ? !title.equals(copyBook.title) : copyBook.title != null) return false;
+        return copyBooksViolations != null ? copyBooksViolations.equals(copyBook.copyBooksViolations) : copyBook.copyBooksViolations == null;
     }
 
     @Override
@@ -107,6 +128,8 @@ public class CopyBook implements Serializable {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         temp = Double.doubleToLongBits(rating);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (copyBooksViolations != null ? copyBooksViolations.hashCode() : 0);
+        result = 31 * result + (existence ? 1 : 0);
         return result;
     }
 
@@ -119,8 +142,9 @@ public class CopyBook implements Serializable {
                 ", availability=" + availability +
                 ", title='" + title + '\'' +
                 ", rating=" + rating +
+                ", copyBooksViolations=" + copyBooksViolations +
+                ", existence=" + existence +
                 '}';
     }
-
 }
 

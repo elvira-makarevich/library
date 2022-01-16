@@ -65,7 +65,8 @@ public class ConstantParameter {
             PATH_MAIN_PAGE = "/WEB-INF/jsp/main.jsp",
             PATH_ORDER_PAGE = "/WEB-INF/jsp/formOrder.jsp",
             PATH_PROFITABILITY_PAGE = "/WEB-INF/jsp/profitability.jsp",
-            PATH_COPY_BOOK_EDIT_PAGE = "/WEB-INF/jsp/editCopyBook.jsp";
+            PATH_COPY_BOOK_EDIT_PAGE = "/WEB-INF/jsp/editCopyBook.jsp",
+            PATH_WRITING_OFF_BOOKS_PAGE = "/WEB-INF/jsp/writingOffBooks.jsp";
 
     public static final String PATTERN_FIRST_NAME_LAST_NAME = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)",
             PATTERN_PATRONYMIC = "([a-zA-Z]{2,20}$)|([а-яА-яёЁ]{2,20}$)|(^\\s*$)",
@@ -79,7 +80,7 @@ public class ConstantParameter {
             PATTERN_TITLE = ".{2,70}$",
             PATTERN_ORIGINAL_TITLE = "(.{2,70}$)|(^\\s*$)",
             PATTERN_COST = "^[0-9]{1,}[.,]?[0-9]{0,2}",
-            PATTERN_VIOLATION_MESSAGE = ".{10,500}$";
+            PATTERN_VIOLATION_MESSAGE = "([a-zA-Z0-9.!$%*+/=? ]{10,500}$)|(^[\\p{L}0-9.!$%*+/=? ]{10,500}$)";
 
     public static final String INSERT_AUTHOR = "INSERT INTO authors (first_name, last_name) VALUES (?,?) ",
             INSERT_AUTHOR_IMAGE = "INSERT INTO authors_images (author_id, image) VALUES (?,?)",

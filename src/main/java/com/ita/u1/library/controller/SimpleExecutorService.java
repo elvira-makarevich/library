@@ -29,11 +29,11 @@ public class SimpleExecutorService {
 
     public SimpleExecutorService() {
         LocalDate today = LocalDate.now();
-        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 11, 00);
+        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 11, 17);
         LocalDateTime now = LocalDateTime.now();
-
         Duration duration = Duration.between(now, timeToSendMail);
         long delay = Math.abs(duration.toMillis());
+
         executor = Executors.newScheduledThreadPool(1);
         Thread mailSender = new Thread(new MailSender());
         mailSender.setDaemon(true);

@@ -9,7 +9,6 @@
 <input id="pageContextMostPopular" type="text" name="" value="${pageContext.request.contextPath}"
        style="display: none;">
 <script>
-
     findMostPopularBooks();
 
     async function findMostPopularBooks() {
@@ -98,7 +97,6 @@
 
         document.getElementById('mostPopularBooks').appendChild(table);
     }
-
 </script>
 <h2 style="padding: 0 0 0 15px;">Most popular books</h2>
 <div id="mostPopularBooks">

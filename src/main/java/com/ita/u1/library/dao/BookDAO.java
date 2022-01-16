@@ -22,4 +22,6 @@ public interface BookDAO {
 
     Optional<Book> findBookCover(int id);
 
+    List<CopyBook> findBooksForWritingOff(String title);
+
 }

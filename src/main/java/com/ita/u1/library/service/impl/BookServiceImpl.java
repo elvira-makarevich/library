@@ -83,4 +83,14 @@ public class BookServiceImpl implements BookService {
         Book book = optionalBook.orElse(new Book());
         return book;
     }
+
+    @Override
+    public List<CopyBook> findBooksForWritingOff(String title) {
+        serviceValidator.validateTitle(title);
+        List<CopyBook> copyBooks = bookDAO.findBooksForWritingOff(title);
+        if (copyBooks.isEmpty() || copyBooks == null) {
+            return Collections.emptyList();
+        }
+        return copyBooks;
+    }
 }

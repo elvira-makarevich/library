@@ -3,10 +3,7 @@ package com.ita.u1.library.dao.impl;
 import com.ita.u1.library.dao.AbstractDAO;
 import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
-import com.ita.u1.library.entity.Author;
-import com.ita.u1.library.entity.Book;
-import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.entity.Genre;
+import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.DAOException;
 
 import java.math.BigDecimal;
@@ -248,9 +245,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             release(connection);
         }
 
-        if (books.isEmpty()) {
-            return Collections.emptyList();
-        }
         return books;
     }
 
@@ -346,6 +340,61 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         }
         optionalBook = Optional.of(book);
         return optionalBook;
+    }
+
+    @Override
+    public List<CopyBook> findBooksForWritingOff(String title) {
+        Connection connection = take();
+        PreparedStatement psBook = null;
+        PreparedStatement psCopyBook = null;
+        PreparedStatement psCopyBookViolations = null;
+        ResultSet rsBook = null;
+        ResultSet rsCopyBook = null;
+        ResultSet rsCopyBookViolations = null;
+
+        List<CopyBook> copyBooks = new ArrayList<>();
+
+        try {
+            psBook = connection.prepareStatement("SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true and existence=true and books.title = ? group by books.id ");
+            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true and existence=true");
+            psCopyBookViolations = connection.prepareStatement("SELECT violation FROM books_orders where copy_id=? and violation is not null");
+
+            psBook.setString(1, title);
+            rsBook = psBook.executeQuery();
+
+            if (rsBook != null) {
+                while (rsBook.next()) {
+                    int bookId = rsBook.getInt(1);//может быть несколько, разные поставки, год издания...
+                    String booksTitle = rsBook.getString(2);
+                    psCopyBook.setInt(1, bookId);
+                    rsCopyBook = psCopyBook.executeQuery();
+
+                    while (rsCopyBook.next()) {
+                        CopyBook copy = new CopyBook();
+                        copy.setId(rsCopyBook.getInt(1));
+                        copy.setTitle(booksTitle);
+
+                        List<Violation> violationsCopyBook = new ArrayList<>();
+                        psCopyBookViolations.setInt(1, copy.getId());
+                        rsCopyBookViolations = psCopyBookViolations.executeQuery();
+                        while (rsCopyBookViolations.next()) {
+                            System.out.println(rsCopyBookViolations.getString(1));
+                            violationsCopyBook.add(new Violation(rsCopyBookViolations.getString(1)));
+                        }
+                        copy.setCopyBooksViolations(violationsCopyBook);
+                        copyBooks.add(copy);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("DAOException: method findBooksForWritingOff() failed.", e);
+        } finally {
+            close(rsBook, rsCopyBook, rsCopyBookViolations);
+            close(psBook, psCopyBook, psCopyBookViolations);
+            release(connection);
+        }
+        return copyBooks;
     }
 
     private double cutOffNumbers(double rating) {
