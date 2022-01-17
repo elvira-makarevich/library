@@ -1,16 +1,16 @@
 window.onload = () => init();
 
-function init() {
+ function init() {
     document.getElementById("files").addEventListener('change', loadImages);
     document.getElementById("violationMessage").addEventListener('change', checkMessage);
     document.getElementById("files").addEventListener('submit', checkImages);
     let formViolation = document.getElementById('bookViolation');
-    formViolation.addEventListener('submit', function (event) {
+    formViolation.addEventListener('submit', async function (event) {
         event.preventDefault();
         checkMessage();
         checkImages();
         if (checkMessage() && checkImages()) {
-            submitValidFormAndCloseWindow();
+            await submitValidFormAndCloseWindow();
         }
     });
 }

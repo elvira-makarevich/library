@@ -24,6 +24,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void saveOrder(Order order) {
+
+        //проверить есть ли такой клиент
         if (orderDAO.hasClientActiveOrder(order.getClientId())) {
             throw new ActiveOrderServiceException("Client has active order.");
         }
@@ -34,13 +36,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean hasClientActiveOrder(int clientId) {
+        //проверить есть ли такой клиент
+
+
+
         return orderDAO.hasClientActiveOrder(clientId);
     }
 
     @Override
     public Order findOrderInfo(int clientId) {
+        //change
+        //проверить есть ли такой клиент
         Optional<Order> optionalOrder = orderDAO.findOrderInfo(clientId);
         Order order = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
+        order.setTotalCost(serviceValidator.calculateTotalCostBasedOnDataFromDB(order));
+
         return order;
     }
 
@@ -55,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void closeOrder(Order order) {
+        //проверить есть ли такой клиент
         Optional<Order> optionalOrder = orderDAO.findOrderInfo(order.getClientId());
         Order orderInfoFromDB = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
         serviceValidator.validateCloseOrder(order, orderInfoFromDB);
@@ -65,7 +76,6 @@ public class OrderServiceImpl implements OrderService {
     public Profitability checkProfitability(Profitability profitabilityDates) {
         serviceValidator.validateProfitabilityDates(profitabilityDates);
         Profitability profitability = orderDAO.checkProfitability(profitabilityDates);
-
         return profitability;
     }
 }

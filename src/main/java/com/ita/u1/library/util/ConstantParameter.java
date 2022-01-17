@@ -59,7 +59,6 @@ public class ConstantParameter {
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",
             PATH_ALL_BOOKS_PAGE = "/WEB-INF/jsp/allBooks.jsp",
             PATH_ALL_CLIENTS_PAGE = "/WEB-INF/jsp/allClients.jsp",
-            PATH_AUTHOR_PAGE = "/WEB-INF/jsp/authorInfo.jsp",
             PATH_BOOK_VIOLATION_PAGE = "/WEB-INF/jsp/bookViolation.jsp",
             PATH_CLOSE_ORDER_PAGE = "/WEB-INF/jsp/closeOrder.jsp",
             PATH_MAIN_PAGE = "/WEB-INF/jsp/main.jsp",
@@ -80,7 +79,7 @@ public class ConstantParameter {
             PATTERN_TITLE = ".{2,70}$",
             PATTERN_ORIGINAL_TITLE = "(.{2,70}$)|(^\\s*$)",
             PATTERN_COST = "^[0-9]{1,}[.,]?[0-9]{0,2}",
-            PATTERN_VIOLATION_MESSAGE = "([a-zA-Z0-9.!$%*+/=? ]{10,500}$)|(^[\\p{L}0-9.!$%*+/=? ]{10,500}$)";
+            PATTERN_VIOLATION_MESSAGE = ".{10,500}$";
 
     public static final String INSERT_AUTHOR = "INSERT INTO authors (first_name, last_name) VALUES (?,?) ",
             INSERT_AUTHOR_IMAGE = "INSERT INTO authors_images (author_id, image) VALUES (?,?)",
@@ -92,18 +91,21 @@ public class ConstantParameter {
             INSERT_BOOK_COPIES = "INSERT INTO books_copies (book_id, cost_per_day) VALUES (?,?)",
             INSERT_GENRES = "INSERT INTO genres (book_id, genre) VALUES (?,?)",
             INSERT_BOOK_AUTHORS = "INSERT INTO authors_books (author_id, book_id) VALUES (?,?)",
-            SELECT_LIMIT_BOOKS = "SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true group by books.id order by available DESC, title LIMIT ? OFFSET ? ",
+            SELECT_LIMIT_BOOKS = "SELECT books.*, sum(available) as available_copies, count(books.id) as copies_number FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.existence=true  group by  books.id order by available_copies DESC, title LIMIT ? OFFSET ?",
             SELECT_BOOKS_GENRES = "SELECT * FROM genres where book_id=?",
-            AVAILABLE = "available",
+            AVAILABLE_COPIES = "available_copies",
             RATING_BOOK = "rating_book",
+            COPIES_NUMBER_WITHOUT_WRITTEN_OFF = "copies_number",
             NUMBER_OF_PEOPLE_WHO_READ = "numberPeopleRead",
-            COUNT_NUMBER_OF_AVAILABLE_BOOKS = "SELECT Count(id) FROM books_copies where availability=true group by book_id",
-            SELECT_BOOK_BY_TITLE = "SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true and books.title = ? group by books.id ",
-            SELECT_AVAILABLE_BOOKS = "SELECT * FROM books_copies where book_id=? and availability=true",
+            COUNT_NUMBER_OF_AVAILABLE_BOOKS = "SELECT Count(id) FROM books_copies where existence=true group by book_id",
+            SELECT_BOOK_BY_TITLE = "SELECT books.*, sum(available) as available_copies FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.available=1 and books.title = ? group by books.id ",
+            SELECT_AVAILABLE_COPY_BOOKS_BY_BOOK_ID = "SELECT * FROM books_copies where book_id=? and available=1 and existence=true",
             UPDATE_COST_PER_DAY = "UPDATE books_copies SET cost_per_day=? WHERE id=?",
             SELECT_MOST_POPULAR_BOOKS = "SELECT books_copies.book_id, avg(rating) as rating_book, count(copy_id) as numberPeopleRead FROM books_copies inner join books_orders on books_copies.id=books_orders.copy_id  where rating>-1 and books_orders.order_id>? group by books_copies.book_id order by numberPeopleRead DESC limit 3",
             SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1",
-            SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO = "select id from orders where order_date>? limit 1";
+            SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO = "select id from orders where order_date>? order by id limit 1",
+            SELECT_COPY_BOOK_VIOLATION = "SELECT violation FROM books_orders where copy_id=? and violation is not null",
+            UPDATE_EXISTENCE = "UPDATE books_copies SET available=0, existence=false, date_of_writing_off=? WHERE id=?";
 
     public static final String INSERT_CLIENT = "INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             INSERT_CLIENT_IMAGE = "INSERT INTO clients_images (client_id, image) VALUES (?,?)",
@@ -115,7 +117,7 @@ public class ConstantParameter {
 
     public static final String INSERT_ORDER = "INSERT INTO orders (client_id, preliminary_cost, order_date, possible_return_date) VALUES (?,?,?,?)",
             INSERT_BOOKS_ORDER = "INSERT INTO books_orders (order_id, copy_id) VALUES (?,?)",
-            UPDATE_BOOKS_COPIES_AVAILABILITY_FALSE = "UPDATE books_copies SET availability = false WHERE id = ?",
+            UPDATE_BOOKS_COPIES_AVAILABILITY_FALSE = "UPDATE books_copies SET available=0 WHERE id = ?",
             SELECT_ACTIVE_CLIENT_ORDER = "SELECT * FROM orders WHERE client_id=? and status=true ",
             SELECT_BOOKS_ORDER_BY_ID = "SELECT * FROM books_orders WHERE order_id=?",
             SELECT_BOOKS_TITLE = "SELECT title FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?",
@@ -124,7 +126,7 @@ public class ConstantParameter {
             INSERT_VIOLATION_IMAGES = "INSERT INTO violation_images (order_id, copy_id, image) VALUES (?,?,?)",
             UPDATE_ORDER_CLOSE = "UPDATE orders SET total_cost=?, real_return_date=?, status=false, penalty=? WHERE id=?",
             UPDATE_BOOKS_ORDER_WITH_RATING = "UPDATE books_orders SET rating=? where order_id=? and copy_id=?",
-            UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET availability=true where id=?",
+            UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET available=1 where id=?",
             SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?",
             SELECT_COPY_BOOK_FROM_ORDER = "SELECT * FROM books_orders WHERE order_id=? and copy_id=? ",
             SELECT_SUM_TOTAL_COST_FROM_TO = "select sum(total_cost) from orders where real_return_date >? and real_return_date<?";

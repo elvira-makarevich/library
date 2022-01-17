@@ -67,14 +67,14 @@ function changeValidation() {
     formSaveBook.noValidate = true;
 }
 
-function checkParamAuthor() {
+async function checkParamAuthor() {
     removeTable("table_authors");
     let initials = document.getElementById('initials');
     let initialsValue = initials.value;
     if (initialsValue.length < 2) {
         alert("Enter the last name of the author to search!");
     } else
-        findAuthorRequest();
+       await findAuthorRequest();
 }
 
 async function findAuthorRequest() {

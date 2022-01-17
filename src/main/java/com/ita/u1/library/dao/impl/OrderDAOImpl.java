@@ -20,7 +20,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         super(connectionPool);
     }
 
-
     @Override
     public void saveOrder(Order order) {
 
@@ -67,16 +66,12 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: save order.", ex);
-                }
+            rollback(connection);
             throw new DAOException("Saving order to database failed.", e);
         } finally {
             close(generatedKeys);
             close(psOrder, psBooksOrder, psBooksCopies);
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -202,15 +197,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: indicateBookViolationAndChangeCost().", ex);
-                }
+            rollback(connection);
             throw new DAOException("Method indicateBookViolationAndChangeCost() failed.", e);
         } finally {
             close(psBooksOrder, psViolationImage);
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -249,15 +240,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: closeOrder().", ex);
-                }
+            rollback(connection);
             throw new DAOException("Method closeOrder() failed.", e);
         } finally {
             close(psBooksOrder, psOrder, psBooksCopies);
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -280,7 +267,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                     copy.setId(rsBooksCopies.getInt(1));
                     copy.setBookId(rsBooksCopies.getInt(2));
                     copy.setCostPerDay(convertToBigDecimal(rsBooksCopies.getString(3)));
-                    copy.setAvailability(rsBooksCopies.getBoolean(4));
+                    copy.setAvailable(7);//6
                     books.add(copy);
                 }
             }

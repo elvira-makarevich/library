@@ -135,14 +135,17 @@ function viewInTableClients(clients) {
     let heading_2 = document.createElement('th');
     heading_2.innerHTML = "First name";
     let heading_3 = document.createElement('th');
-    heading_3.innerHTML = "Date of birth";
+    heading_3.innerHTML = "Email";
     let heading_4 = document.createElement('th');
-    heading_4.innerHTML = "";
+    heading_4.innerHTML = "Date of birth";
+    let heading_5 = document.createElement('th');
+    heading_5.innerHTML = "";
 
     row_1.appendChild(heading_1);
     row_1.appendChild(heading_2);
     row_1.appendChild(heading_3);
     row_1.appendChild(heading_4);
+    row_1.appendChild(heading_5);
     thead.appendChild(row_1);
 
     let i;
@@ -154,13 +157,15 @@ function viewInTableClients(clients) {
         let row_data_2 = document.createElement('td');
         row_data_2.innerHTML = clients[i].firstName;
         let row_data_3 = document.createElement('td');
-        row_data_3.innerHTML = clients[i].dateOfBirth.year + "-" + clients[i].dateOfBirth.month + "-" + clients[i].dateOfBirth.day;
+        row_data_3.innerHTML = clients[i].email;
         let row_data_4 = document.createElement('td');
+        row_data_4.innerHTML = clients[i].dateOfBirth.year + "-" + clients[i].dateOfBirth.month + "-" + clients[i].dateOfBirth.day;
+        let row_data_5 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
-        buttonAdd.innerHTML = "Add";
+        buttonAdd.innerHTML = "Add to order";
         buttonAdd.addEventListener('click', addClient);
-        row_data_4.appendChild(buttonAdd);
+        row_data_5.appendChild(buttonAdd);
 
         let initials = clients[i].lastName + " " + clients[i].firstName;
         let id = clients[i].id;
@@ -169,7 +174,7 @@ function viewInTableClients(clients) {
         row.appendChild(row_data_2);
         row.appendChild(row_data_3);
         row.appendChild(row_data_4);
-
+        row.appendChild(row_data_5);
         tbody.appendChild(row);
 
         async function addClient() {
@@ -198,13 +203,13 @@ function viewInTableClients(clients) {
     }
 }
 
-function checkParamBook() {
+async function checkParamBook() {
 
     let title = document.getElementById('title').value;
     if (title.length < 2) {
         alert("Enter title to search!");
     } else
-        findBookRequest();
+        await findBookRequest();
 }
 
 async function findBookRequest() {
@@ -247,7 +252,7 @@ function viewInTableBooks(books) {
             let row_data_3 = document.createElement('td');
 
             let buttonAdd = document.createElement('button');
-            buttonAdd.innerHTML = "Add";
+            buttonAdd.innerHTML = "Add to order";
             buttonAdd.addEventListener('click', addBook);
             row_data_3.appendChild(buttonAdd);
 
@@ -285,13 +290,19 @@ function viewInTableBooks(books) {
                         inputHidden.name = "copyId";
                         row_data_3.appendChild(inputHidden);
 
+                        let inputHiddenTitle = document.createElement("input");
+                        inputHiddenTitle.type = "hidden";
+                        inputHiddenTitle.value = title;
+                        inputHiddenTitle.name = "title";
+
+                        row_data_3.appendChild(inputHiddenTitle);
                         let row_data_4 = document.createElement('td');
 
                         let buttonRemove = document.createElement('button');
                         buttonRemove.innerHTML = "Delete";
 
                         let attr = document.createAttribute("onclick");
-                        attr.value = "deleteRow(this);";
+                        attr.value = "deleteRow(this, 'books_order');";
                         buttonRemove.setAttributeNode(attr);
 
                         row_data_4.appendChild(buttonRemove);
@@ -382,9 +393,14 @@ function isItPossibleToAddABookToTheOrder() {
     return false;
 }
 
-function deleteRow(r) {
+function deleteRow(r, tableClassName) {
     let i = r.parentNode.parentNode.rowIndex;
-    document.getElementsByClassName("books_order")[0].deleteRow(i);
+    document.getElementsByClassName(tableClassName)[0].deleteRow(i);
+
+    let table = document.getElementsByClassName(tableClassName)[0];
+    if (table.rows.length == 1) {
+        removeTable(tableClassName);
+    }
     checkBooks();
     calculateTheOrderAmount();
 }

@@ -3,6 +3,7 @@
 <head>
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="resources/css/mostPopularTable.css">
+
 </head>
 <body>
 
@@ -21,11 +22,24 @@
 
         if (response.ok) {
             let json = await response.json();
-            viewInTableMostPopular(json);
+            if (json == "") {
+                viewAnswerWhenTheListIsEmpty();
+            } else {
+                viewInTableMostPopular(json);
+            }
+
         } else {
             alert("Error while finding books.");
             console.log("Response.status: " + response.status);
         }
+    }
+
+    function viewAnswerWhenTheListIsEmpty() {
+        let div = document.createElement('div');
+        div.className = 'emptyMostPopularBook';
+        let text = document.createTextNode('There are no orders last 3 months.');
+        div.appendChild(text);
+        document.getElementById('mostPopularBooks').appendChild(div);
     }
 
     function viewInTableMostPopular(books) {

@@ -6,13 +6,13 @@ function init() {
     document.getElementById("to").addEventListener('input', checkDateTo);
 
     let formProfitability = document.getElementById('profitability');
-    formProfitability.addEventListener('submit', function (event) {
+    formProfitability.addEventListener('submit', async function (event) {
             event.preventDefault();
             removeProfit();
             checkDateFrom();
             checkDateTo();
             if (checkDateFrom() && checkDateTo() && compareDates()) {
-                getProfitabilityData();
+                await getProfitabilityData();
             }
         }
     )

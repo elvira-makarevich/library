@@ -4,7 +4,6 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.MissingBooksServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -48,10 +47,6 @@ public class GoToAllBooksPage implements Command {
             log.error("Database error. Command: GoToAllBooksPage.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: GoToAllBooksPage.", e);
-        } catch (MissingBooksServiceException e) {
-            log.error("There are no books in the library.", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("There are no books in the library.", e);
         }
     }
 }

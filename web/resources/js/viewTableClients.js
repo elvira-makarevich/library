@@ -21,15 +21,12 @@ function viewInTable(clients) {
     heading_4.innerHTML = "Address";
     let heading_5 = document.createElement('th');
     heading_5.innerHTML = "Email";
-    let heading_6 = document.createElement('th');
-    heading_6.innerHTML = "Action";
 
     row_1.appendChild(heading_1);
     row_1.appendChild(heading_2);
     row_1.appendChild(heading_3);
     row_1.appendChild(heading_4);
     row_1.appendChild(heading_5);
-    row_1.appendChild(heading_6);
     thead.appendChild(row_1);
 
     let i;
@@ -47,28 +44,16 @@ function viewInTable(clients) {
         let row_data_5 = document.createElement('td');
         row_data_5.innerHTML = clients[i].email;
 
-        let row_data_6 = document.createElement('td');
-
-        let a = document.createElement('a');
-        let linkText = document.createTextNode("view");
-        a.appendChild(linkText);
-        a.title = "view";
-
-        let pageContext = document.getElementById('pageContext').value;
-        let href = pageContext + "/Controller?command=view_client&id=" + clients[i].id;
-
-
-        a.href = href;
-        row_data_6.appendChild(a);
-
         row.appendChild(row_data_1);
         row.appendChild(row_data_2);
         row.appendChild(row_data_3);
         row.appendChild(row_data_4);
         row.appendChild(row_data_5);
-        row.appendChild(row_data_6);
         tbody.appendChild(row);
     }
-    sortByThead();
 
+}
+
+function alertAnswer() {
+    alert("There are no clients.");
 }

@@ -39,9 +39,9 @@ public class WriteOffBooks implements Command {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. WriteOffBooks.", e);
         } catch (ServiceException e) {
-            log.error("The list contains copy books with the same id.", e);
+            log.error("Invalid data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("The list contains copy books with the same id.", e);
+            throw new ControllerException("Invalid data.", e);
         }
 
     }

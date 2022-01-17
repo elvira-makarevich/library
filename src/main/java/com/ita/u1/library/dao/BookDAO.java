@@ -20,10 +20,12 @@ public interface BookDAO {
 
     List<Book> findTheMostPopularBooks();
 
-    Optional<Book> findBookCover(int id);
+    Book findBookCover(int id);
 
     List<CopyBook> findBooksForWritingOff(String title);
 
     void writeBooksOff(List<CopyBook> copyBooks);
+
+    boolean doesTheCopyBookExist(CopyBook copyBook);
 
 }

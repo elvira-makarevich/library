@@ -91,23 +91,12 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: add book.", ex);
-                }
+            rollback(connection);
             throw new DAOException("Adding book to database failed.", e);
         } finally {
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    throw new DAOException("Adding book to database failed.", ex);
-                }
-            }
             close(generatedKeys);
             close(psBook, psCover, psCopies, psAuthors, psGenres);
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -115,18 +104,17 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
     @Override
     public List<Book> getAllBooks(int startFromBook, int amountOfBooks) {
 
-        List<Book> books = new ArrayList<>();
         Connection connection = take();
         PreparedStatement psBooks = null;
         PreparedStatement psBooksGenres = null;
         ResultSet rsBooks = null;
         ResultSet rsGenres = null;
+        List<Book> books = new ArrayList<>();
 
         try {
             psBooks = connection.prepareStatement(SELECT_LIMIT_BOOKS);
             psBooksGenres = connection.prepareStatement(SELECT_BOOKS_GENRES);
 
-            //  PreparedStatement psBooksAvailable = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true")
             psBooks.setInt(1, amountOfBooks);
             psBooks.setInt(2, startFromBook);
 
@@ -136,14 +124,12 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                 Book book = new Book();
                 book.setId(rsBooks.getInt(1));
                 book.setTitle(rsBooks.getString(2));
-                book.setNumberOfCopies(rsBooks.getInt(5));
+                book.setNumberOfCopies(rsBooks.getInt(COPIES_NUMBER_WITHOUT_WRITTEN_OFF));
                 book.setPublishingYear(rsBooks.getInt(6));
-                book.setNumberOfAvailableCopies(rsBooks.getInt(AVAILABLE));
+                book.setNumberOfAvailableCopies(rsBooks.getInt(AVAILABLE_COPIES));
                 psBooksGenres.setInt(1, book.getId());
-                //     psBooksAvailable.setInt(1, book.getId());
 
                 rsGenres = psBooksGenres.executeQuery();
-                //  ResultSet rsAvailableBooks = psBooksAvailable.executeQuery();
 
                 List<Genre> genres = new ArrayList<>();
                 while (rsGenres.next()) {
@@ -152,12 +138,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                     genres.add(Genre.valueOf(g));
                 }
                 book.setGenres(genres);
-
-                // int numberOfAvailableCopies = 0;
-                //   while (rsAvailableBooks.next()) {
-                //        numberOfAvailableCopies++;
-                //    }
-                //     book.setNumberOfAvailableCopies(numberOfAvailableCopies);
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -167,7 +147,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             close(psBooks, psBooksGenres);
             release(connection);
         }
-
         return books;
     }
 
@@ -208,7 +187,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
         try {
             psBook = connection.prepareStatement(SELECT_BOOK_BY_TITLE);
-            psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_BOOKS);
+            psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_COPY_BOOKS_BY_BOOK_ID);
 
             psBook.setString(1, title);
             rsBook = psBook.executeQuery();
@@ -219,7 +198,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                     book.setId(rsBook.getInt(1));
                     book.setTitle(rsBook.getString(2));
 
-                    int numberOfCopies = rsBook.getInt(AVAILABLE);
+                    int numberOfCopies = rsBook.getInt(AVAILABLE_COPIES);
                     CopyBook[] copies = new CopyBook[numberOfCopies];
                     psCopyBook.setInt(1, book.getId());
 
@@ -261,22 +240,11 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             psBooksCopies.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: changeCostPerDay().", ex);
-                }
+            rollback(connection);
             throw new DAOException("Method changeCostPerDay() failed.", e);
         } finally {
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    throw new DAOException("Method changeCostPerDay() failed.", ex);
-                }
-            }
             close(psBooksCopies);
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -293,7 +261,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         try {
             LocalDate threeMonthAgo = LocalDate.now().minusMonths(3);
             int minOrderIdThreeMonthAgo = 0;
-            System.out.println(threeMonthAgo);
             psOrder = connection.prepareStatement(SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO);
             psOrder.setDate(1, Date.valueOf(threeMonthAgo));
             rsOrder = psOrder.executeQuery();
@@ -316,19 +283,18 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         } catch (SQLException e) {
             throw new DAOException("Method findTheMostPopularBooks() failed.", e);
         } finally {
-            close(rsBook);
-            close(psBooks);
+            close(rsBook, rsOrder);
+            close(psBooks, psOrder);
             release(connection);
         }
         return books;
     }
 
     @Override
-    public Optional<Book> findBookCover(int id) {
+    public Book findBookCover(int id) {
         Connection connection = take();
         PreparedStatement psBookCover = null;
         ResultSet rsBookCover = null;
-        Optional<Book> optionalBook;
         Book book = new Book();
         try {
             psBookCover = connection.prepareStatement(SELECT_BOOK_COVER);
@@ -345,8 +311,8 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             close(psBookCover);
             release(connection);
         }
-        optionalBook = Optional.of(book);
-        return optionalBook;
+
+        return book;
     }
 
     @Override
@@ -362,16 +328,17 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         List<CopyBook> copyBooks = new ArrayList<>();
 
         try {
-            psBook = connection.prepareStatement("SELECT books.*, count(availability) as available  FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.availability=true and existence=true and books.title = ? group by books.id ");
-            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies where book_id=? and availability=true and existence=true");
-            psCopyBookViolations = connection.prepareStatement("SELECT violation FROM books_orders where copy_id=? and violation is not null");
+            psBook = connection.prepareStatement(SELECT_BOOK_BY_TITLE);
+
+            psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_COPY_BOOKS_BY_BOOK_ID);
+            psCopyBookViolations = connection.prepareStatement(SELECT_COPY_BOOK_VIOLATION);
 
             psBook.setString(1, title);
             rsBook = psBook.executeQuery();
 
             if (rsBook != null) {
                 while (rsBook.next()) {
-                    int bookId = rsBook.getInt(1);//может быть несколько, разные поставки, год издания...
+                    int bookId = rsBook.getInt(1); //there may be several, different deliveries, year of publication ...
                     String booksTitle = rsBook.getString(2);
                     psCopyBook.setInt(1, bookId);
                     rsCopyBook = psCopyBook.executeQuery();
@@ -412,7 +379,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
         try {
             connection.setAutoCommit(false);
-            psBooksCopies = connection.prepareStatement("UPDATE books_copies SET availability=false, existence=false, date_of_writing_off=? WHERE id=?");
+            psBooksCopies = connection.prepareStatement(UPDATE_EXISTENCE);
             psBooksCopies.setDate(1, Date.valueOf(today));
 
             for (CopyBook copy : copyBooks) {
@@ -421,24 +388,38 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             }
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: writeBooksOff().", ex);
-                }
+            rollback(connection);
             throw new DAOException("Method writeBooksOff() failed.", e);
         } finally {
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    throw new DAOException("Method writeBooksOff() failed.", ex);
-                }
-            }
             close(psBooksCopies);
+            setAutoCommitTrue(connection);
             release(connection);
         }
+    }
+
+    @Override
+    public boolean doesTheCopyBookExist(CopyBook copyBook) {
+        Connection connection = take();
+        PreparedStatement psCopyBook = null;
+        ResultSet rs = null;
+
+        try {
+            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies WHERE id=?");
+            psCopyBook.setInt(1, copyBook.getId());
+            rs = psCopyBook.executeQuery();
+
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Method doesTheOrderExist() failed.", e);
+        } finally {
+            close(rs);
+            close(psCopyBook);
+            release(connection);
+        }
+        return false;
     }
 
     private double cutOffNumbers(double rating) {

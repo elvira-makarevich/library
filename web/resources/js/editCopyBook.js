@@ -5,10 +5,10 @@ function init() {
     document.getElementById("submitButton").addEventListener('click', changeValidation);
 
     let formEditCopyBook = document.getElementById('editCopyBook');
-    formEditCopyBook.addEventListener('submit', function (event) {
+    formEditCopyBook.addEventListener('submit', async function (event) {
         event.preventDefault();
         checkCostPerDay();
-        submitValidFormAndCloseWindow();
+        await submitValidFormAndCloseWindow();
     });
 }
 

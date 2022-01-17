@@ -55,25 +55,12 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             connection.commit();
 
         } catch (SQLException e) {
-
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception while rollback; operation: add author.", ex);
-                }
-            }
+            rollback(connection);
             throw new DAOException("Creating author failed.", e);
         } finally {
             close(generatedKeys);
             close(psAuthor, psImage);
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    throw new DAOException("Creating author failed.", ex);
-                }
-            }
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -109,36 +96,6 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
         }
 
         return authors;
-    }
-
-    @Override
-    public Optional<Author> findAuthorImage(int id) {
-
-        Author author = new Author();
-        Optional<Author> optionalAuthor;
-        Connection connection = take();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            ps = connection.prepareStatement(SELECT_AUTHOR_IMAGE);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-            if (rs != null) {
-                while (rs.next()) {
-                    author.setImage(rs.getBytes(1));
-                }
-            }
-        } catch (SQLException e) {
-            throw new DAOException("SQLException while finding the author's image.", e);
-        } finally {
-            close(rs);
-            close(ps);
-            release(connection);
-        }
-
-        optionalAuthor = Optional.of(author);
-        return optionalAuthor;
     }
 
 }

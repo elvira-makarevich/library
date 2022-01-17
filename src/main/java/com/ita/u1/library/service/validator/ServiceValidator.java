@@ -108,7 +108,7 @@ public class ServiceValidator {
 
     public void validateSaveOrder(Order order, List<CopyBook> copyBooks) {
         log.info("Start validate order info.");
-        checkTheDuplicationOfBooks(copyBooks);
+        checkTheDuplicationOfBooks(order.getBooks());
 
         int numberOfBooks = order.getBooks().size();
         if (numberOfBooks > 5) {
@@ -116,7 +116,6 @@ public class ServiceValidator {
         }
 
         BigDecimal preCost = calculatePreliminaryCost(order, copyBooks, numberOfBooks);
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         compareCost(preCost, order.getPreliminaryCost());
         log.info("Order info validated.");
     }
@@ -126,7 +125,7 @@ public class ServiceValidator {
         checkDates(order, orderInfoFromDB);
         checkPenaltyNullOrNotNegative(order.getPenalty());
 
-        BigDecimal totalCostValueDB = calculateTotalCostBasedOnDataFromDB(order, orderInfoFromDB);
+        BigDecimal totalCostValueDB = calculateTotalCostBasedOnDataFromDB(orderInfoFromDB);
         BigDecimal totalCostValueWithoutPenalty;
         if (order.getPenalty() == null) {
             totalCostValueWithoutPenalty = order.getTotalCost();
@@ -139,14 +138,14 @@ public class ServiceValidator {
 
     public void validateViolationMessage(Violation violation) {
         log.info("Start validate violation message.");
-        if (violation.getMessage().matches(PATTERN_VIOLATION_MESSAGE)) {
+        if (!violation.getMessage().matches(PATTERN_VIOLATION_MESSAGE)) {
             throw new ServiceException("Invalid message.");
         }
         log.info("Violation message validated.");
     }
 
-    public void validateProfitabilityDates(Profitability profitabilityDates){
-        if(profitabilityDates.getFrom().isAfter(profitabilityDates.getTo())){
+    public void validateProfitabilityDates(Profitability profitabilityDates) {
+        if (profitabilityDates.getFrom().isAfter(profitabilityDates.getTo())) {
             throw new ServiceException("Invalid dates to check profitability.");
         }
     }
@@ -165,16 +164,18 @@ public class ServiceValidator {
     }
 
     private void checkTheDuplicationOfBooks(List<CopyBook> copyBooks) {
-        ////////////////////////////////////////////////
+        log.info("List<CopyBook> copyBooks");
         for (int i = 0; i < copyBooks.size(); i++) {
-            int bookId = copyBooks.get(i).getBookId();
+            String title = copyBooks.get(i).getTitle();
             for (int j = 0; j < copyBooks.size(); j++) {
                 if (i == j) continue;
-                if (bookId == copyBooks.get(j).getBookId()) {
+                if (title.equals(copyBooks.get(j).getTitle())) {
+                    System.out.println(title);
                     throw new ServiceException("The order contains the same books.");
                 }
             }
         }
+        log.info("List<CopyBook> copyBooks");
     }
 
     private BigDecimal calculatePreliminaryCost(Order order, List<CopyBook> copyBooks, int numberOfBooks) {
@@ -202,16 +203,11 @@ public class ServiceValidator {
     }
 
     private void compareCost(BigDecimal cost1, BigDecimal cost2) {
-        //возможно поменяется на compareTo BigDecimal
-        double d1 = cost1.doubleValue();
-        double d2 = cost2.doubleValue();
-
-        double difference = Math.abs(d1 - d2);
-        System.out.println(difference);
-
-        if (difference > 0.03) {
+        log.info("Start compare cost with the info from DB.");
+        if (cost1.compareTo(cost2) != 0) {
             throw new ServiceException("Invalid order cost.");
         }
+        log.info("Cost compared.");
     }
 
     private void checkDates(Order order, Order orderInfoFromDB) {
@@ -225,12 +221,12 @@ public class ServiceValidator {
 
     }
 
-    private BigDecimal calculateTotalCostBasedOnDataFromDB(Order order, Order orderInfoFromDB) {
-        BigDecimal realNumberOfRentalDays = new BigDecimal(order.getRealReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
-        BigDecimal numberOfPossibleRentalDays = new BigDecimal(order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
+    public BigDecimal calculateTotalCostBasedOnDataFromDB(Order orderInfoFromDB) {
+        BigDecimal realNumberOfRentalDays = new BigDecimal(LocalDate.now().toEpochDay() - orderInfoFromDB.getOrderDate().toEpochDay() + 1);
+        BigDecimal numberOfPossibleRentalDays = new BigDecimal(orderInfoFromDB.getPossibleReturnDate().toEpochDay() - orderInfoFromDB.getOrderDate().toEpochDay() + 1);
         BigDecimal totalCostValue;
 
-        if (isReturnDateViolated(order)) {
+        if (isReturnDateViolated(orderInfoFromDB)) {
             BigDecimal numberOfOverdueDays = realNumberOfRentalDays.subtract(numberOfPossibleRentalDays);
             BigDecimal penaltyRate = new BigDecimal(0.01);
             BigDecimal amountOfThePenalty = orderInfoFromDB.getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
@@ -244,7 +240,7 @@ public class ServiceValidator {
 
     private boolean isReturnDateViolated(Order order) {
 
-        if (order.getPossibleReturnDate().compareTo(order.getRealReturnDate()) < 0) {
+        if (order.getPossibleReturnDate().isBefore(LocalDate.now())) {
             return true;
         }
         return false;
@@ -273,7 +269,7 @@ public class ServiceValidator {
     }
 
     private boolean checkPostCode(int postcode) {
-        String s = postcode + "";
+        String s = postcode + EMPTY;
         return s.matches(PATTERN_POST_CODE);
     }
 
@@ -282,7 +278,7 @@ public class ServiceValidator {
     }
 
     private boolean checkHouseNumber(int houseNumber) {
-        String s = houseNumber + "";
+        String s = houseNumber + EMPTY;
         return s.matches(PATTERN_HOUSE_NUMBER);
     }
 
@@ -294,7 +290,7 @@ public class ServiceValidator {
     }
 
     private boolean checkApartmentNumber(int apartmentNumber) {
-        String s = apartmentNumber + "";
+        String s = apartmentNumber + EMPTY;
         return s.matches(PATTERN_APARTMENT_NUMBER);
     }
 
@@ -316,7 +312,7 @@ public class ServiceValidator {
     }
 
     private boolean checkCost(BigDecimal cost) {
-        String c = cost + "";
+        String c = cost + EMPTY;
         return c.matches(PATTERN_COST);
     }
 
@@ -324,7 +320,7 @@ public class ServiceValidator {
         if (penalty == null) {
             return true;
         }
-        String c = penalty + "";
+        String c = penalty + EMPTY;
         return c.matches(PATTERN_COST);
     }
 

@@ -55,10 +55,6 @@ public class ViewAllClients implements Command {
             log.error("Database error. Command: ViewAllClients.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: ViewAllClients.", e);
-        } catch (MissingClientsServiceException e) {
-            log.error("There are no clients in the library.", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("There are no clients in the library.", e);
         }
     }
 }

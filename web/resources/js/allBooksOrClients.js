@@ -1,30 +1,9 @@
 window.onload = () => init();
 
-function init() {
+async function init() {
     let page = document.getElementById('currentPage').value;
-    getList(page);
+    await getList(page);
 
-}
-
-
-
-async function getList(page) {
-
-    let numberOfPages = document.getElementById('numberOfPages').value;
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + page;
-    let response = await fetch(url);
-
-    if (response.ok) {
-        let json = await response.json();
-        viewInTable(json);
-        createNavigation(page, numberOfPages);
-    } else {
-        console.log("Response.status: " + response.status);
-    }
-
-}
-function sortByThead() {
     document.querySelectorAll('.table_sort thead').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
     const getSort = ({target}) => {
         const order = (target.dataset.order = -(target.dataset.order || -1));
@@ -41,6 +20,28 @@ function sortByThead() {
         for (const cell of target.parentNode.cells)
             cell.classList.toggle('sorted', cell === target);
     };
+
+}
+
+async function getList(page) {
+
+    let numberOfPages = document.getElementById('numberOfPages').value;
+    let pageContext = document.getElementById('pageContext').value;
+    let url = pageContext + page;
+    let response = await fetch(url);
+
+    if (response.ok) {
+        let json = await response.json();
+        if (json == "") {
+            alertAnswer();
+        } else {
+            viewInTable(json);
+            createNavigation(page, numberOfPages);
+        }
+    } else {
+        console.log("Response.status: " + response.status);
+    }
+
 }
 
 function createNavigation(currentPage, numberOfPages) {
@@ -101,18 +102,18 @@ function createNavigation(currentPage, numberOfPages) {
         }
     }
 
-    function click() {
+    async function click() {
         page = this.innerHTML;
-        removeTable();
-        getList(page);
+        removeTableByTagName();
+        await getList(page);
         start();
     }
 
 }
 
-function removeTable() {
+function removeTableByTagName() {
     let table = document.getElementsByTagName("table")[0];
-    if (!table){
+    if (!table) {
         return;
     }
     table.parentNode.removeChild(table);

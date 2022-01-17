@@ -7,13 +7,13 @@ function init() {
     document.getElementById("lastName").addEventListener('input', checkLastName);
 
     let formSaveAuthor = document.getElementById('saveAuthor');
-    formSaveAuthor.addEventListener('submit', function (event) {
+    formSaveAuthor.addEventListener('submit', async function (event) {
         event.preventDefault();
         checkFirstName();
         checkLastName();
 
         if (checkImage() && checkFirstName() && checkLastName()) {
-            submitValidFormAndCloseWindow();
+            await submitValidFormAndCloseWindow();
         }
     })
 }

@@ -25,6 +25,28 @@ public abstract class AbstractDAO {
         connectionPool.releaseConnection(connection);
     }
 
+    protected void rollback(Connection connection){
+
+        if (connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DAOException("Exception while rollback.", ex);
+            }
+        }
+    }
+
+    protected void setAutoCommitTrue(Connection connection){
+
+        if (connection != null) {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                throw new DAOException("SQLException in setAutoCommit(true).", ex);
+            }
+        }
+    }
+
     protected void close(ResultSet... resultSets) {
         if (resultSets != null) {
             for (final ResultSet resultSet : resultSets) {
@@ -32,7 +54,7 @@ public abstract class AbstractDAO {
                     try {
                         resultSet.close();
                     } catch (SQLException e) {
-                        throw new DAOException("Closing  ResultSet failed.", e);
+                        throw new DAOException("Closing ResultSet failed.", e);
                     }
                 }
             }

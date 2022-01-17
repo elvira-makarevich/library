@@ -49,13 +49,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public int getNumberOfClients() {
-
-        int number = clientDAO.getNumberOfClients();
-        if (number == 0) {
-            throw new ServiceException("There are no clients in the library.");
-        }
-        return number;
-
+        return clientDAO.getNumberOfClients();
     }
 
     @Override
@@ -63,7 +57,7 @@ public class ClientServiceImpl implements ClientService {
 
         List<Client> clients = clientDAO.getAllClients(startFromClient, amountOfClients);
         if (clients.isEmpty() || clients == null) {
-            throw new ServiceException("There are no clients in the library.");
+            return Collections.emptyList();
         }
         return clients;
     }

@@ -4,12 +4,12 @@ function init() {
     document.getElementById('findClient').addEventListener('click', checkParamClient);
 
     let formCloseOrder = document.getElementById('closeOrder');
-    formCloseOrder.addEventListener('submit', function (event) {
+    formCloseOrder.addEventListener('submit', async function (event) {
         event.preventDefault();
         checkClient();
         checkPenalty();
         if (checkClient() && checkPenalty()) {
-            submitValidForm();
+            await submitValidForm();
         }
     })
 }
@@ -108,7 +108,7 @@ function viewInTableClients(clients) {
                 realClientContainer.appendChild(inputHidden);
                 removeTable("table_clients");
                 checkClient();
-                findOrderBooks(idClient);
+                await findOrderBooks(idClient);
 
             } else {
                 alert("The reader has no orders!");
@@ -184,22 +184,9 @@ function calculateTheTotalRentalCost(order) {
 
     let totalCost = document.getElementById("totalCost");
     let penalty = document.getElementById("penalty").value;
-    penalty=penalty.replace(',','.')*1;
-    let numberOfRentalDays = calculateTheNumberOfRentalDays(order);
-    let numberOfPossibleRentalDays = calculateTheNumberOfPossibleRentalDays(order);
+    penalty = penalty.replace(',', '.') * 1;
+    totalCost.value = order.totalCost + penalty;
 
-    if (isReturnDateViolated(order) == true) {
-        //term of return is violated
-        let numberOfOverdueDays = numberOfRentalDays - numberOfPossibleRentalDays;
-        let rate = 0.01;
-        let amountOfThePenalty = order.preliminaryCost * numberOfOverdueDays * rate;
-        let totalCostValue = (order.preliminaryCost + amountOfThePenalty + penalty).toFixed(2);
-        totalCost.value = totalCostValue;
-    } else {
-        let rentalCostPerDay = order.preliminaryCost / numberOfPossibleRentalDays;
-        let totalCostValue = (numberOfRentalDays * rentalCostPerDay + penalty).toFixed(2);
-        totalCost.value = totalCostValue;
-    }
 }
 
 function checkPenalty() {
@@ -214,31 +201,6 @@ function checkPenalty() {
         return false;
     }
     return true;
-}
-
-function calculateTheNumberOfPossibleRentalDays(order) {
-
-    let orderDate = new Date(order.orderDate.year, order.orderDate.month - 1, order.orderDate.day);
-    let possibleReturnDate = new Date(order.possibleReturnDate.year, order.possibleReturnDate.month - 1, order.possibleReturnDate.day);
-    let daysLag = Math.ceil(Math.abs(possibleReturnDate.getTime() - orderDate.getTime()) / (1000 * 3600 * 24)) + 1;
-    return daysLag;
-}
-
-function calculateTheNumberOfRentalDays(order) {
-    let today = new Date();
-    let orderDate = new Date(order.orderDate.year, order.orderDate.month - 1, order.orderDate.day);
-    let daysLag = Math.ceil(Math.abs(today.getTime() - orderDate.getTime()) / (1000 * 3600 * 24));
-    return daysLag;
-}
-
-function isReturnDateViolated(order) {
-
-    let today = new Date();
-    let possibleReturnDate = new Date(order.possibleReturnDate.year, order.possibleReturnDate.month - 1, order.possibleReturnDate.day);
-    if (possibleReturnDate.getTime() < today.getTime()) {
-        return true;
-    }
-    return false;
 }
 
 function indicateDates(order) {

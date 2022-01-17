@@ -30,7 +30,7 @@ public class SaveOrder implements Command {
 
         int clientId = Converter.toInt(request.getParameter(CLIENT_ID));
         BigDecimal preliminaryCost = Converter.toBigDecimal(request.getParameter(PRELIMINARY_COST));
-        List<CopyBook> books = Converter.toListCopies(request.getParameterValues(COPY_ID));
+        List<CopyBook> books = Converter.toListCopiesWithTitle(request.getParameterValues(COPY_ID), request.getParameterValues(TITLE));
         LocalDate orderDate = LocalDate.now();
         LocalDate possibleReturnDate = orderDate.plusMonths(1);
         Order order = new Order(clientId, preliminaryCost, books, orderDate, possibleReturnDate);

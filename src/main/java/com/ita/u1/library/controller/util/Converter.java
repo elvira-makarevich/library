@@ -51,7 +51,7 @@ public class Converter {
             return 0;
         }
         try {
-        return Integer.parseInt(s);
+            return Integer.parseInt(s);
         } catch (NumberFormatException e) {
             log.error("Value [" + s + "] can't be converted to int.", e);
             throw new ControllerValidationException("Value [" + s + "] can't be converted to int.", e);
@@ -119,6 +119,24 @@ public class Converter {
         } catch (NullPointerException | NumberFormatException e) {
             log.error("Values [" + values + "] can't be converted to int.", e);
             throw new ControllerValidationException("Values [" + values + "] can't be converted to int.", e);
+        }
+        return copies;
+    }
+
+    public static List<CopyBook> toListCopiesWithTitle(String[] valuesId, String[] valuesTitle) throws ControllerValidationException {
+        if (valuesId == null || valuesId.length == 0 || valuesTitle == null || valuesTitle.length == 0) {
+            log.error("Provided parameters can not be empty.");
+            throw new ControllerValidationException("Provided parameters can not be empty.");
+        }
+        List<CopyBook> copies = new ArrayList<>();
+        try {
+
+            for (int i = 0; i < valuesId.length; i++) {
+                copies.add(new CopyBook(Integer.parseInt(valuesId[i]), valuesTitle[i]));
+            }
+        } catch (NullPointerException | NumberFormatException e) {
+            log.error("Provided parameters can't be converted to int.", e);
+            throw new ControllerValidationException("Provided parameters can't be converted to int.", e);
         }
         return copies;
     }

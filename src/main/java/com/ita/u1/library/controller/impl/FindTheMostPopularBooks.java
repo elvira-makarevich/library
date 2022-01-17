@@ -35,10 +35,6 @@ public class FindTheMostPopularBooks implements Command {
             log.error("Database error. Command: FindTheMostPopularBooks.", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: FindTheMostPopularBooks.", e);
-        } catch (MissingMostPopularBooksServiceException e) {
-            log.error("Nobody borrowed books from the library!", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Nobody borrowed books from the library!", e);
         }
     }
 }

@@ -11,6 +11,4 @@ public interface AuthorDAO {
 
     List<Author> findAuthor(String lastName);
 
-    Optional<Author> findAuthorImage(int id);
-
 }

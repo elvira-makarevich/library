@@ -46,7 +46,7 @@ public class ChangeCostPerDay implements Command {
             throw new ControllerException("Database error. Command: IndicateBookViolationAndChangeCost.", e);
         }catch (ServiceException e) {
             log.error("Invalid data.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("Invalid data.", e);
         }
     }

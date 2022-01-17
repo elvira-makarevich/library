@@ -9,18 +9,13 @@ public class CopyBook implements Serializable {
     private int id;
     private int bookId;
     private BigDecimal costPerDay;
-    private boolean availability;
     private String title;
     private double rating;
     private List<Violation> copyBooksViolations;
     private boolean existence;
+    private int available;
 
     public CopyBook() {
-    }
-
-    public CopyBook(BigDecimal costPerDay, boolean availability) {
-        this.costPerDay = costPerDay;
-        this.availability = availability;
     }
 
     public CopyBook(int id) {
@@ -34,6 +29,15 @@ public class CopyBook implements Serializable {
 
     public CopyBook(String title) {
         this.title = title;
+    }
+
+    public CopyBook(int id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    public CopyBook(BigDecimal costPerDay) {
+        this.costPerDay = costPerDay;
     }
 
     public int getId() {
@@ -58,14 +62,6 @@ public class CopyBook implements Serializable {
 
     public void setCostPerDay(BigDecimal costPerDay) {
         this.costPerDay = costPerDay;
-    }
-
-    public boolean isAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(boolean availability) {
-        this.availability = availability;
     }
 
     public String getTitle() {
@@ -100,6 +96,14 @@ public class CopyBook implements Serializable {
         this.existence = existence;
     }
 
+    public int getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(int available) {
+        this.available = available;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,9 +113,9 @@ public class CopyBook implements Serializable {
 
         if (id != copyBook.id) return false;
         if (bookId != copyBook.bookId) return false;
-        if (availability != copyBook.availability) return false;
         if (Double.compare(copyBook.rating, rating) != 0) return false;
         if (existence != copyBook.existence) return false;
+        if (available != copyBook.available) return false;
         if (costPerDay != null ? !costPerDay.equals(copyBook.costPerDay) : copyBook.costPerDay != null) return false;
         if (title != null ? !title.equals(copyBook.title) : copyBook.title != null) return false;
         return copyBooksViolations != null ? copyBooksViolations.equals(copyBook.copyBooksViolations) : copyBook.copyBooksViolations == null;
@@ -124,12 +128,12 @@ public class CopyBook implements Serializable {
         result = id;
         result = 31 * result + bookId;
         result = 31 * result + (costPerDay != null ? costPerDay.hashCode() : 0);
-        result = 31 * result + (availability ? 1 : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         temp = Double.doubleToLongBits(rating);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (copyBooksViolations != null ? copyBooksViolations.hashCode() : 0);
         result = 31 * result + (existence ? 1 : 0);
+        result = 31 * result + available;
         return result;
     }
 
@@ -139,11 +143,11 @@ public class CopyBook implements Serializable {
                 "id=" + id +
                 ", bookId=" + bookId +
                 ", costPerDay=" + costPerDay +
-                ", availability=" + availability +
                 ", title='" + title + '\'' +
                 ", rating=" + rating +
                 ", copyBooksViolations=" + copyBooksViolations +
                 ", existence=" + existence +
+                ", available=" + available +
                 '}';
     }
 }

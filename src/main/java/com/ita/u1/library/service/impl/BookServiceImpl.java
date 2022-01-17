@@ -3,14 +3,11 @@ package com.ita.u1.library.service.impl;
 import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.exception.MissingBooksServiceException;
-import com.ita.u1.library.exception.MissingMostPopularBooksServiceException;
 import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.validator.ServiceValidator;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,21 +32,15 @@ public class BookServiceImpl implements BookService {
     public List<Book> getAllBooks(int startFromBook, int amountOfBooks) {
 
         List<Book> books = bookDAO.getAllBooks(startFromBook, amountOfBooks);
-        //  books.sort(Comparator.comparing(Book::getNumberOfAvailableCopies).thenComparing(Book::getTitle));
         if (books.isEmpty() || books == null) {
-            throw new MissingBooksServiceException("There are no books in the library!");
+            return Collections.emptyList();
         }
         return books;
     }
 
     @Override
     public int getNumberOfBooks() {
-
-        int numberOfRecords = bookDAO.getNumberOfBooks();
-        if (numberOfRecords == 0) {
-            throw new MissingBooksServiceException("There are no books in the library!");
-        }
-        return numberOfRecords;
+        return bookDAO.getNumberOfBooks();
     }
 
     @Override
@@ -65,22 +56,28 @@ public class BookServiceImpl implements BookService {
     @Override
     public void changeCostPerDay(CopyBook copyBook) {
         serviceValidator.validateCost(copyBook.getCostPerDay());
+        if (!bookDAO.doesTheCopyBookExist(copyBook)) {
+            throw new ServiceException("There is no such book in the library.");
+        }
         bookDAO.changeCostPerDay(copyBook);
     }
 
     @Override
     public List<Book> findTheMostPopularBooks() {
+
         List<Book> books = bookDAO.findTheMostPopularBooks();
         if (books.isEmpty() || books == null) {
-            throw new MissingMostPopularBooksServiceException("Nobody borrowed books from the library!");
+            return Collections.emptyList();
         }
         return books;
     }
 
     @Override
     public Book findBookCover(int id) {
-        Optional<Book> optionalBook = bookDAO.findBookCover(id);
-        Book book = optionalBook.orElse(new Book());
+        Book book = bookDAO.findBookCover(id);
+        if (book == null) {
+            return new Book();
+        }
         return book;
     }
 
@@ -96,7 +93,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void writeBooksOff(List<CopyBook> copyBooks) {
+
         serviceValidator.validateTheDuplicationOfCopyBooks(copyBooks);
+        for (CopyBook copyBook : copyBooks) {
+            if (!bookDAO.doesTheCopyBookExist(copyBook)) {
+                throw new ServiceException("There is no such book in the library.");
+            }
+        }
         bookDAO.writeBooksOff(copyBooks);
     }
 }

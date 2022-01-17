@@ -32,7 +32,6 @@
            value="${pageContext.request.contextPath}/Controller?command=view_all_books&currentPage="
            style="display: none;">
 
-
     <input id="numberOfPages" type="text" name="" value="${numberOfPages}" style="display: none;">
     <input id="currentPage" type="text" name="" value="${currentPage}" style="display: none;">
 </div>

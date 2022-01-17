@@ -66,23 +66,12 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            if (connection != null)
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    throw new DAOException("Exception during rollback; operation: add client.", ex);
-                }
+            rollback(connection);
             throw new DAOException("Adding book to database failed.", e);
         } finally {
             close(generatedKeys);
             close(psClientImage, psClient);
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    throw new DAOException("Adding client to database failed.", ex);
-                }
-            }
+            setAutoCommitTrue(connection);
             release(connection);
         }
     }
@@ -222,6 +211,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
                     client.setId(rs.getInt(1));
                     client.setFirstName(rs.getString(2));
                     client.setLastName(rs.getString(3));
+                    client.setEmail(rs.getString(6));
                     client.setDateOfBirth(rs.getDate(7).toLocalDate());
                     clients.add(client);
                 }
@@ -232,10 +222,6 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
             close(rs);
             close(ps);
             release(connection);
-        }
-
-        if (clients.isEmpty()) {
-            return Collections.emptyList();
         }
         return clients;
     }

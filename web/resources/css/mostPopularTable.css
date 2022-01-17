@@ -9,3 +9,9 @@ th, td {
     border: 1px solid grey;
     padding: 10px 15px;
 }
+
+.emptyMostPopularBook {
+    color: red;
+    font-size: 25px;
+    padding: 3% 0% 15% 0%;
+}

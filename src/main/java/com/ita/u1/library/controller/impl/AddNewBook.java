@@ -48,7 +48,7 @@ public class AddNewBook implements Command {
 
         CopyBook[] copies = new CopyBook[numberOfCopies];
         for (int i = 0; i < numberOfCopies; i++) {
-            copies[i] = new CopyBook(costPerDay, true);
+            copies[i] = new CopyBook(costPerDay);
         }
 
         Book book = new Book(title, originalTitle, genres, price, numberOfCopies, authors, covers, publishingYear, numberOfPages, copies);

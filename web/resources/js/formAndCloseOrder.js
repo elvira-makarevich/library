@@ -1,10 +1,10 @@
-function checkParamClient() {
+async function checkParamClient() {
 
     let initials = document.getElementById('initials').value;
     if (initials.length < 2) {
         alert("Enter the last name of the client to search!");
     } else
-        findClientRequest();
+       await findClientRequest();
 }
 
 async function findClientRequest() {

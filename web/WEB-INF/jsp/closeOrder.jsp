@@ -51,7 +51,7 @@
     <br><br>
     <p id="penaltyError" class="error"></p>
     <div><label>Penalty, Br:</label>
-        <input id="penalty" type="text" value="0">
+        <input id="penalty" name="penalty" type="text" value="0" >
     </div>
     <br><br>
     <div><label>Total cost, Br:</label>
