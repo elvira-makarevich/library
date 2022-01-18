@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.exception.ControllerException;
+import com.ita.u1.library.exception.ControllerValidationException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.ClientService;
@@ -18,7 +19,7 @@ import java.io.IOException;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class CheckUniquenessEmail implements Command {
+public class CheckUniquenessEmail extends AbstractCommand implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
     private static final Logger log = LogManager.getLogger(CheckUniquenessEmail.class);
@@ -30,19 +31,13 @@ public class CheckUniquenessEmail implements Command {
 
         try {
             boolean result = clientService.checkUniquenessEmail(email);
-
-            String json = new Gson().toJson(result);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: CheckUniquenessEmail.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: CheckUniquenessEmail.", e);
-        } catch (DAOException e) {
+            sendResponseJSON(new Gson().toJson(result), response);
+        } catch (ControllerValidationException e) {
+            log.error("Invalid email.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: CheckUniquenessEmail.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: CheckUniquenessEmail.", e);
         }
     }
-
 }

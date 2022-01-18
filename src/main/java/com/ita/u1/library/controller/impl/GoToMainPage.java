@@ -27,18 +27,16 @@ public class GoToMainPage implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int page = DEFAULT_PAGE_NUMBER;
-
-        if (request.getParameter(CURRENT_PAGE) != null) {
-            page = Integer.parseInt(request.getParameter(CURRENT_PAGE));
-        }
+        //   int page = DEFAULT_PAGE_NUMBER;
+        //   if (request.getParameter(CURRENT_PAGE) != null) {
+        //        page = Integer.parseInt(request.getParameter(CURRENT_PAGE));
+        //    }
 
         try {
-            int numberOfRecords = bookService.getNumberOfBooks();
-            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
-
-            request.setAttribute(CURRENT_PAGE, page);
-            request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
+            //   int numberOfRecords = bookService.getNumberOfBooks();
+            //    int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+            //  request.setAttribute(CURRENT_PAGE, page);
+            //   request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
             request.getRequestDispatcher(PATH_MAIN_PAGE).forward(request, response);
         } catch (DAOConnectionPoolException e) {
             log.error("Database connection error. Command: GoToMainPage.", e);

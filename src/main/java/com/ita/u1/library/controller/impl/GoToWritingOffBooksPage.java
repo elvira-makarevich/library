@@ -13,6 +13,8 @@ public class GoToWritingOffBooksPage implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         request.getRequestDispatcher(PATH_WRITING_OFF_BOOKS_PAGE).forward(request, response);
+
     }
 }

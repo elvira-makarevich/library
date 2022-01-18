@@ -1,7 +1,9 @@
 package com.ita.u1.library.controller.impl;
 
 import com.ita.u1.library.controller.Command;
+import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.exception.ControllerException;
+import com.ita.u1.library.exception.ControllerValidationException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.BookService;
@@ -30,7 +32,7 @@ public class GoToAllBooksPage implements Command {
         int page = DEFAULT_PAGE_NUMBER;
 
         if (request.getParameter(CURRENT_PAGE) != null) {
-            page = Integer.parseInt(request.getParameter(CURRENT_PAGE));
+            page = Converter.toInt(request.getParameter(CURRENT_PAGE));
         }
 
         try {
@@ -39,13 +41,11 @@ public class GoToAllBooksPage implements Command {
             request.setAttribute(CURRENT_PAGE, page);
             request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
             request.getRequestDispatcher(PATH_ALL_BOOKS_PAGE).forward(request, response);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: GoToAllBooksPage.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: GoToAllBooksPage.", e);
-        } catch (DAOException e) {
+        } catch (ControllerValidationException e) {
+            log.error("ControllerValidationException. Command: GoToAllBooksPage.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: GoToAllBooksPage.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: GoToAllBooksPage.", e);
         }
     }

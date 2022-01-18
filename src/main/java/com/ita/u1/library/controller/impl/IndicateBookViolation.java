@@ -36,19 +36,15 @@ public class IndicateBookViolation implements Command {
 
         try {
             orderService.indicateBookViolation(violation);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: IndicateBookViolationAndChangeCost.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: IndicateBookViolationAndChangeCost.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: IndicateBookViolationAndChangeCost.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: IndicateBookViolationAndChangeCost.", e);
-        } catch (MissingOrderServiceException e) {
-            log.error("The order does not exist!", e);
+        } catch (ControllerValidationException | ServiceException e) {
+            log.error("Invalid violation data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("The order does not exist!", e);
+        } catch (MissingOrderServiceException e) {
+            log.error("Order with the specified book does not exist.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: IndicateBookViolation.", e);
+            throw new ControllerException("Database error. Command: IndicateBookViolation.", e);
         }
-
     }
 }

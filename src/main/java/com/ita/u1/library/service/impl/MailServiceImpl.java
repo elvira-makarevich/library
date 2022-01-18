@@ -7,6 +7,7 @@ import com.ita.u1.library.service.MailService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 public class MailServiceImpl implements MailService {
@@ -19,16 +20,20 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public List<ViolationReturnDate> getViolationsReturnDeadlineToday() {
-        return mailDAO.getViolationsReturnDeadlineToday();
+        List<ViolationReturnDate> freshViolations = mailDAO.getViolationsReturnDeadlineToday();
+        if (freshViolations.isEmpty() || freshViolations == null) {
+            return Collections.emptyList();
+        }
+        return freshViolations;
     }
 
     @Override
     public List<ViolationReturnDate> getViolationsReturnDeadlineFiveAndMoreDays() {
 
         List<ViolationReturnDate> violations = mailDAO.getViolationsReturnDeadlineFiveAndMoreDays();
-
-        if (!violations.isEmpty() && violations != null) {
-
+        if (violations.isEmpty() || violations == null) {
+            return Collections.emptyList();
+        } else {
             LocalDate today = LocalDate.now();
             for (int i = 0; i < violations.size(); i++) {
                 BigDecimal numberOfOverdueDays = new BigDecimal(today.toEpochDay() - violations.get(i).getOrder().getPossibleReturnDate().toEpochDay());

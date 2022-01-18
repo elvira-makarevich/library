@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.exception.ControllerException;
+import com.ita.u1.library.exception.ControllerValidationException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.ClientService;
@@ -18,7 +19,7 @@ import java.io.IOException;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class CheckUniquenessPassportNumber implements Command {
+public class CheckUniquenessPassportNumber extends AbstractCommand implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
     private static final Logger log = LogManager.getLogger(CheckUniquenessPassportNumber.class);
@@ -30,17 +31,12 @@ public class CheckUniquenessPassportNumber implements Command {
 
         try {
             boolean result = clientService.checkUniquenessPassportNumber(passportNumber);
-
-            String json = new Gson().toJson(result);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: CheckUniquenessPassportNumber.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: CheckUniquenessPassportNumber.", e);
-        } catch (DAOException e) {
-            log.error("Database connection error. Command:  CheckUniquenessPassportNumber.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sendResponseJSON(new Gson().toJson(result), response);
+        } catch (ControllerValidationException e) {
+            log.error("Invalid passport number.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: CheckUniquenessPassportNumber.", e);
             throw new ControllerException("Database error. Command: CheckUniquenessPassportNumber.", e);
         }
     }

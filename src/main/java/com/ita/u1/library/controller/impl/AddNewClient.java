@@ -47,26 +47,18 @@ public class AddNewClient implements Command {
 
         try {
             clientService.add(client);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: AddNewClient.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: AddNewClient.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: AddNewClient.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: AddNewClient.", e);
+        } catch (ControllerValidationException | ServiceException e) {
+            log.error("Invalid client data.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (DublicateEmailException e) {
             log.error("The client with the entered email is already registered!", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("The client with the entered email is already registered!", e);
         } catch (DublicatePassportNumberException e) {
             log.error("The client with the entered passport number is already registered!", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             throw new ControllerException("The client with the entered passport number is already registered!", e);
-        } catch (ServiceException e) {
-            log.error("Invalid client data.", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid client data.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: AddNewClient.", e);
+            throw new ControllerException("Database error. Command: AddNewClient.", e);
         }
     }
 }

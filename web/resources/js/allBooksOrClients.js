@@ -28,6 +28,7 @@ async function getList(page) {
     let numberOfPages = document.getElementById('numberOfPages').value;
     let pageContext = document.getElementById('pageContext').value;
     let url = pageContext + page;
+
     let response = await fetch(url);
 
     if (response.ok) {
@@ -41,7 +42,6 @@ async function getList(page) {
     } else {
         console.log("Response.status: " + response.status);
     }
-
 }
 
 function createNavigation(currentPage, numberOfPages) {

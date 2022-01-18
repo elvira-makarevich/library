@@ -3,10 +3,7 @@ package com.ita.u1.library.controller.impl;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.CopyBook;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -33,21 +30,13 @@ public class ChangeCostPerDay implements Command {
         CopyBook copyBook = new CopyBook(copyId, newCostPerDay);
 
         try {
-
             bookService.changeCostPerDay(copyBook);
-
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: ChangeCostPerDay.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: IndicateBookViolationAndChangeCost.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: ChangeCostPerDay.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: IndicateBookViolationAndChangeCost.", e);
-        }catch (ServiceException e) {
-            log.error("Invalid data.", e);
+        } catch (ControllerValidationException | ServiceException e) {
+            log.error("Invalid cost data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid data.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: ChangeCostPerDay.", e);
+            throw new ControllerException("Database error. Command: ChangeCostPerDay.", e);
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class ViewAllClients implements Command {
+public class ViewAllClients extends AbstractCommand implements Command {
 
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
     private static final Logger log = LogManager.getLogger(ViewAllClients.class);
@@ -43,17 +43,13 @@ public class ViewAllClients implements Command {
 
             request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
             request.setAttribute(CURRENT_PAGE, page);
+            sendResponseJSON(new Gson().toJson(clients), response);
 
-            String json = new Gson().toJson(clients);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: ViewAllClients.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: ViewAllClients.", e);
-        } catch (DAOException e) {
+        } catch (ControllerValidationException e) {
+            log.error("Invalid data.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: ViewAllClients.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: ViewAllClients.", e);
         }
     }

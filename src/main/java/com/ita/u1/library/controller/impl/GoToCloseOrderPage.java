@@ -13,6 +13,8 @@ public class GoToCloseOrderPage implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         request.getRequestDispatcher(PATH_CLOSE_ORDER_PAGE).forward(request, response);
+
     }
 }

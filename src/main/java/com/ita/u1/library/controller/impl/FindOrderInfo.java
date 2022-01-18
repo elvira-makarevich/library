@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class FindOrderInfo implements Command {
+public class FindOrderInfo extends AbstractCommand implements Command {
 
     private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
     private static final Logger log = LogManager.getLogger(FindOrderInfo.class);
@@ -29,25 +29,16 @@ public class FindOrderInfo implements Command {
 
         try {
             Order order = orderService.findOrderInfo(clientId);
-
-            request.getSession().setAttribute(CLIENT_ID_IN_SESSION, clientId);
-
-            String json = new Gson().toJson(order);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: FindOrderInfo.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: FindOrderInfo.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: FindOrderInfo.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: FindOrderInfo.", e);
+            sendResponseJSON(new Gson().toJson(order), response);
+        } catch (ControllerValidationException | ServiceException e) {
+            log.error("Invalid client data.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (NoActiveOrderServiceException e) {
             log.error("Invalid order data: client does not have active order.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid order data: client does not have active order.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: FindClient.", e);
+            throw new ControllerException("Database error. Command: FindClient.", e);
         }
     }
 }

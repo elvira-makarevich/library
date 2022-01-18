@@ -28,30 +28,30 @@ public class SimpleExecutorService {
     private ScheduledExecutorService executor;
 
     public SimpleExecutorService() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 11, 17);
-        LocalDateTime now = LocalDateTime.now();
-        Duration duration = Duration.between(now, timeToSendMail);
-        long delay = Math.abs(duration.toMillis());
 
-        executor = Executors.newScheduledThreadPool(1);
-        Thread mailSender = new Thread(new MailSender());
-        mailSender.setDaemon(true);
-        executor.schedule(mailSender, delay, TimeUnit.MILLISECONDS);
+        executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(new MailSender(), getDelay(), TimeUnit.MILLISECONDS);
         executor.shutdown();
     }
 
+    private long getDelay(){
+        LocalDate today = LocalDate.now();
+        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 17, 38);
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(now, timeToSendMail);
+        return Math.abs(duration.toMillis());
+    }
 
     private static class MailSender implements Runnable {
 
-        private static final MailService emailService = ServiceProvider.getInstance().getMailService();
+        private static final MailService mailService = ServiceProvider.getInstance().getMailService();
         private static final Logger log = LogManager.getLogger(MailSender.class);
 
         @Override
         public void run() {
 
-            List<ViolationReturnDate> freshViolationReturnDates = emailService.getViolationsReturnDeadlineToday();
-            List<ViolationReturnDate> oldViolationReturnDates = emailService.getViolationsReturnDeadlineFiveAndMoreDays();
+            List<ViolationReturnDate> freshViolationReturnDates = mailService.getViolationsReturnDeadlineToday();
+            List<ViolationReturnDate> oldViolationReturnDates = mailService.getViolationsReturnDeadlineFiveAndMoreDays();
 
             if (!freshViolationReturnDates.isEmpty() || !oldViolationReturnDates.isEmpty()) {
                 ResourceBundle resourceBundle = ResourceBundle.getBundle(MAIL_RESOURCE);

@@ -24,8 +24,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void saveOrder(Order order) {
-
-        //проверить есть ли такой клиент
         if (orderDAO.hasClientActiveOrder(order.getClientId())) {
             throw new ActiveOrderServiceException("Client has active order.");
         }
@@ -36,21 +34,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean hasClientActiveOrder(int clientId) {
-        //проверить есть ли такой клиент
-
-
-
         return orderDAO.hasClientActiveOrder(clientId);
     }
 
     @Override
     public Order findOrderInfo(int clientId) {
-        //change
-        //проверить есть ли такой клиент
-        Optional<Order> optionalOrder = orderDAO.findOrderInfo(clientId);
-        Order order = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
+        Order order = orderDAO.findOrderInfo(clientId);
+        if (order == null) {
+            throw new NoActiveOrderServiceException("Order does not exist.");
+        }
         order.setTotalCost(serviceValidator.calculateTotalCostBasedOnDataFromDB(order));
-
         return order;
     }
 
@@ -58,16 +51,17 @@ public class OrderServiceImpl implements OrderService {
     public void indicateBookViolation(Violation violation) {
         serviceValidator.validateViolationMessage(violation);
         if (!orderDAO.doesTheOrderExist(violation.getOrderId(), violation.getCopyId())) {
-            throw new MissingOrderServiceException("The order does not exist!");
+            throw new MissingOrderServiceException("Order with the specified book does not exist.");
         }
         orderDAO.indicateBookViolation(violation);
     }
 
     @Override
     public void closeOrder(Order order) {
-        //проверить есть ли такой клиент
-        Optional<Order> optionalOrder = orderDAO.findOrderInfo(order.getClientId());
-        Order orderInfoFromDB = optionalOrder.orElseThrow(() -> new NoActiveOrderServiceException("Client does not have active order."));
+        Order orderInfoFromDB = orderDAO.findOrderInfo(order.getClientId());
+        if (order == null) {
+            throw new NoActiveOrderServiceException("Order does not exist.");
+        }
         serviceValidator.validateCloseOrder(order, orderInfoFromDB);
         orderDAO.closeOrder(order);
     }

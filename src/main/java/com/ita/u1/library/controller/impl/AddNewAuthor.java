@@ -4,10 +4,7 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Author;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.AuthorService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -37,18 +34,12 @@ public class AddNewAuthor implements Command {
 
         try {
             authorService.addAuthor(author);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: AddNewAuthor.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: AddNewAuthor.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: AddNewAuthor.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: AddNewAuthor.", e);
-        } catch (ServiceException e) {
+        } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid author data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid author data.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: AddNewAuthor.", e);
+            throw new ControllerException("Database error. Command: AddNewAuthor.", e);
         }
     }
 }

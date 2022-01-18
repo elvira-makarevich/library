@@ -44,33 +44,19 @@ public class CloseOrder implements Command {
             books.get(i).setRating(ratingBook);
         }
 
-        int clientIdInSession = (int) request.getSession().getAttribute(CLIENT_ID_IN_SESSION);
-
-        if (clientId != clientIdInSession) {
-            throw new ControllerValidationException("Invalid order data.");
-        }
-
         Order order = new Order(orderId, clientId, books, orderDate, possibleReturnDate, realReturnDate, preliminaryCost, penalty, totalCost);
 
         try {
             orderService.closeOrder(order);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: CloseOrder.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: CloseOrder.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: CloseOrder.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: CloseOrder.", e);
-        } catch (ServiceException e) {
+        } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid order data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid order data.", e);
         } catch (NoActiveOrderServiceException e) {
             log.error("Invalid order data: client does not have active order.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid order data: client does not have active order.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: CloseOrder.", e);
+            throw new ControllerException("Database error. Command: CloseOrder.", e);
         }
-
     }
 }

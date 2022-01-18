@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Book;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +18,7 @@ import java.util.List;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class FindBook implements Command {
+public class FindBook extends AbstractCommand implements Command {
 
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
     private static final Logger log = LogManager.getLogger(FindBook.class);
@@ -34,23 +31,13 @@ public class FindBook implements Command {
 
         try {
             List<Book> books = bookService.findBook(title);
-
-            String json = new Gson().toJson(books);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: FindBook.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: FindBook.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: FindBook.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: FindBook.", e);
-        } catch (ServiceException e) {
-            log.error("Invalid book title.", e);
+            sendResponseJSON(new Gson().toJson(books), response);
+        } catch (ControllerValidationException | ServiceException e) {
+            log.error("Invalid title.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid book title.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: FindBook.", e);
+            throw new ControllerException("Database error. Command: FindBook.", e);
         }
     }
 }

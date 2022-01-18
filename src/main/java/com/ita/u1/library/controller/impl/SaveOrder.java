@@ -37,22 +37,15 @@ public class SaveOrder implements Command {
 
         try {
             orderService.saveOrder(order);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: SaveOrder.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: SaveOrder.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: SaveOrder.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: SaveOrder.", e);
-        } catch (ServiceException e) {
+        } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid order data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid order data.", e);
         } catch (ActiveOrderServiceException e) {
             log.error("Client has active order.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Client has active order.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: SaveOrder.", e);
+            throw new ControllerException("Database error. Command: SaveOrder.", e);
         }
     }
 }

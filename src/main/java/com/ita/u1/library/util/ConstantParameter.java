@@ -83,8 +83,7 @@ public class ConstantParameter {
 
     public static final String INSERT_AUTHOR = "INSERT INTO authors (first_name, last_name) VALUES (?,?) ",
             INSERT_AUTHOR_IMAGE = "INSERT INTO authors_images (author_id, image) VALUES (?,?)",
-            SELECT_AUTHOR_BY_LAST_NAME = "SELECT * FROM authors WHERE last_name = ?",
-            SELECT_AUTHOR_IMAGE = "SELECT image FROM authors_images WHERE author_id = ?";
+            SELECT_AUTHOR_BY_LAST_NAME = "SELECT * FROM authors WHERE last_name = ?";
 
     public static final String INSERT_BOOK = "INSERT INTO books (title, original_title, price, number_of_copies, publishing_year, registration_date, number_of_pages) VALUES (?,?,?,?,?,?,?)",
             INSERT_BOOK_COVERS = "INSERT INTO books_covers (book_id, cover) VALUES (?,?)",

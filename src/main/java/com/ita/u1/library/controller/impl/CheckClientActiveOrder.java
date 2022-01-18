@@ -3,9 +3,7 @@ package com.ita.u1.library.controller.impl;
 import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +16,7 @@ import java.io.IOException;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
-public class CheckClientActiveOrder implements Command {
+public class CheckClientActiveOrder extends AbstractCommand implements Command {
 
     private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
     private static final Logger log = LogManager.getLogger(CheckClientActiveOrder.class);
@@ -30,16 +28,12 @@ public class CheckClientActiveOrder implements Command {
 
         try {
             boolean result = orderService.hasClientActiveOrder(clientId);
-            String json = new Gson().toJson(result);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: CheckClientActiveOrder.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: CheckClientActiveOrder.", e);
-        } catch (DAOException e) {
+            sendResponseJSON(new Gson().toJson(result), response);
+        } catch (ControllerValidationException e) {
+            log.error("Invalid client id.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: CheckClientActiveOrder.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: CheckClientActiveOrder.", e);
         }
     }

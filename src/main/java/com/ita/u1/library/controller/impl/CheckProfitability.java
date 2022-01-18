@@ -5,6 +5,7 @@ import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Profitability;
 import com.ita.u1.library.exception.ControllerException;
+import com.ita.u1.library.exception.ControllerValidationException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
 import com.ita.u1.library.service.OrderService;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 
-public class CheckProfitability implements Command {
+public class CheckProfitability extends AbstractCommand implements Command {
 
     private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
     private static final Logger log = LogManager.getLogger(CheckProfitability.class);
@@ -32,18 +33,13 @@ public class CheckProfitability implements Command {
 
         try {
             Profitability profitability = orderService.checkProfitability(profitabilityDates);
-            String json = new Gson().toJson(profitability);
-            response.setHeader("Content-Type", "application/json; charset=UTF-8");
-            response.getWriter().write(json);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: CheckProfitability.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: CheckProfitability.", e);
-        } catch (DAOException e) {
+            sendResponseJSON(new Gson().toJson(profitability), response);
+        } catch (ControllerValidationException e) {
+            log.error("Invalid dates.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: CheckProfitability.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: CheckProfitability.", e);
         }
-
     }
 }

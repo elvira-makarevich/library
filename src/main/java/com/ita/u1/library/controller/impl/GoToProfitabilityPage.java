@@ -13,6 +13,8 @@ public class GoToProfitabilityPage implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         request.getRequestDispatcher(PATH_PROFITABILITY_PAGE).forward(request, response);
+
     }
 }

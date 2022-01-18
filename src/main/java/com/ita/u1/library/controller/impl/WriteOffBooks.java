@@ -30,19 +30,12 @@ public class WriteOffBooks implements Command {
 
         try {
             bookService.writeBooksOff(copyBooks);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: WriteOffBooks.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: WriteOffBooks.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: WriteOffBooks.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. WriteOffBooks.", e);
-        } catch (ServiceException e) {
-            log.error("Invalid data.", e);
+        } catch (ControllerValidationException | ServiceException e) {
+            log.error("Invalid book(s) data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid data.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: WriteOffBooks.", e);
+            throw new ControllerException("Database error. Command: WriteOffBooks.", e);
         }
-
     }
 }

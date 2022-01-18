@@ -4,7 +4,6 @@ import com.ita.u1.library.dao.ClientDAO;
 import com.ita.u1.library.entity.Client;
 import com.ita.u1.library.exception.DublicateEmailException;
 import com.ita.u1.library.exception.DublicatePassportNumberException;
-import com.ita.u1.library.exception.ServiceException;
 import com.ita.u1.library.service.ClientService;
 import com.ita.u1.library.service.validator.ServiceValidator;
 

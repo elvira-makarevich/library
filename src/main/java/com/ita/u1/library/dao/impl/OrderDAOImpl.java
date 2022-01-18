@@ -103,7 +103,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public Optional<Order> findOrderInfo(int clientId) {
+    public Order findOrderInfo(int clientId) {
         Connection connection = take();
         PreparedStatement psOrder = null;
         PreparedStatement psBooksOrder = null;
@@ -114,7 +114,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
         ResultSet rsBooks = null;
         ResultSet rsBooksCopies = null;
 
-        Optional<Order> optionalOrder;
         Order order = new Order();
         List<CopyBook> booksOrder = new ArrayList<>();
 
@@ -166,9 +165,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             close(rsOrder, rsBooks, rsBooksCopies, rsBooksOrder);
             release(connection);
         }
-
-        optionalOrder = Optional.of(order);
-        return optionalOrder;
+        return order;
     }
 
     @Override

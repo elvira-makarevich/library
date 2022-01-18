@@ -7,10 +7,7 @@ import com.ita.u1.library.entity.Author;
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.entity.Genre;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
-import com.ita.u1.library.exception.ServiceException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -55,18 +52,12 @@ public class AddNewBook implements Command {
 
         try {
             bookService.add(book);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: AddNewBook.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: AddNewBook.", e);
-        } catch (DAOException e) {
-            log.error("Database error. Command: AddNewBook.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database error. Command: AddNewBook.", e);
-        } catch (ServiceException e) {
+        } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid book data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            throw new ControllerException("Invalid book data.", e);
+        } catch (DAOConnectionPoolException | DAOException e) {
+            log.error("Database error. Command: AddNewBook.", e);
+            throw new ControllerException("Database error. Command: AddNewBook.", e);
         }
     }
 }

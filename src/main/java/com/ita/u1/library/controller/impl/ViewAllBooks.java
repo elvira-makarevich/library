@@ -19,7 +19,7 @@ import java.util.List;
 import static com.ita.u1.library.util.ConstantParameter.*;
 
 
-public class ViewAllBooks implements Command {
+public class ViewAllBooks extends AbstractCommand implements Command {
 
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
     private static final Logger log = LogManager.getLogger(ViewAllBooks.class);
@@ -37,24 +37,20 @@ public class ViewAllBooks implements Command {
         }
 
         try {
-        int numberOfRecords = bookService.getNumberOfBooks();
-        int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+            int numberOfRecords = bookService.getNumberOfBooks();
+            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
 
-        List<Book> books = bookService.getAllBooks((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
+            List<Book> books = bookService.getAllBooks((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
 
-        request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
-        request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
+            request.setAttribute(CURRENT_PAGE, page);
+            sendResponseJSON(new Gson().toJson(books), response);
 
-        String json = new Gson().toJson(books);
-        response.setHeader("Content-Type", "application/json; charset=UTF-8");
-        response.getWriter().write(json);
-        } catch (DAOConnectionPoolException e) {
-            log.error("Database connection error. Command: ViewAllBooks.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new ControllerException("Database connection error. Command: ViewAllBooks.", e);
-        } catch (DAOException e) {
+        } catch (ControllerValidationException e) {
+            log.error("ControllerValidationException. Command: ViewAllBooks.", e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: ViewAllBooks.", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ControllerException("Database error. Command: ViewAllBooks.", e);
         }
     }
