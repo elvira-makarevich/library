@@ -6,6 +6,7 @@ import com.ita.u1.library.entity.ViolationReturnDate;
 import com.ita.u1.library.service.MailService;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +22,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public List<ViolationReturnDate> getViolationsReturnDeadlineToday() {
         List<ViolationReturnDate> freshViolations = mailDAO.getViolationsReturnDeadlineToday();
-        if (freshViolations.isEmpty() || freshViolations == null) {
+        if (freshViolations.isEmpty()) {
             return Collections.emptyList();
         }
         return freshViolations;
@@ -31,15 +32,15 @@ public class MailServiceImpl implements MailService {
     public List<ViolationReturnDate> getViolationsReturnDeadlineFiveAndMoreDays() {
 
         List<ViolationReturnDate> violations = mailDAO.getViolationsReturnDeadlineFiveAndMoreDays();
-        if (violations.isEmpty() || violations == null) {
+        if (violations.isEmpty()) {
             return Collections.emptyList();
         } else {
             LocalDate today = LocalDate.now();
-            for (int i = 0; i < violations.size(); i++) {
-                BigDecimal numberOfOverdueDays = new BigDecimal(today.toEpochDay() - violations.get(i).getOrder().getPossibleReturnDate().toEpochDay());
-                BigDecimal penaltyRate = new BigDecimal(0.01);
-                BigDecimal amountOfThePenalty = violations.get(i).getOrder().getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
-                violations.get(i).setPenaltyAmountForDelaying(amountOfThePenalty.setScale(2, BigDecimal.ROUND_UP));
+            for (ViolationReturnDate violation : violations) {
+                BigDecimal numberOfOverdueDays = new BigDecimal(today.toEpochDay() - violation.getOrder().getPossibleReturnDate().toEpochDay());
+                BigDecimal penaltyRate = new BigDecimal("0.01");
+                BigDecimal amountOfThePenalty = violation.getOrder().getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
+                violation.setPenaltyAmountForDelaying(amountOfThePenalty.setScale(2, RoundingMode.UP));
             }
         }
         return violations;

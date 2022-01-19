@@ -1,39 +1,17 @@
 window.onload = () => init();
 
- function init() {
+function init() {
     document.getElementById("files").addEventListener('change', loadImages);
     document.getElementById("violationMessage").addEventListener('change', checkMessage);
     document.getElementById("files").addEventListener('submit', checkImages);
-    let formViolation = document.getElementById('bookViolation');
-    formViolation.addEventListener('submit', async function (event) {
+    document.getElementById('bookViolation').addEventListener('submit', async function (event) {
         event.preventDefault();
         checkMessage();
         checkImages();
         if (checkMessage() && checkImages()) {
-            await submitValidFormAndCloseWindow();
+            await submitValidFormAndCloseWindow("bookViolation", "/Controller?command=indicate_book_violation");
         }
     });
-}
-
-async function submitValidFormAndCloseWindow() {
-
-    let formData = new FormData(document.getElementById('bookViolation'));
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=indicate_book_violation";
-
-    let response = await fetch(url, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (response.ok) {
-        alert("The information was saved.");
-        close();
-    } else {
-        console.log("Error" + this.status);
-        alert("Check the correctness of the entered data.");
-    }
-
 }
 
 function checkImages() {
@@ -66,35 +44,4 @@ function checkMessage() {
         }
     }
     return true;
-}
-
-function loadImages() {
-
-    let containerImages = document.getElementById("fileListDisplay");
-    deleteImages();
-    let fileInput = document.getElementById("files");
-    let files = fileInput.files;
-    let file;
-
-    for (let i = 0; i < files.length; i++) {
-        let image = document.createElement("img");
-        let reader = new FileReader();
-        file = files[i];
-        reader.onload = function () {
-
-            image.className = "img-item";
-            image.src = reader.result;
-        };
-        reader.readAsDataURL(file);
-        containerImages.appendChild(image);
-
-    }
-    checkImages();
-}
-
-function deleteImages() {
-    let div = document.getElementById('fileListDisplay');
-    while (div.firstChild) {
-        div.removeChild(div.firstChild);
-    }
 }

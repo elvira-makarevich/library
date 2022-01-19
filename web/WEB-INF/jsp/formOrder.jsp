@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/table.css">
     <script src="resources/js/formOrder.js"></script>
     <script src="resources/js/formAndCloseOrder.js"></script>
+    <script src="resources/js/common.js"></script>
 
 </head>
 <body>
@@ -63,9 +64,6 @@
     <br><br>
     <input type="submit" name="submit" id="submitButton" value="Save">
 </form>
-
-<input id="pageContextAddClient" type="text" name=""
-       value="${pageContext.request.contextPath}/Controller?command=go_to_add_new_client_page" style="display: none;">
 
 <input id="pageContext" type="text" name=""
        value="${pageContext.request.contextPath}" style="display: none;">

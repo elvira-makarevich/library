@@ -4,6 +4,7 @@
     <title>Indicate violation</title>
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <script src="resources/js/bookViolation.js"></script>
+    <script src="resources/js/common.js"></script>
 
 </head>
 <body>

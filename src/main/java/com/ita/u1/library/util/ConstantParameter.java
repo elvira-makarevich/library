@@ -54,6 +54,8 @@ public class ConstantParameter {
             BR = " Br",
             EMPTY = "",
             SUM = "sum",
+            FROM = "from",
+            TO = "to",
             PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp",
             PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp",
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",

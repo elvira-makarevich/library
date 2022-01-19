@@ -2,83 +2,39 @@ window.onload = () => init();
 
 function init() {
     document.getElementById('findClient').addEventListener('click', checkParamClient);
-
-    let formCloseOrder = document.getElementById('closeOrder');
-    formCloseOrder.addEventListener('submit', async function (event) {
+    document.getElementById('closeOrder').addEventListener('submit', async function (event) {
         event.preventDefault();
         checkClient();
         checkPenalty();
         if (checkClient() && checkPenalty()) {
-            await submitValidForm();
+            let formData = new FormData(document.getElementById("closeOrder"));
+            let command = "/Controller?command=close_order";
+            let commandRedirect = "/Controller?command=go_to_main_page";
+            await submitValidFormAndRedirect(formData, command, commandRedirect);
         }
     })
 }
 
-async function submitValidForm() {
-
-    let formData = new FormData(document.getElementById('closeOrder'));
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=close_order";
-    let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-
-    let response = await fetch(url, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (response.ok) {
-        alert("The order has been successfully closed.");
-        window.location = urlRedirect;
-    } else {
-        console.log("Error" + this.status);
-        alert("Check the correctness of the entered data.");
-    }
-
-}
-
 function viewInTableClients(clients) {
-    removeTable("table_clients");
-    let table = document.createElement('table');
-    table.className = "table_clients";
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('possibleClientContainer').appendChild(table);
-
-    let row_1 = document.createElement('tr');
-    let heading_1 = document.createElement('th');
-    heading_1.innerHTML = "Last name";
-    let heading_2 = document.createElement('th');
-    heading_2.innerHTML = "First name";
-    let heading_3 = document.createElement('th');
-    heading_3.innerHTML = "Date of birth";
-    let heading_4 = document.createElement('th');
-    heading_4.innerHTML = "";
-
-    row_1.appendChild(heading_1);
-    row_1.appendChild(heading_2);
-    row_1.appendChild(heading_3);
-    row_1.appendChild(heading_4);
-    thead.appendChild(row_1);
-
+    createTableForClients("table_clients", "possibleClientContainer");
     let i;
     for (i in clients) {
-
+        let table_clients = document.getElementsByClassName("table_clients")[0];
         let row = document.createElement('tr');
         let row_data_1 = document.createElement('td');
         row_data_1.innerHTML = clients[i].lastName;
         let row_data_2 = document.createElement('td');
         row_data_2.innerHTML = clients[i].firstName;
         let row_data_3 = document.createElement('td');
-        row_data_3.innerHTML = clients[i].dateOfBirth.year + "-" + clients[i].dateOfBirth.month + "-" + clients[i].dateOfBirth.day;
+        row_data_3.innerHTML = clients[i].email;
         let row_data_4 = document.createElement('td');
+        row_data_4.innerHTML = clients[i].dateOfBirth.year + "-" + clients[i].dateOfBirth.month + "-" + clients[i].dateOfBirth.day;
+        let row_data_5 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
-        buttonAdd.innerHTML = "Add";
+        buttonAdd.innerHTML = "Add to form";
         buttonAdd.addEventListener('click', addClient);
-        row_data_4.appendChild(buttonAdd);
+        row_data_5.appendChild(buttonAdd);
 
         let initials = clients[i].lastName + " " + clients[i].firstName;
         let idClient = clients[i].id;
@@ -87,29 +43,13 @@ function viewInTableClients(clients) {
         row.appendChild(row_data_2);
         row.appendChild(row_data_3);
         row.appendChild(row_data_4);
-
-        tbody.appendChild(row);
+        row.appendChild(row_data_5);
+        table_clients.appendChild(row);
 
         async function addClient() {
             if (await hasClientActiveOrder(idClient) === true) {
-                removeClient();
-                let realClientContainer = document.getElementById("realClientContainer");
-                let input = document.createElement("input");
-                input.type = "text";
-                input.id = "realClient";
-                input.value = initials;
-                input.setAttribute("readonly", "readonly");
-                realClientContainer.appendChild(input);
-
-                let inputHidden = document.createElement("input");
-                inputHidden.type = "hidden";
-                inputHidden.value = idClient;
-                inputHidden.name = "clientId";
-                realClientContainer.appendChild(inputHidden);
-                removeTable("table_clients");
-                checkClient();
+                addClientToRealClientContainer(initials, idClient);
                 await findOrderBooks(idClient);
-
             } else {
                 alert("The reader has no orders!");
             }
@@ -130,12 +70,26 @@ async function findOrderBooks(clientId) {
         let json = await response.json();
         createFormWithOrderInfo(json);
     } else {
-        alert("Error while finding books.");
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 }
 
 function createFormWithOrderInfo(order) {
+    addEventListenerForPenalty(order);
+    viewBooksInfo(order);
+    indicateDates(order);
+    calculateTheTotalRentalCost(order);
+    indicateHiddenField("orderId", order.id);
+    indicateHiddenField("clientId", order.clientId);
+    indicateHiddenField("preliminaryCost", order.preliminaryCost);
+    indicateHiddenField("orderDate", formDate(order.orderDate));
+    indicateHiddenField("possibleReturnDate", formDate(order.possibleReturnDate));
+}
+
+function addEventListenerForPenalty(order) {
     document.getElementById('penalty').addEventListener('input', function () {
         let penalty = document.getElementById("penalty").value;
         let error = document.getElementById("penaltyError");
@@ -149,14 +103,6 @@ function createFormWithOrderInfo(order) {
         calculateTheTotalRentalCost(order);
         return true;
     });
-    viewBooksInfo(order);
-    indicateDates(order);
-    calculateTheTotalRentalCost(order);
-    indicateHiddenField("orderId", order.id);
-    indicateHiddenField("clientId", order.clientId);
-    indicateHiddenField("preliminaryCost", order.preliminaryCost);
-    indicateHiddenField("orderDate", formDate(order.orderDate));
-    indicateHiddenField("possibleReturnDate", formDate(order.possibleReturnDate));
 }
 
 function formDate(date) {
@@ -187,20 +133,6 @@ function calculateTheTotalRentalCost(order) {
     penalty = penalty.replace(',', '.') * 1;
     totalCost.value = order.totalCost + penalty;
 
-}
-
-function checkPenalty() {
-
-    let penalty = document.getElementById("penalty").value;
-    let error = document.getElementById("penaltyError");
-    error.innerHTML = "";
-
-    let regex = /(^[0-9]{1,}[.,]?[0-9]{0,2})$/;
-    if (regex.test(penalty) === false) {
-        error.textContent = "Penalty cannot be negative, 2 decimal places are allowed.";
-        return false;
-    }
-    return true;
 }
 
 function indicateDates(order) {
@@ -250,9 +182,9 @@ function viewBooksInfo(order) {
 
         let row = document.createElement('tr');
         let row_data_1 = document.createElement('td');
-        row_data_1.innerHTML = order.books[i].title;
+        row_data_1.innerHTML = title;
         let row_data_2 = document.createElement('td');
-        row_data_2.innerHTML = order.books[i].costPerDay;
+        row_data_2.innerHTML = costPerDay;
         let row_data_3 = document.createElement('td');
 
         let divElement = document.createElement('div');
@@ -312,4 +244,19 @@ function viewBooksInfo(order) {
         tbody.appendChild(row);
     }
 }
+
+function checkPenalty() {
+
+    let penalty = document.getElementById("penalty").value;
+    let error = document.getElementById("penaltyError");
+    error.innerHTML = "";
+
+    let regex = /(^[0-9]{1,}[.,]?[0-9]{0,2})$/;
+    if (regex.test(penalty) === false) {
+        error.textContent = "Penalty cannot be negative, 2 decimal places are allowed.";
+        return false;
+    }
+    return true;
+}
+
 

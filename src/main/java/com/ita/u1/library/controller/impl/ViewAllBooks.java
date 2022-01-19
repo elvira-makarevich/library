@@ -48,7 +48,7 @@ public class ViewAllBooks extends AbstractCommand implements Command {
 
         } catch (ControllerValidationException e) {
             log.error("ControllerValidationException. Command: ViewAllBooks.", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ControllerValidationException. Command: ViewAllBooks.");
         } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: ViewAllBooks.", e);
             throw new ControllerException("Database error. Command: ViewAllBooks.", e);

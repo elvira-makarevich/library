@@ -110,3 +110,9 @@ footer {
 .mostPopularBooksArea {
     padding: 5px 40px 40px 77px;
 }
+
+.emptyList {
+    color: red;
+    font-size: 25px;
+    padding: 3% 0% 15% 0%;
+}

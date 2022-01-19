@@ -51,10 +51,14 @@ function viewInTable(books) {
         row.appendChild(row_data_5);
         tbody.appendChild(row);
     }
-
+    sortByThead();
 }
 
-function alertAnswer() {
-alert("There are no books.");
+function viewAnswerWhenTheListIsEmpty() {
+    let div = document.createElement('div');
+    div.className = 'emptyList';
+    let text = document.createTextNode('There are no books.');
+    div.appendChild(text);
+    document.getElementById('booksTable').appendChild(div);
 }
 

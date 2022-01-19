@@ -17,9 +17,7 @@ function init() {
     document.getElementById("houseNumber").addEventListener('input', checkHouseNumber);
     document.getElementById("building").addEventListener('input', checkBuilding);
     document.getElementById("apartmentNumber").addEventListener('input', checkApartmentNumber);
-
-    let formSaveClient = document.getElementById('registerClientForm');
-    formSaveClient.addEventListener('submit', function (event) {
+    document.getElementById('registerClientForm').addEventListener('submit', async function (event) {
         event.preventDefault();
         checkFirstName();
         checkLastName();
@@ -34,36 +32,12 @@ function init() {
         if (checkImage() && checkFirstName() && checkLastName() && checkEmail() && checkDateOfBirth() && checkPostcode() &&
             checkCountry() && checkLocality() && checkStreet() && checkHouseNumber() && checkPatronymic() && checkBuilding() &&
             checkApartmentNumber()) {
-            submitValidForm();
+            let formData = new FormData(document.getElementById('registerClientForm'));
+            let command = "/Controller?command=add_new_client";
+            let commandRedirect = "/Controller?command=go_to_main_page";
+            await submitValidFormAndRedirect(formData, command, commandRedirect);
         }
     })
-}
-
-async function submitValidForm() {
-
-    let formData = new FormData(document.getElementById('registerClientForm'));
-
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=add_new_client";
-    let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-
-    let response = await fetch(url, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (response.ok) {
-        alert("The reader was saved.");
-        window.location = urlRedirect;
-    } else if (response.status === 400) {
-        alert("Invalid data.");
-        console.log("Response.status: " + response.status);
-    } else if (response.status === 500) {
-        alert("Database connection error.");
-        console.log("Response.status: " + response.status);
-    } else {
-        console.log("Response.status: " + response.status);
-    }
 }
 
 function checkPatronymic() {
@@ -165,73 +139,8 @@ async function checkUniquenessPassportNumber() {
 function checkDateOfBirth() {
     let dateOfBirth = document.getElementById("dateOfBirth").value;
     let error = document.querySelector('#dateOfBirth + span.error');
-    error.textContent = "";
-
-    if (dateOfBirth == '') {
-        error.textContent = "Please enter date of birth.";
-        return false;
-    }
-
-    let dateArr = dateOfBirth.split('-');
-
-    let year = dateArr[0];
-    let month = dateArr[1];
-    let day = dateArr[2];
-
-    let today = new Date();
-    let todayYear = today.getFullYear();
-    let todayMonth = today.getMonth() + 1;
-    let todayDay = today.getDate();
-    let todayValue = todayDay + "-" + todayMonth + "-" + todayYear;
-
-    let errorMessage = "Incorrect date of birth. Min: 01-01-1900, max: " + todayValue + ".";
-
-    if (year < 1900) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year > todayYear) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month == todayMonth && day > todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month > todayMonth && day == todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month > todayMonth && day < todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month > todayMonth && day > todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (isNaN(parseInt(day)) ||
-        isNaN(parseInt(month)) ||
-        isNaN(parseInt(year))) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    let newDate = new Date(year, month - 1, day);
-
-    if (newDate.getDate() != day ||
-        newDate.getMonth() + 1 != month ||
-        newDate.getFullYear() != year) {
-        error.textContent = errorMessage;
-        return false;
-    }
-    return true;
+    let minYear = 1900;
+    return checkDate(dateOfBirth, error, minYear);
 }
 
 function checkPostcode() {

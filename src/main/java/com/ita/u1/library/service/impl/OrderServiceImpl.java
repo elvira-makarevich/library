@@ -27,8 +27,8 @@ public class OrderServiceImpl implements OrderService {
         if (orderDAO.hasClientActiveOrder(order.getClientId())) {
             throw new ActiveOrderServiceException("Client has active order.");
         }
-        List<CopyBook> copyBooks = orderDAO.findCopyBookInfo(order);
-        serviceValidator.validateSaveOrder(order, copyBooks);
+        List<CopyBook> copyBooksInfoFromDB = orderDAO.findCopyBookInfo(order);
+        serviceValidator.validateSaveOrder(order, copyBooksInfoFromDB);
         orderDAO.saveOrder(order);
     }
 

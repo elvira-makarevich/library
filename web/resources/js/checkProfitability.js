@@ -4,9 +4,7 @@ function init() {
 
     document.getElementById("from").addEventListener('input', checkDateFrom);
     document.getElementById("to").addEventListener('input', checkDateTo);
-
-    let formProfitability = document.getElementById('profitability');
-    formProfitability.addEventListener('submit', async function (event) {
+    document.getElementById('profitability').addEventListener('submit', async function (event) {
             event.preventDefault();
             removeProfit();
             checkDateFrom();
@@ -34,7 +32,8 @@ async function getProfitabilityData() {
     let to = document.getElementById("to").value;
     let pageContext = document.getElementById('pageContext').value;
     let params = 'from=' + from + '&to=' + to;
-    let url = pageContext + "/Controller?command=check_profitability&" + params;
+    let command = "/Controller?command=check_profitability&";
+    let url = pageContext + command + params;
 
     let response = await fetch(url);
 
@@ -42,6 +41,9 @@ async function getProfitabilityData() {
         let json = await response.json();
         viewProfit(json);
     } else {
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 }
@@ -73,81 +75,13 @@ function removeProfit() {
 function checkDateFrom() {
     let date = document.getElementById('from').value;
     let error = document.querySelector('#from + span.error');
-    return checkDate(date, error);
+    let minYear = 2020;
+    return checkDate(date, error, minYear);
 }
 
 function checkDateTo() {
     let date = document.getElementById('to').value;
     let error = document.querySelector('#to + span.error');
-    return checkDate(date, error);
-}
-
-function checkDate(date, error) {
-    error.textContent = "";
-
-    if (date == '') {
-        error.textContent = "Please enter date.";
-        return false;
-    }
-
-    let dateArr = date.split('-');
-
-    let year = dateArr[0];
-    let month = dateArr[1];
-    let day = dateArr[2];
-
-    let today = new Date();
-    let todayYear = today.getFullYear();
-    let todayMonth = today.getMonth() + 1;
-    let todayDay = today.getDate();
-    let todayValue = todayDay + "-" + todayMonth + "-" + todayYear;
-
-    let errorMessage = "Incorrect date. Min: 01-01-2020, max: " + todayValue + ".";
-
-    if (year < 2020) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year > todayYear) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month == todayMonth && day > todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month > todayMonth && day == todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month > todayMonth && day < todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (year == todayYear && (month > todayMonth && day > todayDay)) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    if (isNaN(parseInt(day)) ||
-        isNaN(parseInt(month)) ||
-        isNaN(parseInt(year))) {
-        error.textContent = errorMessage;
-        return false;
-    }
-
-    let newDate = new Date(year, month - 1, day);
-
-    if (newDate.getDate() != day ||
-        newDate.getMonth() + 1 != month ||
-        newDate.getFullYear() != year) {
-        error.textContent = errorMessage;
-        return false;
-    }
-    return true;
+    let minYear = 2020;
+    return checkDate(date, error, minYear);
 }

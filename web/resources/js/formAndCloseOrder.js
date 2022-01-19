@@ -4,7 +4,7 @@ async function checkParamClient() {
     if (initials.length < 2) {
         alert("Enter the last name of the client to search!");
     } else
-       await findClientRequest();
+        await findClientRequest();
 }
 
 async function findClientRequest() {
@@ -26,7 +26,9 @@ async function findClientRequest() {
         }
 
     } else {
-        alert("Error while finding client.");
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 }
@@ -34,8 +36,9 @@ async function findClientRequest() {
 async function hasClientActiveOrder(id) {
 
     let pageContext = document.getElementById('pageContext').value;
+    let command = "/Controller?command=check_client_active_order&";
     let param = 'clientId=' + id;
-    let url = pageContext + "/Controller?command=check_client_active_order&" + param;
+    let url = pageContext + command + param;
 
     let response = await fetch(url);
 
@@ -43,8 +46,62 @@ async function hasClientActiveOrder(id) {
         let json = await response.json();
         return json;
     } else {
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
+}
+
+function addClientToRealClientContainer(initials, idClient){
+    removeClient();
+    let realClientContainer = document.getElementById("realClientContainer");
+    let input = document.createElement("input");
+    input.type = "text";
+    input.id = "realClient";
+    input.value = initials;
+    input.setAttribute("readonly", "readonly");
+    realClientContainer.appendChild(input);
+
+    let inputHidden = document.createElement("input");
+    inputHidden.type = "hidden";
+    inputHidden.value = idClient;
+    inputHidden.name = "clientId";
+    realClientContainer.appendChild(inputHidden);
+
+    removeTable("table_clients");
+    checkClient();
+}
+
+function createTableForClients(tableClassName, clientsContainer) {
+    removeTable(tableClassName);
+    let table = document.createElement('table');
+    table.className = tableClassName;
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    document.getElementById(clientsContainer).appendChild(table);
+
+    let row_1 = document.createElement('tr');
+    let heading_1 = document.createElement('th');
+    heading_1.innerHTML = "Last name";
+    let heading_2 = document.createElement('th');
+    heading_2.innerHTML = "First name";
+    let heading_3 = document.createElement('th');
+    heading_3.innerHTML = "Email";
+    let heading_4 = document.createElement('th');
+    heading_4.innerHTML = "Date of birth";
+    let heading_5 = document.createElement('th');
+    heading_5.innerHTML = "";
+
+    row_1.appendChild(heading_1);
+    row_1.appendChild(heading_2);
+    row_1.appendChild(heading_3);
+    row_1.appendChild(heading_4);
+    row_1.appendChild(heading_5);
+    thead.appendChild(row_1);
 }
 
 function checkClient() {

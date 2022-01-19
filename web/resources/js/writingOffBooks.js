@@ -1,38 +1,18 @@
 window.onload = () => init();
 
 function init() {
-    defineDate();
-    document.getElementById('findBook').addEventListener('click', checkParamBook);
 
-    let formWriteOff = document.getElementById('writeOff');
-    formWriteOff.addEventListener('submit', async function (event) {
+    defineDate("dateOfWritingOff");
+    document.getElementById('findBook').addEventListener('click', checkParamBook);
+    document.getElementById('writeOff').addEventListener('submit', async function (event) {
         event.preventDefault();
         if (checkBooks("books_write_off")) {
-            await submitValidForm();
+            let formData = new FormData(document.getElementById('writeOff'));
+            let command = "/Controller?command=write_off_books";
+            let commandRedirect = "/Controller?command=go_to_main_page";
+            await submitValidFormAndRedirect(formData, command, commandRedirect);
         }
     })
-
-}
-
-async function submitValidForm() {
-
-    let formData = new FormData(document.getElementById('writeOff'));
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=write_off_books";
-    let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-
-    let response = await fetch(url, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (response.ok) {
-        alert("The info was saved.");
-        window.location = urlRedirect;
-    } else {
-        console.log("Error" + this.status);
-        alert("Check the correctness of the entered data.");
-    }
 
 }
 
@@ -181,20 +161,13 @@ function createTableForBooksWithViolation(tableClassName, booksContainer) {
     thead.appendChild(row_1);
 }
 
-function defineDate() {
-    let dateOfWritingOff = document.getElementById("dateOfWritingOff");
-    let today = new Date();
-    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    let todayDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
-    dateOfWritingOff.value = todayDate;
-
-}
+0
 
 function isThereDuplicationOfBooks(parameter) {
     let table = document.getElementsByClassName("books_write_off")[0];
     for (let r = 1, n = table.rows.length; r < n; r++) {
         if (parameter == table.rows[r].cells[0].innerHTML) {
-            alert("The book has already been added to the list!");
+            alert("The book has already been added to the list of books!");
             return true;
         }
     }
@@ -237,7 +210,5 @@ function checkBooks(tableClassName) {
         error.innerHTML = "Add book(s)!";
         return false;
     }
-
     return true;
-
 }

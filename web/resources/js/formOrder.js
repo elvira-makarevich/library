@@ -3,76 +3,20 @@ window.onload = () => init();
 function init() {
     defineMaxReturnDate();
 
-    let url = document.getElementById("pageContextAddClient").value;
-    document.getElementById("addClient").addEventListener('click', () => {
-        window.open(url);
-    });
-
+    document.getElementById("addClient").addEventListener('click', addNewClient);
     document.getElementById('findClient').addEventListener('click', checkParamClient);
     document.getElementById('findBook').addEventListener('click', checkParamBook);
-
-    let formSaveOrder = document.getElementById('saveOrder');
-    formSaveOrder.addEventListener('submit', function (event) {
+    document.getElementById('saveOrder').addEventListener('submit', async function (event) {
         event.preventDefault();
-
         checkClient();
         checkBooks();
         if (checkClient() && checkBooks()) {
-            submitValidForm();
+            let formData = new FormData(document.getElementById("saveOrder"));
+            let command = "/Controller?command=save_order";
+            let commandRedirect = "/Controller?command=go_to_main_page";
+            await submitValidFormAndRedirect(formData, command, commandRedirect);
         }
     })
-
-}
-
-async function submitValidForm() {
-
-    let formData = new FormData(document.getElementById('saveOrder'));
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=save_order";
-    let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-
-    let response = await fetch(url, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (response.ok) {
-        alert("The order has been successfully completed.");
-        window.location = urlRedirect;
-    } else {
-        console.log("Error" + this.status);
-        alert("Check the correctness of the entered data.");
-    }
-
-}
-
-function checkClient() {
-    let client = document.getElementById("realClient");
-    let error = document.getElementById("clientError");
-    error.innerHTML = "";
-
-    if (!client) {
-        error.innerHTML = "Add reader!";
-        return false;
-    }
-    return true;
-}
-
-
-function checkBooks() {
-
-    let error = document.getElementById("booksError");
-    error.innerHTML = "";
-    if (!isTableExists("books_order")) {
-        error.innerHTML = "Add book(s)!";
-        return false;
-    } else if (document.getElementsByClassName("books_order")[0].rows.length == 1) {
-        error.innerHTML = "Add book(s)!";
-        return false;
-    }
-
-    return true;
-
 }
 
 function defineMaxReturnDate() {
@@ -82,75 +26,20 @@ function defineMaxReturnDate() {
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let maxReturnDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
     inputMaxReturnDate.value = maxReturnDate;
-
 }
 
-function checkParamClient() {
-
-    let initials = document.getElementById('initials').value;
-    if (initials.length < 2) {
-        alert("Enter the last name of the client to search!");
-    } else
-        findClientRequest();
-}
-
-async function findClientRequest() {
-    let initials = document.getElementById("initials").value;
-    let pageContext = document.getElementById('pageContext').value;
-    let command = "/Controller?command=find_client&";
-    let param = 'lastName=' + initials;
-    let url = pageContext + command + param;
-
-    let response = await fetch(url);
-
-    if (response.ok) {
-        let json = await response.json();
-
-        if (json == "") {
-            alert("No clients found.");
-        } else {
-            viewInTableClients(json);
-        }
-
-    } else {
-        alert("Error while finding client.");
-        console.log("Response.status: " + response.status);
-    }
+function addNewClient() {
+    let pageContext = document.getElementById("pageContext").value;
+    let command = "/Controller?command=go_to_add_new_client_page";
+    let url = pageContext + command;
+    window.open(url);
 }
 
 function viewInTableClients(clients) {
-    removeTable("table_clients");
-    let table = document.createElement('table');
-    table.className = "table_clients";
-    let thead = document.createElement('thead');
-    let tbody = document.createElement('tbody');
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('possibleClientContainer').appendChild(table);
-
-    let row_1 = document.createElement('tr');
-    let heading_1 = document.createElement('th');
-    heading_1.innerHTML = "Last name";
-    let heading_2 = document.createElement('th');
-    heading_2.innerHTML = "First name";
-    let heading_3 = document.createElement('th');
-    heading_3.innerHTML = "Email";
-    let heading_4 = document.createElement('th');
-    heading_4.innerHTML = "Date of birth";
-    let heading_5 = document.createElement('th');
-    heading_5.innerHTML = "";
-
-    row_1.appendChild(heading_1);
-    row_1.appendChild(heading_2);
-    row_1.appendChild(heading_3);
-    row_1.appendChild(heading_4);
-    row_1.appendChild(heading_5);
-    thead.appendChild(row_1);
-
+    createTableForClients("table_clients", "possibleClientContainer");
     let i;
     for (i in clients) {
-
+        let table_clients = document.getElementsByClassName("table_clients")[0];
         let row = document.createElement('tr');
         let row_data_1 = document.createElement('td');
         row_data_1.innerHTML = clients[i].lastName;
@@ -163,41 +52,25 @@ function viewInTableClients(clients) {
         let row_data_5 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
-        buttonAdd.innerHTML = "Add to order";
+        buttonAdd.innerHTML = "Add to form";
         buttonAdd.addEventListener('click', addClient);
         row_data_5.appendChild(buttonAdd);
 
         let initials = clients[i].lastName + " " + clients[i].firstName;
-        let id = clients[i].id;
+        let idClient = clients[i].id;
 
         row.appendChild(row_data_1);
         row.appendChild(row_data_2);
         row.appendChild(row_data_3);
         row.appendChild(row_data_4);
         row.appendChild(row_data_5);
-        tbody.appendChild(row);
+        table_clients.appendChild(row);
 
         async function addClient() {
-            if (await hasClientActiveOrder(id) === true) {
+            if (await hasClientActiveOrder(idClient) === true) {
                 alert("The reader has not returned the books and cannot take others!");
             } else {
-                removeClient();
-                let realClientContainer = document.getElementById("realClientContainer");
-                let input = document.createElement("input");
-                input.type = "text";
-                input.id = "realClient";
-                input.value = initials;
-                input.setAttribute("readonly", "readonly");
-                realClientContainer.appendChild(input);
-
-                let inputHidden = document.createElement("input");
-                inputHidden.type = "hidden";
-                inputHidden.value = id;
-                inputHidden.name = "clientId";
-                realClientContainer.appendChild(inputHidden);
-
-                removeTable("table_clients");
-                checkClient();
+                addClientToRealClientContainer(initials, idClient);
             }
         }
     }
@@ -231,15 +104,15 @@ async function findBookRequest() {
         }
 
     } else {
-        alert("Error while finding book.");
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 }
 
 function viewInTableBooks(books) {
-    removeTable("table_books");
     createTableForBooks("table_books", "possibleBookContainer");
-
     let i;
     for (i in books) {
         for (let j = 0; i < books[i].copies.length; j++) {
@@ -323,6 +196,7 @@ function viewInTableBooks(books) {
 }
 
 function createTableForBooks(tableClassName, booksContainer) {
+    removeTable("table_books");
     let table = document.createElement('table');
     table.className = tableClassName;
     let thead = document.createElement('thead');
@@ -344,6 +218,20 @@ function createTableForBooks(tableClassName, booksContainer) {
     row_1.appendChild(heading_2);
     row_1.appendChild(heading_3);
     thead.appendChild(row_1);
+}
+
+function checkBooks() {
+
+    let error = document.getElementById("booksError");
+    error.innerHTML = "";
+    if (!isTableExists("books_order")) {
+        error.innerHTML = "Add book(s)!";
+        return false;
+    } else if (document.getElementsByClassName("books_order")[0].rows.length == 1) {
+        error.innerHTML = "Add book(s)!";
+        return false;
+    }
+    return true;
 }
 
 function calculateTheOrderAmount() {

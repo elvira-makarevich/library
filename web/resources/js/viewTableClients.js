@@ -51,9 +51,14 @@ function viewInTable(clients) {
         row.appendChild(row_data_5);
         tbody.appendChild(row);
     }
-
+    sortByThead();
 }
 
-function alertAnswer() {
-    alert("There are no clients.");
+function viewAnswerWhenTheListIsEmpty() {
+    let div = document.createElement('div');
+    div.className = 'emptyList';
+    let text = document.createTextNode('There are no readers.');
+    div.appendChild(text);
+    document.getElementById('clientsTable').appendChild(div);
 }
+

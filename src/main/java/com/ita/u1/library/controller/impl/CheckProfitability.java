@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import static com.ita.u1.library.util.ConstantParameter.*;
+
 public class CheckProfitability extends AbstractCommand implements Command {
 
     private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
@@ -27,8 +29,8 @@ public class CheckProfitability extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        LocalDate from = Converter.toDate(request.getParameter("from")).minusDays(1);
-        LocalDate to = Converter.toDate(request.getParameter("to")).plusDays(1);
+        LocalDate from = Converter.toDate(request.getParameter(FROM)).minusDays(1);
+        LocalDate to = Converter.toDate(request.getParameter(TO)).plusDays(1);
         Profitability profitabilityDates = new Profitability(from, to);
 
         try {

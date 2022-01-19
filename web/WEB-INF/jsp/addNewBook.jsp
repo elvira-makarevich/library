@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <link rel="stylesheet" type="text/css" href="resources/css/table.css">
     <script src="resources/js/registrationBook.js"></script>
+    <script src="resources/js/common.js"></script>
 
 </head>
 <body>
@@ -109,8 +110,6 @@
     <input type="submit" name="submit" id="submitButton" value="Save">
 
 </form>
-<input id="pageContextAddAuthor" type="text" name=""
-       value="${pageContext.request.contextPath}/Controller?command=go_to_add_new_author_page" style="display: none;">
 
 <input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

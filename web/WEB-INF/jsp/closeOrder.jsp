@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/table.css">
     <script src="resources/js/closeOrder.js"></script>
     <script src="resources/js/formAndCloseOrder.js"></script>
-
+    <script src="resources/js/common.js"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>

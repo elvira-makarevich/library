@@ -4,22 +4,6 @@ async function init() {
     let page = document.getElementById('currentPage').value;
     await getList(page);
 
-    document.querySelectorAll('.table_sort thead').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
-    const getSort = ({target}) => {
-        const order = (target.dataset.order = -(target.dataset.order || -1));
-        const index = [...target.parentNode.cells].indexOf(target);
-        const collator = new Intl.Collator(['en', 'ru'], {numeric: true});
-        const comparator = (index, order) => (a, b) => order * collator.compare(
-            a.children[index].innerHTML,
-            b.children[index].innerHTML
-        );
-
-        for (const tBody of target.closest('table').tBodies)
-            tBody.append(...[...tBody.rows].sort(comparator(index, order)));
-
-        for (const cell of target.parentNode.cells)
-            cell.classList.toggle('sorted', cell === target);
-    };
 
 }
 
@@ -34,12 +18,15 @@ async function getList(page) {
     if (response.ok) {
         let json = await response.json();
         if (json == "") {
-            alertAnswer();
+            viewAnswerWhenTheListIsEmpty();
         } else {
             viewInTable(json);
             createNavigation(page, numberOfPages);
         }
     } else {
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 }
@@ -109,6 +96,23 @@ function createNavigation(currentPage, numberOfPages) {
         start();
     }
 
+}
+
+function sortByThead() {
+    document.querySelectorAll('.table_sort thead').forEach(tableTH => tableTH.addEventListener('click', () => getSort(event)));
+    const getSort = ({target}) => {
+        const order = (target.dataset.order = -(target.dataset.order || -1));
+        const index = [...target.parentNode.cells].indexOf(target);
+        const collator = new Intl.Collator(['en', 'ru'], {numeric: true});
+        const comparator = (index, order) => (a, b) => order * collator.compare(
+            a.children[index].innerHTML,
+            b.children[index].innerHTML
+        );
+        for (const tBody of target.closest('table').tBodies)
+            tBody.append(...[...tBody.rows].sort(comparator(index, order)));
+        for (const cell of target.parentNode.cells)
+            cell.classList.toggle('sorted', cell === target);
+    };
 }
 
 function removeTableByTagName() {

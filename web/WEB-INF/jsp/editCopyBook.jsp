@@ -4,6 +4,7 @@
     <title>Edit book</title>
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <script src="resources/js/editCopyBook.js"></script>
+    <script src="resources/js/common.js"></script>
 
 </head>
 <body>

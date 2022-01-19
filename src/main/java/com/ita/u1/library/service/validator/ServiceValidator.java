@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class ServiceValidator {
     }
 
     public void validateEmail(String email) {
-        log.info("Start validate passport email.");
+        log.info("Start validate email.");
         boolean result = checkEmail(email);
         if (!result) {
             throw new ServiceException("Invalid email.");
@@ -123,7 +124,9 @@ public class ServiceValidator {
     public void validateCloseOrder(Order order, Order orderInfoFromDB) {
         log.info("Start validate close order info.");
         checkDates(order, orderInfoFromDB);
-        checkPenaltyNullOrNotNegative(order.getPenalty());
+        if (!checkPenaltyNullOrNotNegative(order.getPenalty())) {
+            throw new ServiceException("Invalid penalty.");
+        }
 
         BigDecimal totalCostValueDB = calculateTotalCostBasedOnDataFromDB(orderInfoFromDB);
         BigDecimal totalCostValueWithoutPenalty;
@@ -181,15 +184,16 @@ public class ServiceValidator {
     private BigDecimal calculatePreliminaryCost(Order order, List<CopyBook> copyBooks, int numberOfBooks) {
 
         BigDecimal daysRentNumber = new BigDecimal(order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
-        BigDecimal maxDiscount = new BigDecimal(0.85);
-        BigDecimal discount = new BigDecimal(0.9);
-        BigDecimal dayCostAllBooksWithoutDiscount = new BigDecimal(0);
+        BigDecimal maxDiscount = new BigDecimal("0.85");
+        BigDecimal discount = new BigDecimal("0.9");
+        //
+        BigDecimal dayCostAllBooksWithoutDiscount = new BigDecimal("0");
 
-        for (int i = 0; i < copyBooks.size(); i++) {
-            dayCostAllBooksWithoutDiscount = dayCostAllBooksWithoutDiscount.add(copyBooks.get(i).getCostPerDay());
+        for (CopyBook copyBook : copyBooks) {
+            dayCostAllBooksWithoutDiscount = dayCostAllBooksWithoutDiscount.add(copyBook.getCostPerDay());
         }
 
-        BigDecimal preCost = null;
+        BigDecimal preCost;
         if (numberOfBooks > 4) {
             preCost = dayCostAllBooksWithoutDiscount.multiply(daysRentNumber).multiply(maxDiscount);
         } else if (numberOfBooks > 2) {
@@ -197,7 +201,7 @@ public class ServiceValidator {
         } else {
             preCost = dayCostAllBooksWithoutDiscount.multiply(daysRentNumber);
         }
-        preCost.setScale(2, BigDecimal.ROUND_UP);
+        preCost = preCost.setScale(2, RoundingMode.UP);
 
         return preCost;
     }
@@ -228,22 +232,19 @@ public class ServiceValidator {
 
         if (isReturnDateViolated(orderInfoFromDB)) {
             BigDecimal numberOfOverdueDays = realNumberOfRentalDays.subtract(numberOfPossibleRentalDays);
-            BigDecimal penaltyRate = new BigDecimal(0.01);
+            BigDecimal penaltyRate = new BigDecimal("0.01");
             BigDecimal amountOfThePenalty = orderInfoFromDB.getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
             totalCostValue = orderInfoFromDB.getPreliminaryCost().add(amountOfThePenalty);
         } else {
             BigDecimal rentalCostPerDay = orderInfoFromDB.getPreliminaryCost().divide(numberOfPossibleRentalDays);
             totalCostValue = rentalCostPerDay.multiply(realNumberOfRentalDays);
         }
-        return totalCostValue.setScale(2, BigDecimal.ROUND_UP);
+        return totalCostValue.setScale(2, RoundingMode.UP);
     }
 
     private boolean isReturnDateViolated(Order order) {
 
-        if (order.getPossibleReturnDate().isBefore(LocalDate.now())) {
-            return true;
-        }
-        return false;
+        return order.getPossibleReturnDate().isBefore(LocalDate.now());
     }
 
     private boolean checkFirstLastName(String name) {
@@ -336,17 +337,11 @@ public class ServiceValidator {
         if (publishingYear == 0) {
             return true;
         }
-        if (publishingYear < 868 || publishingYear > LocalDate.now().getYear()) {
-            return false;
-        }
-        return true;
+        return publishingYear >= 868 && publishingYear <= LocalDate.now().getYear();
     }
 
     private boolean checkNumberOfPages(int numberOfPages) {
-        if (numberOfPages < 0 || numberOfPages > 2000) {
-            return false;
-        }
-        return true;
+        return numberOfPages >= 0 && numberOfPages <= 2000;
     }
 
 }

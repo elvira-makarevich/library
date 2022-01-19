@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <script src="resources/js/registrationAuthor.js"></script>
     <script src="resources/js/registrationCommon.js"></script>
+    <script src="resources/js/common.js"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>

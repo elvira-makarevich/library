@@ -2,6 +2,7 @@ window.onload = () => init();
 
 function init() {
 
+    defineDate("registrationDate");
     document.getElementById('findAuthor').addEventListener('click', checkParamAuthor);
     document.getElementById("files").addEventListener('change', loadImages);
     document.getElementById("title").addEventListener('input', checkTitle);
@@ -9,19 +10,12 @@ function init() {
     document.getElementById("price").addEventListener('input', checkPrice);
     document.getElementById("costPerDay").addEventListener('input', checkCostPerDay);
     document.getElementById("numberOfCopies").addEventListener('input', checkNumberOfCopies);
-    document.getElementById("files").addEventListener('submit', checkCovers);
+    document.getElementById("files").addEventListener('submit', checkImages);
     document.getElementById("publishingYear").addEventListener('input', checkPublishingYear);
     document.getElementById("numberOfPages").addEventListener('input', checkNumberOfPages);
     document.getElementById("submitButton").addEventListener('click', changeValidation);
-    let url = document.getElementById("pageContextAddAuthor").value;
-    document.getElementById("addAuthor").addEventListener('click', () => {
-        window.open(url);
-    });
-
-    defineDate();
-
-    let formSaveBook = document.getElementById('saveBook');
-    formSaveBook.addEventListener('submit', function (event) {
+    document.getElementById("addAuthor").addEventListener('click', addNewAuthor);
+    document.getElementById('saveBook').addEventListener('submit', async function (event) {
         event.preventDefault();
         checkTitle();
         checkPrice();
@@ -31,35 +25,22 @@ function init() {
         checkNumberOfPages();
         checkAuthors();
         checkGenres();
-
-        if (checkCovers() && checkAuthors() && checkGenres()) {
-            submitValidForm();
+        if (checkImages() && checkAuthors() && checkGenres()) {
+            let formData = new FormData(document.getElementById('saveBook'));
+            let command = "/Controller?command=add_new_book";
+            let commandRedirect = "/Controller?command=go_to_main_page";
+            await submitValidFormAndRedirect(formData, command, commandRedirect);
         }
-        formSaveBook.noValidate = false;
+        document.getElementById('saveBook').noValidate = false;
     });
 
 }
 
-async function submitValidForm() {
-
-    let formData = new FormData(document.getElementById('saveBook'));
-    let pageContext = document.getElementById('pageContext').value;
-    let url = pageContext + "/Controller?command=add_new_book";
-    let urlRedirect = pageContext + "/Controller?command=go_to_main_page";
-
-    let response = await fetch(url, {
-        method: 'POST',
-        body: formData
-    });
-
-    if (response.ok) {
-        alert("The book was saved.");
-        window.location = urlRedirect;
-    } else {
-        console.log("Error" + this.status);
-        alert("Check the correctness of the entered data.");
-    }
-
+function addNewAuthor() {
+    let pageContext = document.getElementById("pageContext").value;
+    let command = "/Controller?command=go_to_add_new_author_page";
+    let url = pageContext + command;
+    window.open(url);
 }
 
 function changeValidation() {
@@ -74,7 +55,7 @@ async function checkParamAuthor() {
     if (initialsValue.length < 2) {
         alert("Enter the last name of the author to search!");
     } else
-       await findAuthorRequest();
+        await findAuthorRequest();
 }
 
 async function findAuthorRequest() {
@@ -95,13 +76,10 @@ async function findAuthorRequest() {
             viewInTableAuthors(json);
         }
 
-    } else if (response.status === 400) {
-        alert("Invalid data.");
-        console.log("Response.status: " + response.status);
-    } else if (response.status === 500) {
-        alert("Database connection error.");
-        console.log("Response.status: " + response.status);
     } else {
+        if (response.status === 400) {
+            alert("Invalid data.");
+        }
         console.log("Response.status: " + response.status);
     }
 }
@@ -219,34 +197,6 @@ function deleteRow(r) {
     checkAuthors();
 }
 
-function loadImages() {
-    deleteImages();
-    let containerImages = document.getElementById("fileListDisplay");
-    let fileInput = document.getElementById("files");
-    let files = fileInput.files;
-    let file;
-
-    for (let i = 0; i < files.length; i++) {
-        let image = document.createElement("img");
-        let reader = new FileReader();
-        file = files[i];
-        reader.onload = function () {
-            image.className = "img-item";
-            image.src = reader.result;
-        };
-        reader.readAsDataURL(file);
-        containerImages.appendChild(image);
-    }
-    checkCovers();
-}
-
-function deleteImages() {
-    let div = document.getElementById('fileListDisplay');
-    while (div.firstChild) {
-        div.removeChild(div.firstChild);
-    }
-}
-
 function checkTitle() {
 
     let title = document.getElementById("title");
@@ -299,22 +249,6 @@ function checkPrice() {
     }
 }
 
-function checkCostPerDay() {
-    let costPerDay = document.getElementById("costPerDay");
-    let errorPrice = document.querySelector('#costPerDay + span.error');
-
-    if (costPerDay.validity.valid) {
-        errorPrice.textContent = '';
-        errorPrice.className = 'error';
-    } else {
-        if (costPerDay.validity.valueMissing) {
-            errorPrice.textContent = 'The field cannot be empty.';
-        } else if (costPerDay.validity.patternMismatch) {
-            errorPrice.textContent = 'The cost cannot be negative (2 decimal places are allowed).';
-        }
-    }
-}
-
 function checkNumberOfCopies() {
     let numberOfCopies = document.getElementById("numberOfCopies");
     let error = document.querySelector('#numberOfCopies + span.error');
@@ -331,7 +265,7 @@ function checkNumberOfCopies() {
     }
 }
 
-function checkCovers() {
+function checkImages() {
 
     let covers = document.getElementById("files");
     let error = document.getElementById("filesError");
@@ -408,13 +342,4 @@ function checkAuthors() {
         return false;
     }
     return true;
-}
-
-function defineDate() {
-    let inputRegistrationDate = document.getElementById("registrationDate");
-    let today = new Date();
-    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    let registrationDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
-    inputRegistrationDate.value = registrationDate;
-
 }
