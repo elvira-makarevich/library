@@ -25,9 +25,8 @@ public class FindOrderInfo extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int clientId = Converter.toInt(request.getParameter(CLIENT_ID));
-
         try {
+            int clientId = Converter.toInt(request.getParameter(CLIENT_ID));
             Order order = orderService.findOrderInfo(clientId);
             sendResponseJSON(new Gson().toJson(order), response);
         } catch (ControllerValidationException | ServiceException e) {

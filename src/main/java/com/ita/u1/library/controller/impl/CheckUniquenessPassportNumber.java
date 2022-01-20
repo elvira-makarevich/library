@@ -27,9 +27,8 @@ public class CheckUniquenessPassportNumber extends AbstractCommand implements Co
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String passportNumber = Validator.assertNotNullOrEmpty(request.getParameter(PASSPORT_NUMBER));
-
         try {
+            String passportNumber = Validator.assertNotNullOrEmpty(request.getParameter(PASSPORT_NUMBER));
             boolean result = clientService.checkUniquenessPassportNumber(passportNumber);
             sendResponseJSON(new Gson().toJson(result), response);
         } catch (ControllerValidationException e) {

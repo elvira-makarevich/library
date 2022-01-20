@@ -25,9 +25,8 @@ public class FindBookCover extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int bookId = Converter.toInt(request.getParameter(ID));
-
         try {
+            int bookId = Converter.toInt(request.getParameter(ID));
             Book book = bookService.findBookCover(bookId);
             byte[] cover = book.getCovers().get(0);
             sendImage(cover, response);

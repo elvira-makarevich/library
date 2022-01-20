@@ -28,11 +28,9 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Author> findAuthor(String lastName) {
         serviceValidator.validateLastName(lastName);
         List<Author> authors = authorDAO.findAuthor(lastName);
-
-        if (authors.isEmpty() || authors == null) {
+        if (authors.isEmpty()) {
             return Collections.emptyList();
         }
-
         return authors;
     }
 

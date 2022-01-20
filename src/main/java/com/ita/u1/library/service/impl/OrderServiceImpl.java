@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void closeOrder(Order order) {
         Order orderInfoFromDB = orderDAO.findOrderInfo(order.getClientId());
-        if (order == null) {
+        if (orderInfoFromDB == null) {
             throw new NoActiveOrderServiceException("Order does not exist.");
         }
         serviceValidator.validateCloseOrder(order, orderInfoFromDB);
@@ -70,6 +70,8 @@ public class OrderServiceImpl implements OrderService {
     public Profitability checkProfitability(Profitability profitabilityDates) {
         serviceValidator.validateProfitabilityDates(profitabilityDates);
         Profitability profitability = orderDAO.checkProfitability(profitabilityDates);
+        profitabilityDates.setFrom(profitabilityDates.getFrom().minusDays(1));
+        profitabilityDates.setTo(profitabilityDates.getTo().plusDays(1));
         return profitability;
     }
 }

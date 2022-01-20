@@ -27,9 +27,8 @@ public class FindBooksForWritingOff extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
-
         try {
+            String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
             List<CopyBook> copyBooks = bookService.findBooksForWritingOff(title);
             sendResponseJSON(new Gson().toJson(copyBooks), response);
         } catch (ControllerValidationException | ServiceException e) {

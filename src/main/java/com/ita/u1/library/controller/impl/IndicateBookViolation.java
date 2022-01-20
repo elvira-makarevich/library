@@ -27,14 +27,14 @@ public class IndicateBookViolation implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int orderId = Converter.toInt(request.getParameter(ORDER_ID));
-        int copyId = Converter.toInt(request.getParameter(COPY_ID));
-        String message = Validator.assertNotNullOrEmpty(request.getParameter(VIOLATION_MESSAGE));
-        List<byte[]> images = Converter.toListBytes(request.getParts().stream().filter(part -> IMAGES.equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
-
-        Violation violation = new Violation(orderId, copyId, message, images);
-
         try {
+            int orderId = Converter.toInt(request.getParameter(ORDER_ID));
+            int copyId = Converter.toInt(request.getParameter(COPY_ID));
+            String message = Validator.assertNotNullOrEmpty(request.getParameter(VIOLATION_MESSAGE));
+            List<byte[]> images = Converter.toListBytes(request.getParts().stream().filter(part -> IMAGES.equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
+
+            Violation violation = new Violation(orderId, copyId, message, images);
+
             orderService.indicateBookViolation(violation);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid violation data.", e);

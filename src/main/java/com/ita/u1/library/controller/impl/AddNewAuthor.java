@@ -26,13 +26,13 @@ public class AddNewAuthor implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = Validator.assertNotNullOrEmpty(request.getParameter(FIRST_NAME));
-        String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
-        byte[] bytesImage = Converter.toBytes(request.getPart(FILE));
-
-        Author author = new Author(firstName, lastName, bytesImage);
-
         try {
+            String firstName = Validator.assertNotNullOrEmpty(request.getParameter(FIRST_NAME));
+            String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
+            byte[] bytesImage = Converter.toBytes(request.getPart(FILE));
+
+            Author author = new Author(firstName, lastName, bytesImage);
+
             authorService.addAuthor(author);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid author data.", e);

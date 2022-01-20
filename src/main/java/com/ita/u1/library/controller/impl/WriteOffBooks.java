@@ -26,9 +26,8 @@ public class WriteOffBooks implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        List<CopyBook> copyBooks = Converter.toListCopies(request.getParameterValues(COPY_ID));
-
         try {
+            List<CopyBook> copyBooks = Converter.toListCopies(request.getParameterValues(COPY_ID));
             bookService.writeBooksOff(copyBooks);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid book(s) data.", e);

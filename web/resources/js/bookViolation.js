@@ -9,7 +9,9 @@ function init() {
         checkMessage();
         checkImages();
         if (checkMessage() && checkImages()) {
-            await submitValidFormAndCloseWindow("bookViolation", "/Controller?command=indicate_book_violation");
+            let formData = new FormData(document.getElementById("bookViolation"));
+            let command = "/Controller?command=indicate_book_violation";
+            await submitValidFormAndCloseWindow(formData, command);
         }
     });
 }

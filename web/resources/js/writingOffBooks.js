@@ -43,7 +43,9 @@ async function findBooksForWringOffRequest() {
         }
 
     } else {
-        alert("Error while finding book.");
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 }
@@ -160,8 +162,6 @@ function createTableForBooksWithViolation(tableClassName, booksContainer) {
     row_1.appendChild(heading_4);
     thead.appendChild(row_1);
 }
-
-0
 
 function isThereDuplicationOfBooks(parameter) {
     let table = document.getElementsByClassName("books_write_off")[0];

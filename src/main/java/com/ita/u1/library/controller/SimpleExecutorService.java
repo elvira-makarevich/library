@@ -28,15 +28,14 @@ public class SimpleExecutorService {
     private ScheduledExecutorService executor;
 
     public SimpleExecutorService() {
-
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(new MailSender(), getDelay(), TimeUnit.MILLISECONDS);
         executor.shutdown();
     }
 
-    private long getDelay(){
+    private long getDelay() {
         LocalDate today = LocalDate.now();
-        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 17, 38);
+        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 16, 39);
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(now, timeToSendMail);
         return Math.abs(duration.toMillis());

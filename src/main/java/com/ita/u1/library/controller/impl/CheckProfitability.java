@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.entity.Profitability;
-import com.ita.u1.library.exception.ControllerException;
-import com.ita.u1.library.exception.ControllerValidationException;
-import com.ita.u1.library.exception.DAOConnectionPoolException;
-import com.ita.u1.library.exception.DAOException;
+import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
@@ -29,14 +26,14 @@ public class CheckProfitability extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        LocalDate from = Converter.toDate(request.getParameter(FROM)).minusDays(1);
-        LocalDate to = Converter.toDate(request.getParameter(TO)).plusDays(1);
-        Profitability profitabilityDates = new Profitability(from, to);
-
         try {
+            LocalDate from = Converter.toDate(request.getParameter(FROM));
+            LocalDate to = Converter.toDate(request.getParameter(TO));
+            Profitability profitabilityDates = new Profitability(from, to);
+
             Profitability profitability = orderService.checkProfitability(profitabilityDates);
             sendResponseJSON(new Gson().toJson(profitability), response);
-        } catch (ControllerValidationException e) {
+        } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid dates.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (DAOConnectionPoolException | DAOException e) {

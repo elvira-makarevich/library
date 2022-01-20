@@ -22,7 +22,6 @@ public class Converter {
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Logger log = LogManager.getLogger(Converter.class);
 
-
     public static LocalDate toDate(String s) throws ControllerValidationException {
         if (s == null || s.isEmpty()) {
             log.error("Date can not be empty.");

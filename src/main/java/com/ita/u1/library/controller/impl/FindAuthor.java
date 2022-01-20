@@ -27,9 +27,9 @@ public class FindAuthor extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
-
         try {
+            String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
+
             List<Author> authors = authorService.findAuthor(lastName);
             sendResponseJSON(new Gson().toJson(authors), response);
         } catch (ControllerValidationException | ServiceException e) {

@@ -32,25 +32,25 @@ public class AddNewBook implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        List<Author> authors = Converter.toListAuthors(request.getParameterValues(AUTHOR_ID));
-        String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
-        String originalTitle = Converter.toNullIfEmpty(request.getParameter(ORIGINAL_TITLE));
-        List<Genre> genres = Converter.toListGenres(request.getParameterValues(GENRES));
-        BigDecimal price = Converter.toBigDecimal(request.getParameter(PRICE));
-        BigDecimal costPerDay = Converter.toBigDecimal(request.getParameter(COST_PER_DAY));
-        int numberOfCopies = Converter.toInt(request.getParameter(NUMBER_OF_COPIES));
-        int publishingYear = Converter.toNullIfEmptyOrInt(request.getParameter(PUBLISHING_YEAR));
-        int numberOfPages = Converter.toNullIfEmptyOrInt(request.getParameter(NUMBER_OF_PAGES));
-        List<byte[]> covers = Converter.toListBytes(request.getParts().stream().filter(part -> COVERS.equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
-
-        CopyBook[] copies = new CopyBook[numberOfCopies];
-        for (int i = 0; i < numberOfCopies; i++) {
-            copies[i] = new CopyBook(costPerDay);
-        }
-
-        Book book = new Book(title, originalTitle, genres, price, numberOfCopies, authors, covers, publishingYear, numberOfPages, copies);
-
         try {
+            List<Author> authors = Converter.toListAuthors(request.getParameterValues(AUTHOR_ID));
+            String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
+            String originalTitle = Converter.toNullIfEmpty(request.getParameter(ORIGINAL_TITLE));
+            List<Genre> genres = Converter.toListGenres(request.getParameterValues(GENRES));
+            BigDecimal price = Converter.toBigDecimal(request.getParameter(PRICE));
+            BigDecimal costPerDay = Converter.toBigDecimal(request.getParameter(COST_PER_DAY));
+            int numberOfCopies = Converter.toInt(request.getParameter(NUMBER_OF_COPIES));
+            int publishingYear = Converter.toNullIfEmptyOrInt(request.getParameter(PUBLISHING_YEAR));
+            int numberOfPages = Converter.toNullIfEmptyOrInt(request.getParameter(NUMBER_OF_PAGES));
+            List<byte[]> covers = Converter.toListBytes(request.getParts().stream().filter(part -> COVERS.equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
+
+            CopyBook[] copies = new CopyBook[numberOfCopies];
+            for (int i = 0; i < numberOfCopies; i++) {
+                copies[i] = new CopyBook(costPerDay);
+            }
+
+            Book book = new Book(title, originalTitle, genres, price, numberOfCopies, authors, covers, publishingYear, numberOfPages, copies);
+
             bookService.add(book);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid book data.", e);

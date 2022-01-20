@@ -26,9 +26,8 @@ public class FindClient extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
-
         try {
+            String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
             List<Client> clients = clientService.findClient(lastName);
             sendResponseJSON(new Gson().toJson(clients), response);
         } catch (ControllerValidationException | ServiceException e) {

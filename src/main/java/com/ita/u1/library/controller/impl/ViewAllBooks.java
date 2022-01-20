@@ -32,11 +32,11 @@ public class ViewAllBooks extends AbstractCommand implements Command {
 
         int page = DEFAULT_PAGE_NUMBER;
 
-        if (request.getParameter(CURRENT_PAGE) != null) {
-            page = Converter.toInt(request.getParameter(CURRENT_PAGE));
-        }
-
         try {
+            if (request.getParameter(CURRENT_PAGE) != null) {
+                page = Converter.toInt(request.getParameter(CURRENT_PAGE));
+            }
+
             int numberOfRecords = bookService.getNumberOfBooks();
             int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
 

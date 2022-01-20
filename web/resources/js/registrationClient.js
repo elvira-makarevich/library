@@ -93,6 +93,9 @@ async function checkUniquenessEmail() {
         let json = await response.json();
         return json;
     } else {
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 
@@ -131,6 +134,9 @@ async function checkUniquenessPassportNumber() {
         return json;
 
     } else {
+        if (response.status === 400) {
+            alert("Invalid data!");
+        }
         console.log("Response.status: " + response.status);
     }
 

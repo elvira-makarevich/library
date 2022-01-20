@@ -9,7 +9,6 @@ import com.ita.u1.library.exception.DAOException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
@@ -89,7 +88,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
             rs = psClient.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 return true;
             }
 
@@ -116,7 +115,7 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
 
             rs = psClient.executeQuery();
 
-            while (rs.next()) {
+           if (rs.next()) {
                 return true;
             }
 
@@ -225,5 +224,4 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
         }
         return clients;
     }
-
 }

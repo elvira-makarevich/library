@@ -1,6 +1,5 @@
-async function submitValidFormAndCloseWindow(formDataElement, command) {
+async function submitValidFormAndCloseWindow(formData, command) {
 
-    let formData = new FormData(document.getElementById(formDataElement));
     let pageContext = document.getElementById('pageContext').value;
     let url = pageContext + command;
 

@@ -112,7 +112,7 @@ public class ServiceValidator {
         checkTheDuplicationOfBooks(order.getBooks());
 
         int numberOfBooks = order.getBooks().size();
-        if (numberOfBooks > 5) {
+        if (numberOfBooks > MAX_AMOUNT_OF_BOOKS_PER_ORDER) {
             throw new ServiceException("Invalid order. The maximum number of books in an order is 5.");
         }
 
@@ -148,7 +148,11 @@ public class ServiceValidator {
     }
 
     public void validateProfitabilityDates(Profitability profitabilityDates) {
-        if (profitabilityDates.getFrom().isAfter(profitabilityDates.getTo())) {
+        LocalDate minDate = LocalDate.parse(MIN_DATE_FOR_CHECKING_PROFITABILITY);
+        LocalDate maxDate = LocalDate.now();
+        if (profitabilityDates.getFrom().isAfter(profitabilityDates.getTo()) ||
+                profitabilityDates.getFrom().isBefore(minDate) ||
+                profitabilityDates.getTo().isAfter(maxDate)) {
             throw new ServiceException("Invalid dates to check profitability.");
         }
     }
@@ -167,7 +171,7 @@ public class ServiceValidator {
     }
 
     private void checkTheDuplicationOfBooks(List<CopyBook> copyBooks) {
-        log.info("List<CopyBook> copyBooks");
+
         for (int i = 0; i < copyBooks.size(); i++) {
             String title = copyBooks.get(i).getTitle();
             for (int j = 0; j < copyBooks.size(); j++) {
@@ -178,25 +182,24 @@ public class ServiceValidator {
                 }
             }
         }
-        log.info("List<CopyBook> copyBooks");
     }
 
     private BigDecimal calculatePreliminaryCost(Order order, List<CopyBook> copyBooks, int numberOfBooks) {
 
         BigDecimal daysRentNumber = new BigDecimal(order.getPossibleReturnDate().toEpochDay() - order.getOrderDate().toEpochDay() + 1);
-        BigDecimal maxDiscount = new BigDecimal("0.85");
-        BigDecimal discount = new BigDecimal("0.9");
-        //
-        BigDecimal dayCostAllBooksWithoutDiscount = new BigDecimal("0");
+        BigDecimal maxDiscount = new BigDecimal(DISCOUNT_WITH_MORE_THEN_4_BOOKS);
+        BigDecimal discount = new BigDecimal(DISCOUNT_WITH_MORE_THEN_2_BOOKS);
+
+        BigDecimal dayCostAllBooksWithoutDiscount = new BigDecimal(INITIAL_COST_VALUE);
 
         for (CopyBook copyBook : copyBooks) {
             dayCostAllBooksWithoutDiscount = dayCostAllBooksWithoutDiscount.add(copyBook.getCostPerDay());
         }
 
         BigDecimal preCost;
-        if (numberOfBooks > 4) {
+        if (numberOfBooks > NUMBER_OF_BOOKS_4) {
             preCost = dayCostAllBooksWithoutDiscount.multiply(daysRentNumber).multiply(maxDiscount);
-        } else if (numberOfBooks > 2) {
+        } else if (numberOfBooks > NUMBER_OF_BOOKS_2) {
             preCost = dayCostAllBooksWithoutDiscount.multiply(daysRentNumber).multiply(discount);
         } else {
             preCost = dayCostAllBooksWithoutDiscount.multiply(daysRentNumber);
@@ -296,7 +299,7 @@ public class ServiceValidator {
     }
 
     private boolean checkDateOfBirth(LocalDate dateOfBirth) {
-        LocalDate minDateOfBirth = LocalDate.of(1900, 1, 1);
+        LocalDate minDateOfBirth = LocalDate.parse(MIN_DATE_OF_BIRTH);
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         return dateOfBirth.isAfter(minDateOfBirth) && dateOfBirth.isBefore(tomorrow);
     }

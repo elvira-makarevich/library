@@ -94,7 +94,6 @@ public class AuthorDAOImpl extends AbstractDAO implements AuthorDAO {
             close(ps);
             release(connection);
         }
-
         return authors;
     }
 

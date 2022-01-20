@@ -27,25 +27,25 @@ public class AddNewClient implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String firstName = Validator.assertNotNullOrEmpty(request.getParameter(FIRST_NAME));
-        String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
-        String patronymic = Converter.toNullIfEmpty(request.getParameter(PATRONYMIC));
-        String passportNumber = Converter.toNullIfEmpty(request.getParameter(PASSPORT_NUMBER));
-        String email = Validator.assertNotNullOrEmpty(request.getParameter(EMAIL));
-        LocalDate dateOfBirth = Converter.toDate(request.getParameter(DATE_OF_BIRTH));
-        int postcode = Converter.toInt(request.getParameter(POSTCODE));
-        String country = Validator.assertNotNullOrEmpty(request.getParameter(COUNTRY));
-        String locality = Validator.assertNotNullOrEmpty(request.getParameter(LOCALITY));
-        String street = Validator.assertNotNullOrEmpty(request.getParameter(STREET));
-        int houseNumber = Converter.toInt(request.getParameter(HOUSE_NUMBER));
-        String building = Converter.toNullIfEmpty(request.getParameter(BUILDING));
-        int apartmentNumber = Converter.toNullIfEmptyOrInt(request.getParameter(APARTMENT_NUMBER));
-        byte[] bytesImage = Converter.toBytes(request.getPart(FILE));
-
-        Address clientAddress = new Address(postcode, country, locality, street, houseNumber, building, apartmentNumber);
-        Client client = new Client(firstName, lastName, patronymic, passportNumber, email, dateOfBirth, clientAddress, bytesImage);
-
         try {
+            String firstName = Validator.assertNotNullOrEmpty(request.getParameter(FIRST_NAME));
+            String lastName = Validator.assertNotNullOrEmpty(request.getParameter(LAST_NAME));
+            String patronymic = Converter.toNullIfEmpty(request.getParameter(PATRONYMIC));
+            String passportNumber = Converter.toNullIfEmpty(request.getParameter(PASSPORT_NUMBER));
+            String email = Validator.assertNotNullOrEmpty(request.getParameter(EMAIL));
+            LocalDate dateOfBirth = Converter.toDate(request.getParameter(DATE_OF_BIRTH));
+            int postcode = Converter.toInt(request.getParameter(POSTCODE));
+            String country = Validator.assertNotNullOrEmpty(request.getParameter(COUNTRY));
+            String locality = Validator.assertNotNullOrEmpty(request.getParameter(LOCALITY));
+            String street = Validator.assertNotNullOrEmpty(request.getParameter(STREET));
+            int houseNumber = Converter.toInt(request.getParameter(HOUSE_NUMBER));
+            String building = Converter.toNullIfEmpty(request.getParameter(BUILDING));
+            int apartmentNumber = Converter.toNullIfEmptyOrInt(request.getParameter(APARTMENT_NUMBER));
+            byte[] bytesImage = Converter.toBytes(request.getPart(FILE));
+
+            Address clientAddress = new Address(postcode, country, locality, street, houseNumber, building, apartmentNumber);
+            Client client = new Client(firstName, lastName, patronymic, passportNumber, email, dateOfBirth, clientAddress, bytesImage);
+
             clientService.add(client);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid client data.", e);

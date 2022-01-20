@@ -34,13 +34,12 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         ResultSet generatedKeys = null;
 
         try {
+            connection.setAutoCommit(false);
             psBook = connection.prepareStatement(INSERT_BOOK, Statement.RETURN_GENERATED_KEYS);
             psCover = connection.prepareStatement(INSERT_BOOK_COVERS);
             psCopies = connection.prepareStatement(INSERT_BOOK_COPIES);
             psGenres = connection.prepareStatement(INSERT_GENRES);
             psAuthors = connection.prepareStatement(INSERT_BOOK_AUTHORS);
-
-            connection.setAutoCommit(false);
 
             psBook.setString(1, book.getTitle());
             psBook.setString(2, book.getOriginalTitle());
@@ -62,7 +61,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             } else {
                 throw new DAOException("Adding new book failed, no ID obtained.");
             }
-
 
             for (int i = 0; i < book.getCovers().size(); i++) {
                 psCover.setInt(1, book.getId());
@@ -223,7 +221,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             close(psBook, psCopyBook);
             release(connection);
         }
-
         return books;
     }
 
@@ -311,7 +308,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             close(psBookCover);
             release(connection);
         }
-
         return book;
     }
 
@@ -404,7 +400,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         ResultSet rs = null;
 
         try {
-            psCopyBook = connection.prepareStatement("SELECT * FROM books_copies WHERE id=?");
+            psCopyBook = connection.prepareStatement(SELECT_COPY_BOOK_BY_ID);
             psCopyBook.setInt(1, copyBook.getId());
             rs = psCopyBook.executeQuery();
 

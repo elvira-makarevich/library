@@ -10,7 +10,9 @@ function init() {
         checkFirstName();
         checkLastName();
         if (checkImage() && checkFirstName() && checkLastName()) {
-            await submitValidFormAndCloseWindow("saveAuthor", "/Controller?command=add_new_author");
+            let formData = new FormData(document.getElementById("saveAuthor"));
+            let command = "/Controller?command=add_new_author";
+            await submitValidFormAndCloseWindow(formData, command);
         }
     })
 }

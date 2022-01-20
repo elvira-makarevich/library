@@ -6,11 +6,12 @@ function init() {
     document.getElementById('editCopyBook').addEventListener('submit', async function (event) {
         event.preventDefault();
         checkCostPerDay();
-        await submitValidFormAndCloseWindow("editCopyBook", "/Controller?command=change_cost_per_day");
+        let formData = new FormData(document.getElementById("editCopyBook"));
+        let command = "/Controller?command=change_cost_per_day";
+        await submitValidFormAndCloseWindow(formData, command);
     });
 }
 
 function changeValidation() {
-    let formEditCopyBook = document.getElementById('editCopyBook');
-    formEditCopyBook.noValidate = true;
+    document.getElementById('editCopyBook').noValidate = true;
 }

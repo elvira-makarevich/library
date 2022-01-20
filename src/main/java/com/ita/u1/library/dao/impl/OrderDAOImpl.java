@@ -52,7 +52,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 throw new DAOException("Saving order failed, no ID obtained.");
             }
 
-
             for (int i = 0; i < order.getBooks().size(); i++) {
                 psBooksOrder.setInt(1, order.getId());
                 psBooksOrder.setInt(2, order.getBooks().get(i).getId());
@@ -88,7 +87,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
             rs = psOrder.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 return true;
             }
 
@@ -142,9 +141,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
                 psBooks.setInt(1, copy.getId());
                 rsBooks = psBooks.executeQuery();
+
                 while (rsBooks.next()) {
                     copy.setTitle(rsBooks.getString(1));
-
                 }
 
                 psBooksCopies.setInt(1, copy.getId());
@@ -152,12 +151,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 while (rsBooksCopies.next()) {
                     copy.setCostPerDay(convertToBigDecimal(rsBooksCopies.getString(1)));
                 }
-
                 booksOrder.add(copy);
             }
-
             order.setBooks(booksOrder);
-
         } catch (SQLException e) {
             throw new DAOException("Method findOrderInfo() failed.", e);
         } finally {
@@ -234,7 +230,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 psBooksCopies.setInt(1, order.getBooks().get(i).getId());
                 psBooksCopies.executeUpdate();
             }
-
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
@@ -264,7 +259,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                     copy.setId(rsBooksCopies.getInt(1));
                     copy.setBookId(rsBooksCopies.getInt(2));
                     copy.setCostPerDay(convertToBigDecimal(rsBooksCopies.getString(3)));
-                    copy.setAvailable(7);//6
+                    copy.setAvailable(6);
                     books.add(copy);
                 }
             }
@@ -291,7 +286,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
 
             rs = psOrder.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 return true;
             }
 
@@ -333,14 +328,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             close(psOrder);
             release(connection);
         }
-
         return profitability;
     }
 
     private BigDecimal convertToBigDecimal(String money) {
         String cost = money.replace(',', '.');
-        BigDecimal bigDecimalCost = new BigDecimal(cost.replace(BR, EMPTY));
-        return bigDecimalCost;
+        return new BigDecimal(cost.replace(BR, EMPTY));
     }
-
 }

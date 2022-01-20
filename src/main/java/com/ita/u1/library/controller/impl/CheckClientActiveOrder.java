@@ -24,9 +24,8 @@ public class CheckClientActiveOrder extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int clientId = Converter.toInt(request.getParameter(CLIENT_ID));
-
         try {
+            int clientId = Converter.toInt(request.getParameter(CLIENT_ID));
             boolean result = orderService.hasClientActiveOrder(clientId);
             sendResponseJSON(new Gson().toJson(result), response);
         } catch (ControllerValidationException e) {

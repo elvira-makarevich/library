@@ -44,8 +44,7 @@ function addNewAuthor() {
 }
 
 function changeValidation() {
-    let formSaveBook = document.getElementById('saveBook');
-    formSaveBook.noValidate = true;
+    document.getElementById('saveBook').noValidate = true;
 }
 
 async function checkParamAuthor() {

@@ -13,6 +13,7 @@ public class ConstantParameter {
 
     public static final String REQUEST_PARAM_COMMAND = "command",
             FIRST_NAME = "firstName",
+            PENALTY_RATE = "0.01",
             LAST_NAME = "lastName",
             FILE = "file",
             AUTHOR_ID = "authorId",
@@ -44,7 +45,6 @@ public class ConstantParameter {
             PENALTY = "penalty",
             TOTAL_COST = "totalCost",
             COPY_ID = "copyId",
-            CLIENT_ID_IN_SESSION = "clientIdInSession",
             RATING = "rating",
             CURRENT_PAGE = "currentPage",
             VIOLATION_MESSAGE = "violationMessage",
@@ -56,6 +56,8 @@ public class ConstantParameter {
             SUM = "sum",
             FROM = "from",
             TO = "to",
+            MIN_DATE_OF_BIRTH = "1900-01-01",
+            MIN_DATE_FOR_CHECKING_PROFITABILITY = "2020-01-01",
             PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp",
             PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp",
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",
@@ -106,7 +108,8 @@ public class ConstantParameter {
             SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1",
             SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO = "select id from orders where order_date>? order by id limit 1",
             SELECT_COPY_BOOK_VIOLATION = "SELECT violation FROM books_orders where copy_id=? and violation is not null",
-            UPDATE_EXISTENCE = "UPDATE books_copies SET available=0, existence=false, date_of_writing_off=? WHERE id=?";
+            UPDATE_EXISTENCE = "UPDATE books_copies SET available=0, existence=false, date_of_writing_off=? WHERE id=?",
+            SELECT_COPY_BOOK_BY_ID = "SELECT * FROM books_copies WHERE id=?";
 
     public static final String INSERT_CLIENT = "INSERT INTO clients (first_name, last_name, patronymic, passport_number, email, birthday, postcode, country, locality, street, house_number, building, apartment_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             INSERT_CLIENT_IMAGE = "INSERT INTO clients_images (client_id, image) VALUES (?,?)",
@@ -141,5 +144,14 @@ public class ConstantParameter {
             SELECT_TITLES_COPY_BOOKS_ORDER = "select title from books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?",
             SELECT_ORDERS_OF_OLD_RETURN_VIOLATIONS = "select client_id, preliminary_cost, possible_return_date from orders where possible_return_date<? and status=true";
 
+    public static final String DISCOUNT_WITH_MORE_THEN_4_BOOKS = "0.85",
+            DISCOUNT_WITH_MORE_THEN_2_BOOKS = "0.9",
+            INITIAL_COST_VALUE = "0";
+
+    public static final int MAX_AMOUNT_OF_BOOKS_PER_ORDER = 5,
+            NUMBER_OF_BOOKS_4 = 4,
+            NUMBER_OF_BOOKS_2 = 2;
 
 }
+
+

@@ -27,9 +27,8 @@ public class CheckUniquenessEmail extends AbstractCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String email = Validator.assertNotNullOrEmpty(request.getParameter(EMAIL));
-
         try {
+            String email = Validator.assertNotNullOrEmpty(request.getParameter(EMAIL));
             boolean result = clientService.checkUniquenessEmail(email);
             sendResponseJSON(new Gson().toJson(result), response);
         } catch (ControllerValidationException e) {

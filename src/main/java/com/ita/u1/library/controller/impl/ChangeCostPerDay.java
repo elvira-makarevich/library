@@ -25,11 +25,11 @@ public class ChangeCostPerDay implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        BigDecimal newCostPerDay = Converter.toBigDecimal(request.getParameter(NEW_COST_PER_DAY));
-        int copyId = Converter.toInt(request.getParameter(COPY_ID));
-        CopyBook copyBook = new CopyBook(copyId, newCostPerDay);
-
         try {
+            BigDecimal newCostPerDay = Converter.toBigDecimal(request.getParameter(NEW_COST_PER_DAY));
+            int copyId = Converter.toInt(request.getParameter(COPY_ID));
+            CopyBook copyBook = new CopyBook(copyId, newCostPerDay);
+
             bookService.changeCostPerDay(copyBook);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid cost data.", e);
