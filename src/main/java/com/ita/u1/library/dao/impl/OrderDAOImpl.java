@@ -142,7 +142,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                 psBooks.setInt(1, copy.getId());
                 rsBooks = psBooks.executeQuery();
 
-                while (rsBooks.next()) {
+                if (rsBooks.next()) {
                     copy.setTitle(rsBooks.getString(1));
                 }
 

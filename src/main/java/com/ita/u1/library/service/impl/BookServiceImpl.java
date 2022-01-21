@@ -32,7 +32,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> getAllBooks(int startFromBook, int amountOfBooks) {
 
         List<Book> books = bookDAO.getAllBooks(startFromBook, amountOfBooks);
-        if (books.isEmpty() || books == null) {
+        if (books.isEmpty()) {
             return Collections.emptyList();
         }
         return books;
@@ -66,7 +66,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> findTheMostPopularBooks() {
 
         List<Book> books = bookDAO.findTheMostPopularBooks();
-        if (books.isEmpty() || books == null) {
+        if (books.isEmpty()) {
             return Collections.emptyList();
         }
         return books;

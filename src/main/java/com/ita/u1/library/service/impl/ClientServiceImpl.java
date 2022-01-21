@@ -35,15 +35,13 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public boolean checkUniquenessPassportNumber(String passportNumber) {
         serviceValidator.validatePassportNumber(passportNumber);
-        boolean result = clientDAO.checkUniquenessPassportNumber(passportNumber);
-        return result;
+        return clientDAO.checkUniquenessPassportNumber(passportNumber);
     }
 
     @Override
     public boolean checkUniquenessEmail(String email) {
         serviceValidator.validateEmail(email);
-        boolean result = clientDAO.checkUniquenessEmail(email);
-        return result;
+        return clientDAO.checkUniquenessEmail(email);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ClientServiceImpl implements ClientService {
     public List<Client> getAllClients(int startFromClient, int amountOfClients) {
 
         List<Client> clients = clientDAO.getAllClients(startFromClient, amountOfClients);
-        if (clients.isEmpty() || clients == null) {
+        if (clients.isEmpty()) {
             return Collections.emptyList();
         }
         return clients;
@@ -65,7 +63,7 @@ public class ClientServiceImpl implements ClientService {
     public List<Client> findClient(String lastName) {
         serviceValidator.validateLastName(lastName);
         List<Client> clients = clientDAO.findClient(lastName);
-        if (clients.isEmpty() || clients == null) {
+        if (clients.isEmpty()) {
             return Collections.emptyList();
         }
         return clients;

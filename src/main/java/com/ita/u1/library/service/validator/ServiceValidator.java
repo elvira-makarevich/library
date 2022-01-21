@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
@@ -123,18 +125,23 @@ public class ServiceValidator {
 
     public void validateCloseOrder(Order order, Order orderInfoFromDB) {
         log.info("Start validate close order info.");
-        checkDates(order, orderInfoFromDB);
+
         if (!checkPenaltyNullOrNotNegative(order.getPenalty())) {
             throw new ServiceException("Invalid penalty.");
         }
 
+        checkDates(order, orderInfoFromDB);
+        compareCopyBooks(order.getBooks(), orderInfoFromDB.getBooks());
+
         BigDecimal totalCostValueDB = calculateTotalCostBasedOnDataFromDB(orderInfoFromDB);
         BigDecimal totalCostValueWithoutPenalty;
+
         if (order.getPenalty() == null) {
             totalCostValueWithoutPenalty = order.getTotalCost();
         } else {
             totalCostValueWithoutPenalty = order.getTotalCost().subtract(order.getPenalty());
         }
+
         compareCost(totalCostValueDB, totalCostValueWithoutPenalty);
         log.info("Order closing info validated.");
     }
@@ -167,6 +174,44 @@ public class ServiceValidator {
                     throw new ServiceException("The list contains copy books with the same id.");
                 }
             }
+        }
+    }
+
+    public BigDecimal calculateTotalCostBasedOnDataFromDB(Order orderInfoFromDB) {
+        BigDecimal realNumberOfRentalDays = new BigDecimal(LocalDate.now().toEpochDay() - orderInfoFromDB.getOrderDate().toEpochDay() + 1);
+        BigDecimal numberOfPossibleRentalDays = new BigDecimal(orderInfoFromDB.getPossibleReturnDate().toEpochDay() - orderInfoFromDB.getOrderDate().toEpochDay() + 1);
+        BigDecimal totalCostValue;
+
+        if (isReturnDateViolated(orderInfoFromDB)) {
+            BigDecimal numberOfOverdueDays = realNumberOfRentalDays.subtract(numberOfPossibleRentalDays);
+            BigDecimal penaltyRate = new BigDecimal("0.01");
+            BigDecimal amountOfThePenalty = orderInfoFromDB.getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
+            totalCostValue = orderInfoFromDB.getPreliminaryCost().add(amountOfThePenalty);
+        } else {
+            BigDecimal rentalCostPerDay = orderInfoFromDB.getPreliminaryCost().divide(numberOfPossibleRentalDays);
+            totalCostValue = rentalCostPerDay.multiply(realNumberOfRentalDays);
+        }
+        return totalCostValue.setScale(2, RoundingMode.UP);
+    }
+
+    private void compareCopyBooks(List<CopyBook> copiesOrder, List<CopyBook> copiesOrderFromDB) {
+
+        if (copiesOrder.size() != copiesOrderFromDB.size()) {
+            throw new ServiceException("Invalid data while closing order: books don't match.");
+        }
+
+        List<Integer> listId1 = new ArrayList<>();
+        List<Integer> listId2 = new ArrayList<>();
+
+        for (int i = 0; i < copiesOrder.size(); i++) {
+            listId1.add(copiesOrder.get(i).getId());
+            listId2.add(copiesOrderFromDB.get(i).getId());
+        }
+        Collections.sort(listId1);
+        Collections.sort(listId2);
+
+        if (!listId1.equals(listId2)) {
+            throw new ServiceException("Invalid data while closing order: books don't match.");
         }
     }
 
@@ -209,14 +254,6 @@ public class ServiceValidator {
         return preCost;
     }
 
-    private void compareCost(BigDecimal cost1, BigDecimal cost2) {
-        log.info("Start compare cost with the info from DB.");
-        if (cost1.compareTo(cost2) != 0) {
-            throw new ServiceException("Invalid order cost.");
-        }
-        log.info("Cost compared.");
-    }
-
     private void checkDates(Order order, Order orderInfoFromDB) {
         if (!order.getOrderDate().isEqual(orderInfoFromDB.getOrderDate())) {
             throw new ServiceException("Invalid data while closing order.");
@@ -228,21 +265,12 @@ public class ServiceValidator {
 
     }
 
-    public BigDecimal calculateTotalCostBasedOnDataFromDB(Order orderInfoFromDB) {
-        BigDecimal realNumberOfRentalDays = new BigDecimal(LocalDate.now().toEpochDay() - orderInfoFromDB.getOrderDate().toEpochDay() + 1);
-        BigDecimal numberOfPossibleRentalDays = new BigDecimal(orderInfoFromDB.getPossibleReturnDate().toEpochDay() - orderInfoFromDB.getOrderDate().toEpochDay() + 1);
-        BigDecimal totalCostValue;
-
-        if (isReturnDateViolated(orderInfoFromDB)) {
-            BigDecimal numberOfOverdueDays = realNumberOfRentalDays.subtract(numberOfPossibleRentalDays);
-            BigDecimal penaltyRate = new BigDecimal("0.01");
-            BigDecimal amountOfThePenalty = orderInfoFromDB.getPreliminaryCost().multiply(numberOfOverdueDays).multiply(penaltyRate);
-            totalCostValue = orderInfoFromDB.getPreliminaryCost().add(amountOfThePenalty);
-        } else {
-            BigDecimal rentalCostPerDay = orderInfoFromDB.getPreliminaryCost().divide(numberOfPossibleRentalDays);
-            totalCostValue = rentalCostPerDay.multiply(realNumberOfRentalDays);
+    private void compareCost(BigDecimal cost1, BigDecimal cost2) {
+        log.info("Start compare cost with the info from DB.");
+        if (cost1.compareTo(cost2) != 0) {
+            throw new ServiceException("Invalid order cost.");
         }
-        return totalCostValue.setScale(2, RoundingMode.UP);
+        log.info("Cost compared.");
     }
 
     private boolean isReturnDateViolated(Order order) {
