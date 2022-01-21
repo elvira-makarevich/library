@@ -14,9 +14,9 @@
 
 <div id="findAuthorArea" class="register">
     <h3>Find author(s) area</h3>
-    <input id="initials" type="text" name="" placeholder="Enter last name">
-    <button id="findAuthor" class="" style="inline-size: auto;">Find author</button>
-    <button id="addAuthor" style="inline-size: auto;">Add author</button>
+    <input id="initials" class="initials" type="text" name="" placeholder="Enter last name">
+    <button id="findAuthor" class="btnAction" style="inline-size: auto;">Find author</button>
+    <button id="addAuthor" class="btnAction" style="inline-size: auto;">Add new author</button>
     <br> <br>
 
     <div id="possibleAuthorContainer">
@@ -37,15 +37,15 @@
         <label>Author(s):</label>
     </div>
     <br>
-    <div class="titleBook">
+    <div>
         <label for="title">Title:</label>
-        <input type="text" name="title" id="title" required minlength="2" maxlength="70">
+        <input type="text" class="titleBook" name="title" id="title" required minlength="2" maxlength="70">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
-    <div class="titleBook">
+    <div>
         <label for="originalTitle">Original title:</label>
-        <input type="text" name="originalTitle" id="originalTitle" minlength="2" maxlength="70">
+        <input type="text" class="titleBook" name="originalTitle" id="originalTitle" minlength="2" maxlength="70">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
@@ -67,19 +67,19 @@
     <br>
     <div class="price">
         <label for="price">Price, BYN:</label>
-        <input type="text" name="price" id="price" pattern="^[0-9]{1,}[.,]?[0-9]{0,2}" required>
+        <input type="text" class="number" name="price" id="price" pattern="^[0-9]{1,}[.,]?[0-9]{0,2}" required>
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="costPerDay">
         <label for="costPerDay">Cost per day, BYN:</label>
-        <input type="text" name="costPerDay" id="costPerDay" pattern="^[0-9]{1,}[.,]?[0-9]{0,2}" required>
+        <input type="text" class="number" name="costPerDay" id="costPerDay" pattern="^[0-9]{1,}[.,]?[0-9]{0,2}" required>
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="numberOfCopies">
         <label for="numberOfCopies">Number of copies:</label>
-        <input type="number" name="numberOfCopies" id="numberOfCopies" min="1" pattern="\d+" required>
+        <input type="number" class="number" name="numberOfCopies" id="numberOfCopies" min="1" pattern="\d+" required>
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
@@ -92,22 +92,22 @@
     <br>
     <div class="publishingYear">
         <label for="publishingYear">Publishing year:</label>
-        <input type="number" name="publishingYear" id="publishingYear" min="868" max="2022">
+        <input type="number" class="number" name="publishingYear" id="publishingYear" min="868" max="2022">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="numberOfPages">
         <label for="numberOfPages">Number of pages:</label>
-        <input type="number" name="numberOfPages" id="numberOfPages" min="1" max="2000" pattern="\d+">
+        <input type="number" class="number" name="numberOfPages" id="numberOfPages" min="1" max="2000" pattern="\d+">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
     <div class="registrationDate">
         <label for="registrationDate">Registration date:</label>
-        <input id="registrationDate" type="text" readonly>
+        <input id="registrationDate" class="dates" type="text" readonly>
     </div>
     <br>
-    <input type="submit" name="submit" id="submitButton" value="Save">
+    <input type="submit" class="btnSubmit" name="submit" id="submitButton" value="Save">
 
 </form>
 

@@ -1,5 +1,5 @@
 body {
-    font-size: 17px;
+    font-size: 19px;
     background: #f9f9f9;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 
@@ -11,24 +11,51 @@ footer {
     font-size: 15px;
 }
 
+input[type=text], input[type=number], input[type=email], input[type=date] {
+    padding: 5px 6px 5px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 6px;
+    box-sizing: border-box;
+    border: 1px solid #555;
+    outline: none;
+    font-size: 16px;
+}
+
+.titleBook {
+    width: 35%;
+}
+
+.initials {
+    width: 25%;
+}
+
+.number {
+    width: 15%;
+}
+
+.dates {
+    width: 20%;
+}
+
 .container {
-    margin:70px 35px 0px 35px;
+    margin: 70px 35px 0px 35px;
     padding: 5px 0px 5px 3px;
     color: #fcfafa;
     text-align: center;
 }
 
 .editcontainer {
-    margin:150px 35px 0px 35px;
+    margin: 150px 35px 0px 35px;
     padding: 5px 0px 5px 3px;
     color: #fcfafa;
     text-align: center;
 }
 
-.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea{
-    width: 60%;
+.register, .saveOrder, .closeOrder, .findClientArea, .findBookArea {
+    width: 55%;
     background: #fff;
-    padding: 15px 40px 40px;
+    padding: 15px 30px 40px;
     border: 3px solid #ccc;
     margin: 40px auto 0;
     border-radius: 5px;
@@ -78,22 +105,66 @@ footer {
 
 .button {
     font-family: Arial, Helvetica, sans-serif;
-    border-color: lightslategray;
+    border-color: #7e7e7e;
     background-color: white;
-    color: lightslategray;
+    color: #7e7e7e;
     text-align: center;
     font-size: 17px;
+    font-weight: bold;
     cursor: pointer;
-    border-radius: 35px;
-    border-right: none;
+    border-radius: 6px;
     margin: 6px;
-    padding: 10px 16px 10px 16px;
+    padding: 10px 15px 10px 15px;
 }
 
 .button:hover {
-    border-color: lightslategray;
-    background-color: #b61e3c;
-    color: #ffffff;
+    border-color: #7e7e7e;
+    background-color: #7e7e7e;
+    color: white;
+}
+
+.btnSubmit {
+    text-align: center;
+    font-size: 19px;
+    display: inline-block;
+    font-family: arial, sans-serif;
+    font-weight: bold;
+    color: rgb(68, 68, 68);
+    text-decoration: none;
+    user-select: none;
+    padding: .2em 1.2em;
+    outline: none;
+    border: 2px solid rgba(0, 0, 0, .1);
+    border-radius: 4px;
+    background: rgb(245, 245, 245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+}
+
+.btnSubmit:hover {
+    color: rgb(24, 24, 24);
+    border: 1px solid rgb(198, 198, 198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+}
+
+.btnAction {
+    text-align: center;
+    font-size: 17px;
+    display: inline-block;
+    font-family: arial, sans-serif;
+    color: rgb(68, 68, 68);
+    user-select: none;
+    padding: 5px 6px;
+    outline: none;
+    border: 2px solid rgba(0, 0, 0, .1);
+    border-radius: 4px;
+    background: rgb(245, 245, 245) linear-gradient(#f4f4f4, #f1f1f1);
+}
+
+.btnAction:hover {
+    color: rgb(24, 24, 24);
+    border: 1px solid rgb(198, 198, 198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
 }
 
 .logoDiv {

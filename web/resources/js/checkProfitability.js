@@ -58,6 +58,7 @@ function viewProfit(profitability) {
     div.appendChild(h3);
     let input = document.createElement('input');
     input.type = "text";
+    input.className = "dates";
     input.value = profitability.profit + " Br";
     input.setAttribute("readonly", "readonly");
     div.appendChild(input);

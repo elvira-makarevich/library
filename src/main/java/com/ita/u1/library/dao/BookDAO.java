@@ -14,7 +14,7 @@ public interface BookDAO {
 
     int getNumberOfBooks();
 
-    List<Book> findBook(String title);
+    List<CopyBook> findBooks(String title);
 
     void changeCostPerDay(CopyBook copyBook);
 

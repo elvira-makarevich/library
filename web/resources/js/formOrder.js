@@ -24,8 +24,7 @@ function defineMaxReturnDate() {
     let today = new Date();
     today.setMonth(today.getMonth() + 1);
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    let maxReturnDate = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
-    inputMaxReturnDate.value = maxReturnDate;
+    inputMaxReturnDate.value = today.getDate() + " " + months[(today.getMonth())] + ", " + today.getFullYear();
 }
 
 function addNewClient() {
@@ -52,6 +51,7 @@ function viewInTableClients(clients) {
         let row_data_5 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
+        buttonAdd.className = "btnAction";
         buttonAdd.innerHTML = "Add to form";
         buttonAdd.addEventListener('click', addClient);
         row_data_5.appendChild(buttonAdd);
@@ -111,86 +111,87 @@ async function findBookRequest() {
     }
 }
 
-function viewInTableBooks(books) {
+function viewInTableBooks(booksCopies) {
     createTableForBooks("table_books", "possibleBookContainer");
     let i;
-    for (i in books) {
-        for (let j = 0; i < books[i].copies.length; j++) {
-            let table_books = document.getElementsByClassName("table_books")[0];
-            let row = document.createElement('tr');
-            let row_data_1 = document.createElement('td');
-            row_data_1.innerHTML = books[i].title;
-            let row_data_2 = document.createElement('td');
-            row_data_2.innerHTML = books[i].copies[j].costPerDay;
-            let row_data_3 = document.createElement('td');
+    for (i in booksCopies) {
 
-            let buttonAdd = document.createElement('button');
-            buttonAdd.innerHTML = "Add to order";
-            buttonAdd.addEventListener('click', addBook);
-            row_data_3.appendChild(buttonAdd);
+        let table_books = document.getElementsByClassName("table_books")[0];
+        let row = document.createElement('tr');
+        let row_data_1 = document.createElement('td');
+        row_data_1.innerHTML = booksCopies[i].title;
+        let row_data_2 = document.createElement('td');
+        row_data_2.innerHTML = booksCopies[i].costPerDay;
+        let row_data_3 = document.createElement('td');
 
-            let title = books[i].title;
-            let costPerDay = books[i].copies[j].costPerDay;
-            let id = books[i].copies[j].id;
+        let buttonAdd = document.createElement('button');
+        buttonAdd.className = "btnAction";
+        buttonAdd.innerHTML = "Add to order";
+        buttonAdd.addEventListener('click', addBook);
+        row_data_3.appendChild(buttonAdd);
 
-            row.appendChild(row_data_1);
-            row.appendChild(row_data_2);
-            row.appendChild(row_data_3);
+        let title = booksCopies[i].title;
+        let costPerDay = booksCopies[i].costPerDay;
+        let id = booksCopies[i].id;
 
-            table_books.appendChild(row);
+        row.appendChild(row_data_1);
+        row.appendChild(row_data_2);
+        row.appendChild(row_data_3);
 
-            function addBook() {
+        table_books.appendChild(row);
 
-                if (!isTableExists("books_order")) {
-                    createTableForBooks("books_order", "realBooksContainer");
-                }
+        function addBook() {
 
-                if (!isItPossibleToAddABookToTheOrder()) {
-
-                    if (!isThereDuplicationOfBooks(title)) {
-                        let books_order = document.getElementsByClassName("books_order")[0];
-
-                        let row = document.createElement('tr');
-                        let row_data_1 = document.createElement('td');
-                        row_data_1.innerHTML = title;
-                        let row_data_2 = document.createElement('td');
-                        row_data_2.innerHTML = costPerDay;
-                        let row_data_3 = document.createElement('td');
-
-                        let inputHidden = document.createElement("input");
-                        inputHidden.type = "hidden";
-                        inputHidden.value = id;
-                        inputHidden.name = "copyId";
-                        row_data_3.appendChild(inputHidden);
-
-                        let inputHiddenTitle = document.createElement("input");
-                        inputHiddenTitle.type = "hidden";
-                        inputHiddenTitle.value = title;
-                        inputHiddenTitle.name = "title";
-
-                        row_data_3.appendChild(inputHiddenTitle);
-                        let row_data_4 = document.createElement('td');
-
-                        let buttonRemove = document.createElement('button');
-                        buttonRemove.innerHTML = "Delete";
-
-                        let attr = document.createAttribute("onclick");
-                        attr.value = "deleteRow(this, 'books_order');";
-                        buttonRemove.setAttributeNode(attr);
-
-                        row_data_4.appendChild(buttonRemove);
-
-                        row.appendChild(row_data_1);
-                        row.appendChild(row_data_2);
-                        row.appendChild(row_data_3);
-                        row.appendChild(row_data_4);
-                        books_order.appendChild(row);
-                    }
-                }
-                removeTable("table_books");
-                calculateTheOrderAmount();
-                checkBooks();
+            if (!isTableExists("books_order")) {
+                createTableForBooks("books_order", "realBooksContainer");
             }
+
+            if (!isItPossibleToAddABookToTheOrder()) {
+
+                if (!isThereDuplicationOfBooks(title)) {
+                    let books_order = document.getElementsByClassName("books_order")[0];
+
+                    let row = document.createElement('tr');
+                    let row_data_1 = document.createElement('td');
+                    row_data_1.innerHTML = title;
+                    let row_data_2 = document.createElement('td');
+                    row_data_2.innerHTML = costPerDay;
+                    let row_data_3 = document.createElement('td');
+
+                    let inputHidden = document.createElement("input");
+                    inputHidden.type = "hidden";
+                    inputHidden.value = id;
+                    inputHidden.name = "copyId";
+                    row_data_3.appendChild(inputHidden);
+
+                    let inputHiddenTitle = document.createElement("input");
+                    inputHiddenTitle.type = "hidden";
+                    inputHiddenTitle.value = title;
+                    inputHiddenTitle.name = "title";
+
+                    row_data_3.appendChild(inputHiddenTitle);
+                    let row_data_4 = document.createElement('td');
+
+                    let buttonRemove = document.createElement('button');
+                    buttonRemove.className = "btnAction";
+                    buttonRemove.innerHTML = "Delete";
+
+                    let attr = document.createAttribute("onclick");
+                    attr.value = "deleteRow(this, 'books_order');";
+                    buttonRemove.setAttributeNode(attr);
+
+                    row_data_4.appendChild(buttonRemove);
+
+                    row.appendChild(row_data_1);
+                    row.appendChild(row_data_2);
+                    row.appendChild(row_data_3);
+                    row.appendChild(row_data_4);
+                    books_order.appendChild(row);
+                }
+            }
+            removeTable("table_books");
+            calculateTheOrderAmount();
+            checkBooks();
         }
     }
 }
@@ -227,7 +228,7 @@ function checkBooks() {
     if (!isTableExists("books_order")) {
         error.innerHTML = "Add book(s)!";
         return false;
-    } else if (document.getElementsByClassName("books_order")[0].rows.length == 1) {
+    } else if (document.getElementsByClassName("books_order")[0].rows.length === 1) {
         error.innerHTML = "Add book(s)!";
         return false;
     }
@@ -235,36 +236,39 @@ function checkBooks() {
 }
 
 function calculateTheOrderAmount() {
-    let table = document.getElementsByClassName("books_order")[0];
-    let daysNumber = calculateTheNumberOfDays();
-    let amountOfBooks = table.rows.length - 1;
-    let sum = 0;
-    for (let r = 1, n = table.rows.length; r < n; r++) {
-        let price = table.rows[r].cells[1].innerHTML;
-        sum = sum * 1 + price * 1 * daysNumber;
-    }
-
-    if (amountOfBooks > 4) {
-        sum = sum * 0.85;
-    } else if (amountOfBooks > 2) {
-        sum = sum * 0.9;
-    }
     let preliminaryCost = document.getElementById("preliminaryCost");
-    preliminaryCost.value = sum.toFixed(2);
+    if (!isTableExists("books_order")) {
+        preliminaryCost.value = 0;
+    } else {
+        let table = document.getElementsByClassName("books_order")[0];
+        let daysNumber = calculateTheNumberOfDays();
+        let amountOfBooks = table.rows.length - 1;
+        let sum = 0;
+        for (let r = 1, n = table.rows.length; r < n; r++) {
+            let price = table.rows[r].cells[1].innerHTML;
+            sum = sum * 1 + price * 1 * daysNumber;
+        }
+
+        if (amountOfBooks > 4) {
+            sum = sum * 0.85;
+        } else if (amountOfBooks > 2) {
+            sum = sum * 0.9;
+        }
+        preliminaryCost.value = sum.toFixed(2);
+    }
 }
 
 function calculateTheNumberOfDays() {
     let today = new Date();
     let aMonthLater = new Date();
     aMonthLater.setMonth(today.getMonth() + 1);
-    let daysLag = Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 1;
-    return daysLag;
+    return Math.ceil(Math.abs(aMonthLater.getTime() - today.getTime()) / (1000 * 3600 * 24)) + 1;
 }
 
 function isThereDuplicationOfBooks(title) {
     let table = document.getElementsByClassName("books_order")[0];
     for (let r = 1, n = table.rows.length; r < n; r++) {
-        if (title == table.rows[r].cells[0].innerHTML) {
+        if (title === table.rows[r].cells[0].innerHTML) {
             alert("The book has already been added to the order!");
             return true;
         }
@@ -274,7 +278,7 @@ function isThereDuplicationOfBooks(title) {
 
 function isItPossibleToAddABookToTheOrder() {
     let table = document.getElementsByClassName("books_order")[0];
-    if (table.rows.length == 6) {
+    if (table.rows.length === 6) {
         alert("The maximum number of books in an order should not exceed 5 copies!");
         return true;
     }
@@ -286,10 +290,10 @@ function deleteRow(r, tableClassName) {
     document.getElementsByClassName(tableClassName)[0].deleteRow(i);
 
     let table = document.getElementsByClassName(tableClassName)[0];
-    if (table.rows.length == 1) {
+    if (table.rows.length === 1) {
         removeTable(tableClassName);
     }
-    checkBooks();
     calculateTheOrderAmount();
+    checkBooks();
 }
 

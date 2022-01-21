@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Validator;
 import com.ita.u1.library.entity.Book;
+import com.ita.u1.library.entity.CopyBook;
 import com.ita.u1.library.exception.*;
 import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
@@ -29,9 +30,8 @@ public class FindBook extends AbstractCommand implements Command {
 
         try {
             String title = Validator.assertNotNullOrEmpty(request.getParameter(TITLE));
-
-            List<Book> books = bookService.findBook(title);
-            sendResponseJSON(new Gson().toJson(books), response);
+            List<CopyBook> copyBooks = bookService.findBooks(title);
+            sendResponseJSON(new Gson().toJson(copyBooks), response);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid title.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);

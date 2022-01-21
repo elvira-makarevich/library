@@ -101,6 +101,7 @@ function viewInTableAuthors(authors) {
         let row_data_4 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
+        buttonAdd.className="btnAction";
         buttonAdd.innerHTML = "Add";
         buttonAdd.addEventListener('click', addAuthor);
         row_data_4.appendChild(buttonAdd);
@@ -131,6 +132,7 @@ function viewInTableAuthors(authors) {
 
             let row_data_4 = document.createElement('td');
             let buttonRemove = document.createElement('button');
+            buttonRemove.className="btnAction";
             buttonRemove.innerHTML = "Delete";
 
             let attr = document.createAttribute("onclick");

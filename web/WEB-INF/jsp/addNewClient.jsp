@@ -70,7 +70,7 @@
 
     <div class="fields">
         <label for="postcode">Postcode:</label>
-        <input type="text" name="postcode" id="postcode">
+        <input type="text" class="number" name="postcode" id="postcode">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
@@ -98,26 +98,26 @@
 
     <div class="fields">
         <label for="houseNumber">House number:</label>
-        <input type="text" name="houseNumber" id="houseNumber">
+        <input type="text" class="number" name="houseNumber" id="houseNumber">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
 
     <div class="fields">
         <label for="building">Building:</label>
-        <input type="text" name="building" id="building">
+        <input type="text" class="number" name="building" id="building">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
 
     <div class="fields">
         <label for="apartmentNumber">Apartment number:</label>
-        <input type="text" name="apartmentNumber" id="apartmentNumber">
+        <input type="text" class="number" name="apartmentNumber" id="apartmentNumber">
         <span class="error" aria-live="polite"></span>
     </div>
     <br>
 
-    <input type="submit" name="submit" id="submitButton" value="Save">
+    <input type="submit" class="btnSubmit" name="submit" id="submitButton" value="Save">
 </form>
 
 <input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">

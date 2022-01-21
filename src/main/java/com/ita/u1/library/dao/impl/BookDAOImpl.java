@@ -174,54 +174,46 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
     }
 
     @Override
-    public List<Book> findBook(String title) {
+    public List<CopyBook> findBooks(String title) {
 
         Connection connection = take();
-        List<Book> books = new ArrayList<>();
         PreparedStatement psBook = null;
         PreparedStatement psCopyBook = null;
         ResultSet rsBook = null;
         ResultSet rsCopyBook = null;
+        List<CopyBook> copyBooks = new ArrayList<>();
 
         try {
             psBook = connection.prepareStatement(SELECT_BOOK_BY_TITLE);
             psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_COPY_BOOKS_BY_BOOK_ID);
-
             psBook.setString(1, title);
             rsBook = psBook.executeQuery();
 
             if (rsBook != null) {
                 while (rsBook.next()) {
-                    Book book = new Book();
-                    book.setId(rsBook.getInt(1));
-                    book.setTitle(rsBook.getString(2));
-
-                    int numberOfCopies = rsBook.getInt(AVAILABLE_COPIES);
-                    CopyBook[] copies = new CopyBook[numberOfCopies];
-                    psCopyBook.setInt(1, book.getId());
-
+                    int bookId = rsBook.getInt(1);
+                    String booksTitle = rsBook.getString(2);
+                    psCopyBook.setInt(1, bookId);
                     rsCopyBook = psCopyBook.executeQuery();
+
                     while (rsCopyBook.next()) {
-                        for (int i = 0; i < copies.length; i++) {
-                            CopyBook copy = new CopyBook();
-                            copy.setId(rsCopyBook.getInt(1));
-                            copy.setCostPerDay(convertToBigDecimal(rsCopyBook.getString(3)));
-                            copies[i] = copy;
-                        }
+                        CopyBook copy = new CopyBook();
+                        copy.setId(rsCopyBook.getInt(1));
+                        copy.setTitle(booksTitle);
+                        copy.setCostPerDay(convertToBigDecimal(rsCopyBook.getString(3)));
+                        copyBooks.add(copy);
                     }
-                    book.setCopies(copies);
-                    books.add(book);
                 }
             }
 
         } catch (SQLException e) {
-            throw new DAOException("DAOException: method findBook() failed.", e);
+            throw new DAOException("DAOException: method findBooks() failed.", e);
         } finally {
             close(rsBook, rsCopyBook);
             close(psBook, psCopyBook);
             release(connection);
         }
-        return books;
+        return copyBooks;
     }
 
     @Override
@@ -325,7 +317,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
         try {
             psBook = connection.prepareStatement(SELECT_BOOK_BY_TITLE);
-
             psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_COPY_BOOKS_BY_BOOK_ID);
             psCopyBookViolations = connection.prepareStatement(SELECT_COPY_BOOK_VIOLATION);
 
@@ -348,7 +339,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                         psCopyBookViolations.setInt(1, copy.getId());
                         rsCopyBookViolations = psCopyBookViolations.executeQuery();
                         while (rsCopyBookViolations.next()) {
-                            System.out.println(rsCopyBookViolations.getString(1));
                             violationsCopyBook.add(new Violation(rsCopyBookViolations.getString(1)));
                         }
                         copy.setCopyBooksViolations(violationsCopyBook);
@@ -356,7 +346,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                     }
                 }
             }
-
         } catch (SQLException e) {
             throw new DAOException("DAOException: method findBooksForWritingOff() failed.", e);
         } finally {

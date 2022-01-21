@@ -44,13 +44,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> findBook(String title) {
+    public List<CopyBook> findBooks(String title) {
         serviceValidator.validateTitle(title);
-        List<Book> books = bookDAO.findBook(title);
-        if (books.isEmpty() || books == null) {
+        List<CopyBook> copyBooks= bookDAO.findBooks(title);
+        if (copyBooks.isEmpty()) {
             return Collections.emptyList();
         }
-        return books;
+        return copyBooks;
     }
 
     @Override

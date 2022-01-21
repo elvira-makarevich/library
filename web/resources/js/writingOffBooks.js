@@ -74,6 +74,7 @@ function viewInTableCopyBooksForWringOff(booksCopies) {
         let row_data_4 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
+        buttonAdd.className = "btnAction";
         buttonAdd.innerHTML = "Add for writing off";
         buttonAdd.addEventListener('click', addBookToWriteOff);
         let attr = document.createAttribute("onclick");
@@ -118,6 +119,7 @@ function viewInTableCopyBooksForWringOff(booksCopies) {
                 let row_data_4 = document.createElement('td');
 
                 let buttonRemove = document.createElement('button');
+                buttonRemove.className = "btnAction";
                 buttonRemove.innerHTML = " - ";
                 let attr = document.createAttribute("onclick");
                 attr.value = "deleteRow(this, 'books_write_off');";

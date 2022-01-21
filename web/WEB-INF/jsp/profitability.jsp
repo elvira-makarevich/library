@@ -25,7 +25,7 @@
         <span class="error" aria-live="polite"></span>
     </div>
     <br><br>
-    <input type="submit" name="submit" id="submitButton" value="Check">
+    <input type="submit" class="btnSubmit" name="submit" id="submitButton" value="Check">
 </form>
 
 <div id="profitInfo">

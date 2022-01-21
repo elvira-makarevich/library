@@ -37,7 +37,7 @@
         <span class="error" aria-live="polite"></span>
     </div>
     <br><br>
-    <input type="submit" name="submit" id="submitButton" value="Save">
+    <input type="submit" class="btnSubmit" name="submit" id="submitButton" value="Save">
 </form>
 <input id="pageContext" type="text" name="" value="${pageContext.request.contextPath}" style="display: none;">
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

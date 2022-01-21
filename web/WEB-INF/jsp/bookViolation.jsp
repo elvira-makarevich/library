@@ -32,7 +32,7 @@
     <br>
     <div class="img-item" id="fileListDisplay"></div>
     <br> <br>
-    <input type="submit" name="submit" id="submitButton" value="Save">
+    <input type="submit" class="btnSubmit" name="submit" id="submitButton" value="Save">
 </form>
 
 

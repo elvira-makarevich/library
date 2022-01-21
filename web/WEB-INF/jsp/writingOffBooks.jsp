@@ -11,8 +11,8 @@
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <div id="findBookArea" class="writeOff">
     <h3>Find book area</h3>
-    <input id="title" type="text" name="" placeholder="Enter title">
-    <button id="findBook" class="" style="inline-size: auto;">Find books</button>
+    <input id="title" class="titleBook" type="text" name="" placeholder="Enter title">
+    <button id="findBook" class="btnAction" style="inline-size: auto;">Find books</button>
     <br><br><br>
 
     <div id="possibleBookContainer">
@@ -25,7 +25,7 @@
     <h1>Writing off</h1>
 
     <div><label>Date:</label>
-        <input id="dateOfWritingOff" type="text" readonly>
+        <input id="dateOfWritingOff" class="dates" type="text" readonly>
     </div>
 
     <p id="booksError" class="error"></p>
@@ -34,7 +34,7 @@
         </div>
     </div>
     <br><br>
-    <input type="submit" name="submit" id="submitButton" value="Save">
+    <input type="submit" class="btnSubmit" name="submit" id="submitButton" value="Save">
 </form>
 
 

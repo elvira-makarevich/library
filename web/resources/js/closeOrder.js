@@ -32,6 +32,7 @@ function viewInTableClients(clients) {
         let row_data_5 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
+        buttonAdd.className = "btnAction";
         buttonAdd.innerHTML = "Add to form";
         buttonAdd.addEventListener('click', addClient);
         row_data_5.appendChild(buttonAdd);
@@ -204,6 +205,7 @@ function viewBooksInfo(order) {
         let row_data_4 = document.createElement('td');
 
         let buttonAdd = document.createElement('button');
+        buttonAdd.className = "btnAction";
         buttonAdd.innerHTML = "Indicate violation";
         buttonAdd.addEventListener('click', function (event) {
             event.preventDefault();
@@ -217,6 +219,7 @@ function viewBooksInfo(order) {
 
         let row_data_5 = document.createElement('td');
         let buttonChange = document.createElement('button');
+        buttonChange.className = "btnAction";
         buttonChange.innerHTML = "Change cost";
         buttonChange.addEventListener('click', function (event) {
             event.preventDefault();
