@@ -3,11 +3,12 @@
 <html>
 <head>
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="resources/css/common.css">
     <link rel="stylesheet" type="text/css" href="resources/css/mostPopularTable.css">
 
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <input id="pageContextMostPopular" type="text" name="" value="${pageContext.request.contextPath}"
        style="display: none;">
 <script>
@@ -26,11 +27,11 @@
             if (json == "") {
                 viewAnswerWhenTheListIsEmpty();
             } else {
-               await viewInTableMostPopular(json);
+                await viewInTableMostPopular(json);
             }
 
         } else {
-            alert("Error while finding books.");
+            alert("Error while finding 3 most popular books.");
             console.log("Response.status: " + response.status);
         }
     }
@@ -112,10 +113,11 @@
         document.getElementById('mostPopularBooks').appendChild(table);
     }
 </script>
-
-<h2 style="padding: 0 0 0 15px;">Most popular books</h2>
-<div id="mostPopularBooks">
+<div class="mostPopularBooksArea">
+    <h2 style="padding: 0 0 0 15px;">Most popular books</h2>
+    <div id="mostPopularBooks">
+    </div>
 </div>
-
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 </body>
 </html>

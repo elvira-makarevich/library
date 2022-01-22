@@ -1,8 +1,7 @@
 package com.ita.u1.library.controller.impl;
 
-import com.google.gson.Gson;
+
 import com.ita.u1.library.controller.Command;
-import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.exception.ControllerException;
 import com.ita.u1.library.exception.DAOConnectionPoolException;
 import com.ita.u1.library.exception.DAOException;
@@ -15,7 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
@@ -30,17 +29,19 @@ public class GoToMainPage implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        //   int page = DEFAULT_PAGE_NUMBER;
-        //   if (request.getParameter(CURRENT_PAGE) != null) {
-        //        page = Integer.parseInt(request.getParameter(CURRENT_PAGE));
-        //    }
+        int page = DEFAULT_PAGE_NUMBER;
+        if (request.getParameter(CURRENT_PAGE) != null) {
+            page = Integer.parseInt(request.getParameter(CURRENT_PAGE));
+        }
         System.err.close();
         System.setErr(System.out);
         try {
-            //   int numberOfRecords = bookService.getNumberOfBooks();
-            //    int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
-            //  request.setAttribute(CURRENT_PAGE, page);
-            //   request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
+            int numberOfRecords = bookService.getNumberOfBooks();
+            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+
+            request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
+
             request.getRequestDispatcher(PATH_MAIN_PAGE).forward(request, response);
         } catch (DAOConnectionPoolException e) {
             log.error("Database connection error. Command: GoToMainPage.", e);

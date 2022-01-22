@@ -21,7 +21,7 @@
 
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/header.jsp"/>
+
 <div class="allBooksOrClients">
 <h1>All books</h1>
 
@@ -35,6 +35,5 @@
     <input id="numberOfPages" type="text" name="" value="${numberOfPages}" style="display: none;">
     <input id="currentPage" type="text" name="" value="${currentPage}" style="display: none;">
 </div>
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 </body>
 </html>

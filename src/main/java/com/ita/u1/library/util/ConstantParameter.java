@@ -61,7 +61,7 @@ public class ConstantParameter {
             PATH_ADD_AUTHOR_PAGE = "/WEB-INF/jsp/addNewAuthor.jsp",
             PATH_ADD_BOOK_PAGE = "/WEB-INF/jsp/addNewBook.jsp",
             PATH_ADD_CLIENT_PAGE = "/WEB-INF/jsp/addNewClient.jsp",
-            PATH_ALL_BOOKS_PAGE = "/WEB-INF/jsp/allBooks.jsp",
+            PATH_MOST_POPULAR_BOOKS_PAGE = "/WEB-INF/jsp/mostPopular.jsp",
             PATH_ALL_CLIENTS_PAGE = "/WEB-INF/jsp/allClients.jsp",
             PATH_BOOK_VIOLATION_PAGE = "/WEB-INF/jsp/bookViolation.jsp",
             PATH_CLOSE_ORDER_PAGE = "/WEB-INF/jsp/closeOrder.jsp",

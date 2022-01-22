@@ -20,7 +20,7 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_ADD_NEW_CLIENT_PAGE, new GoToAddNewClientPage());
         commands.put(CommandName.CHECK_UNIQUENESS_PASSPORT_NUMBER, new CheckUniquenessPassportNumber());
         commands.put(CommandName.CHECK_UNIQUENESS_EMAIL, new CheckUniquenessEmail());
-        commands.put(CommandName.GO_TO_ALL_BOOKS_PAGE, new GoToAllBooksPage());
+        commands.put(CommandName.GO_TO_MOST_POPULAR_BOOKS_PAGE, new GoToMostPopularBooksPage());
         commands.put(CommandName.VIEW_ALL_BOOKS, new ViewAllBooks());
         commands.put(CommandName.GO_TO_ALL_CLIENTS_PAGE, new GoToAllClientsPage());
         commands.put(CommandName.VIEW_ALL_CLIENTS, new ViewAllClients());
