@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title>Title</title>
@@ -25,10 +26,10 @@
             if (json == "") {
                 viewAnswerWhenTheListIsEmpty();
             } else {
-                viewInTableMostPopular(json);
+               await viewInTableMostPopular(json);
             }
 
-        } else {
+        } else {.
             alert("Error while finding books.");
             console.log("Response.status: " + response.status);
         }
@@ -42,7 +43,7 @@
         document.getElementById('mostPopularBooks').appendChild(div);
     }
 
-    function viewInTableMostPopular(books) {
+    async function viewInTableMostPopular(books) {
 
         let rate = "Rating: ";
         let readers = "Readers number: ";
@@ -53,21 +54,20 @@
         table.appendChild(tbody);
 
         let row = document.createElement('tr');
-
         let row_data_1 = document.createElement('td');
         let img = document.createElement('img');
         img.src = "${pageContext.request.contextPath}/Controller?command=find_book_cover&id=" + books[0].id;
         img.style.height = '230px';
         img.style.width = '180px';
         row_data_1.appendChild(img);
-
+        await new Promise(r => setTimeout(r, 70));
         let row_data_2 = document.createElement('td');
         let img2 = document.createElement('img');
         img2.src = "${pageContext.request.contextPath}/Controller?command=find_book_cover&id=" + books[1].id;
         img2.style.height = '230px';
         img2.style.width = '180px';
         row_data_2.appendChild(img2);
-
+        await new Promise(r => setTimeout(r, 100));
         let row_data_3 = document.createElement('td');
         let img3 = document.createElement('img');
         img3.src = "${pageContext.request.contextPath}/Controller?command=find_book_cover&id=" + books[2].id;
@@ -112,8 +112,10 @@
         document.getElementById('mostPopularBooks').appendChild(table);
     }
 </script>
+
 <h2 style="padding: 0 0 0 15px;">Most popular books</h2>
 <div id="mostPopularBooks">
 </div>
+
 </body>
 </html>
