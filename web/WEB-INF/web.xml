@@ -40,4 +40,9 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <listener>
+        <listener-class>com.ita.u1.library.controller.listener.ExecutorServiceListener
+        </listener-class>
+    </listener>
+
 </web-app>

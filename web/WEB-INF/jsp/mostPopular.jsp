@@ -29,7 +29,7 @@
                await viewInTableMostPopular(json);
             }
 
-        } else {.
+        } else {
             alert("Error while finding books.");
             console.log("Response.status: " + response.status);
         }

@@ -25,17 +25,22 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class SimpleExecutorService {
 
+    private static final SimpleExecutorService instance = new SimpleExecutorService();
     private ScheduledExecutorService executor;
 
-    public SimpleExecutorService() {
+    private SimpleExecutorService() {
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(new MailSender(), getDelay(), TimeUnit.MILLISECONDS);
         executor.shutdown();
     }
 
+    public static SimpleExecutorService getInstance() {
+        return instance;
+    }
+
     private long getDelay() {
         LocalDate today = LocalDate.now();
-        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 16, 39);
+        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 11, 00);
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(now, timeToSendMail);
         return Math.abs(duration.toMillis());

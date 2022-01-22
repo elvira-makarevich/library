@@ -18,9 +18,6 @@ public class Controller extends HttpServlet {
 
     @Override
     public void init() {
-
-        SimpleExecutorService simpleExecutorService = new SimpleExecutorService();
-        
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
