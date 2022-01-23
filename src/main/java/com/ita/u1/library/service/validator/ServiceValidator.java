@@ -146,9 +146,9 @@ public class ServiceValidator {
         log.info("Order closing info validated.");
     }
 
-    public void validateViolationMessage(Violation violation) {
+    public void validateViolationMessage(ViolationBook violationBook) {
         log.info("Start validate violation message.");
-        if (!violation.getMessage().matches(PATTERN_VIOLATION_MESSAGE)) {
+        if (!violationBook.getMessage().matches(PATTERN_VIOLATION_MESSAGE)) {
             throw new ServiceException("Invalid message.");
         }
         log.info("Violation message validated.");
@@ -279,14 +279,14 @@ public class ServiceValidator {
     }
 
     private boolean checkFirstLastName(String name) {
-        return name.matches(PATTERN_FIRST_NAME_LAST_NAME);
+        return name.trim().matches(PATTERN_FIRST_NAME_LAST_NAME);
     }
 
     private boolean checkPatronymic(String patronymic) {
         if (patronymic == null) {
             return true;
         }
-        return patronymic.matches(PATTERN_PATRONYMIC);
+        return patronymic.trim().matches(PATTERN_PATRONYMIC);
     }
 
     private boolean checkEmail(String email) {
@@ -297,33 +297,33 @@ public class ServiceValidator {
         if (passportNumber == null) {
             return true;
         }
-        return passportNumber.matches(PATTERN_PASSPORT_NUMBER);
+        return passportNumber.trim().matches(PATTERN_PASSPORT_NUMBER);
     }
 
     private boolean checkPostCode(int postcode) {
         String s = postcode + EMPTY;
-        return s.matches(PATTERN_POST_CODE);
+        return s.trim().matches(PATTERN_POST_CODE);
     }
 
     private boolean checkCountryLocalityStreet(String locality) {
-        return locality.matches(PATTERN_COUNTRY_LOCALITY_STREET);
+        return locality.trim().matches(PATTERN_COUNTRY_LOCALITY_STREET);
     }
 
     private boolean checkHouseNumber(int houseNumber) {
         String s = houseNumber + EMPTY;
-        return s.matches(PATTERN_HOUSE_NUMBER);
+        return s.trim().matches(PATTERN_HOUSE_NUMBER);
     }
 
     private boolean checkHouseBuilding(String houseBuilding) {
         if (houseBuilding == null) {
             return true;
         }
-        return houseBuilding.matches(PATTERN_BUILDING);
+        return houseBuilding.trim().matches(PATTERN_BUILDING);
     }
 
     private boolean checkApartmentNumber(int apartmentNumber) {
         String s = apartmentNumber + EMPTY;
-        return s.matches(PATTERN_APARTMENT_NUMBER);
+        return s.trim().matches(PATTERN_APARTMENT_NUMBER);
     }
 
     private boolean checkDateOfBirth(LocalDate dateOfBirth) {
@@ -333,19 +333,19 @@ public class ServiceValidator {
     }
 
     private boolean checkTitle(String title) {
-        return title.matches(PATTERN_TITLE);
+        return title.trim().matches(PATTERN_TITLE);
     }
 
     private boolean checkOriginalTitle(String originalTitle) {
         if (originalTitle == null) {
             return true;
         }
-        return originalTitle.matches(PATTERN_ORIGINAL_TITLE);
+        return originalTitle.trim().matches(PATTERN_ORIGINAL_TITLE);
     }
 
     private boolean checkCost(BigDecimal cost) {
         String c = cost + EMPTY;
-        return c.matches(PATTERN_COST);
+        return c.trim().matches(PATTERN_COST);
     }
 
     private boolean checkPenaltyNullOrNotNegative(BigDecimal penalty) {
@@ -353,7 +353,7 @@ public class ServiceValidator {
             return true;
         }
         String c = penalty + EMPTY;
-        return c.matches(PATTERN_COST);
+        return c.trim().matches(PATTERN_COST);
     }
 
     private boolean checkNumberOfCopies(int numberOfCopies) {

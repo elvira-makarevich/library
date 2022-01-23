@@ -13,7 +13,6 @@
     <input type="hidden" name="command" value="indicate_book_violation"/>
     <h1>Book violation</h1>
     <input type="hidden" name="copyId" value="${copyId}"/>
-    <input type="hidden" name="orderId" value="${orderId}"/>
     <div><label>Title: </label>
         <input type="text" value="${title}" readonly>
     </div>

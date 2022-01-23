@@ -11,8 +11,6 @@ public interface OrderService {
 
     Order findOrderInfo(int clientId);
 
-    void indicateBookViolation(Violation violation);
-
     void closeOrder(Order order);
 
     Profitability checkProfitability (Profitability profitabilityDates);

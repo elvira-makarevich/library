@@ -15,7 +15,6 @@ public class GoToBookViolationPage implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute(TITLE, request.getParameter(TITLE));
         request.setAttribute(COPY_ID, request.getParameter(COPY_ID));
-        request.setAttribute(ORDER_ID, request.getParameter(ORDER_ID));
         request.getRequestDispatcher(PATH_BOOK_VIOLATION_PAGE).forward(request, response);
     }
 }

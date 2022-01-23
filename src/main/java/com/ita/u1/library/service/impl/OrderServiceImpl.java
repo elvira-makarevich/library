@@ -3,14 +3,11 @@ package com.ita.u1.library.service.impl;
 import com.ita.u1.library.dao.OrderDAO;
 import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.ActiveOrderServiceException;
-import com.ita.u1.library.exception.MissingOrderServiceException;
 import com.ita.u1.library.exception.NoActiveOrderServiceException;
 import com.ita.u1.library.service.OrderService;
 import com.ita.u1.library.service.validator.ServiceValidator;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 public class OrderServiceImpl implements OrderService {
 
@@ -45,15 +42,6 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setTotalCost(serviceValidator.calculateTotalCostBasedOnDataFromDB(order));
         return order;
-    }
-
-    @Override
-    public void indicateBookViolation(Violation violation) {
-        serviceValidator.validateViolationMessage(violation);
-        if (!orderDAO.doesTheOrderExist(violation.getOrderId(), violation.getCopyId())) {
-            throw new MissingOrderServiceException("Order with the specified book does not exist.");
-        }
-        orderDAO.indicateBookViolation(violation);
     }
 
     @Override

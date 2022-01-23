@@ -11,7 +11,7 @@ public class CopyBook implements Serializable {
     private BigDecimal costPerDay;
     private String title;
     private double rating;
-    private List<Violation> copyBooksViolations;
+    private List<ViolationBook> copyBooksViolations;
     private boolean existence;
     private int available;
 
@@ -80,11 +80,11 @@ public class CopyBook implements Serializable {
         this.rating = rating;
     }
 
-    public List<Violation> getCopyBooksViolations() {
+    public List<ViolationBook> getCopyBooksViolations() {
         return copyBooksViolations;
     }
 
-    public void setCopyBooksViolations(List<Violation> copyBooksViolations) {
+    public void setCopyBooksViolations(List<ViolationBook> copyBooksViolations) {
         this.copyBooksViolations = copyBooksViolations;
     }
 

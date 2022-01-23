@@ -5,6 +5,7 @@ import com.ita.u1.library.dao.BookDAO;
 import com.ita.u1.library.dao.connection_pool.ConnectionPool;
 import com.ita.u1.library.entity.*;
 import com.ita.u1.library.exception.DAOException;
+import org.apache.logging.log4j.core.util.JsonUtils;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -239,6 +240,52 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
     }
 
     @Override
+    public void indicateBookViolation(ViolationBook violationBook) {
+        Connection connection = take();
+        PreparedStatement psBooksOrder = null;
+        PreparedStatement psViolationImage = null;
+        ResultSet generatedKeys = null;
+
+        try {
+            connection.setAutoCommit(false);
+            psBooksOrder = connection.prepareStatement(INSERT_INTO_BOOKS_COPIES_VIOLATIONS, Statement.RETURN_GENERATED_KEYS);
+            psViolationImage = connection.prepareStatement(INSERT_INTO_VIOLATIONS_IMAGES);
+
+            psBooksOrder.setInt(1, violationBook.getCopyId());
+            psBooksOrder.setString(2, violationBook.getMessage());
+
+            int affectedRows = psBooksOrder.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new DAOException("Adding violation failed, no rows affected.");
+            }
+
+            generatedKeys = psBooksOrder.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                violationBook.setId(generatedKeys.getInt(1));
+            } else {
+                throw new DAOException("Adding violation failed, no ID obtained.");
+            }
+
+
+            for (int i = 0; i < violationBook.getImages().size(); i++) {
+                psViolationImage.setInt(1, violationBook.getId());
+                psViolationImage.setBytes(2, violationBook.getImages().get(i));
+                psViolationImage.executeUpdate();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DAOException("Method indicateBookViolation() failed.", e);
+        } finally {
+            close(generatedKeys);
+            close(psBooksOrder, psViolationImage);
+            setAutoCommitTrue(connection);
+            release(connection);
+        }
+    }
+
+    @Override
     public List<Book> findTheMostPopularBooks() {
         Connection connection = take();
         PreparedStatement psOrder = null;
@@ -247,18 +294,20 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         ResultSet rsBook = null;
 
         List<Book> books = new ArrayList<>();
+        LocalDate threeMonthAgo = LocalDate.now().minusMonths(3);
+        int minOrderIdThreeMonthAgo = 0;
+
         try {
-            LocalDate threeMonthAgo = LocalDate.now().minusMonths(3);
-            int minOrderIdThreeMonthAgo = 0;
             psOrder = connection.prepareStatement(SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO);
+            psBooks = connection.prepareStatement(SELECT_MOST_POPULAR_BOOKS);
             psOrder.setDate(1, Date.valueOf(threeMonthAgo));
             rsOrder = psOrder.executeQuery();
 
             while (rsOrder.next()) {
                 minOrderIdThreeMonthAgo = rsOrder.getInt(1);
+                System.out.println(minOrderIdThreeMonthAgo);
             }
 
-            psBooks = connection.prepareStatement(SELECT_MOST_POPULAR_BOOKS);
             psBooks.setInt(1, minOrderIdThreeMonthAgo);
 
             rsBook = psBooks.executeQuery();
@@ -318,7 +367,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
         try {
             psBook = connection.prepareStatement(SELECT_BOOK_BY_TITLE);
             psCopyBook = connection.prepareStatement(SELECT_AVAILABLE_COPY_BOOKS_BY_BOOK_ID);
-            psCopyBookViolations = connection.prepareStatement(SELECT_COPY_BOOK_VIOLATION);
+            psCopyBookViolations = connection.prepareStatement(SELECT_COPY_BOOK_VIOLATIONS);
 
             psBook.setString(1, title);
             rsBook = psBook.executeQuery();
@@ -335,11 +384,11 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                         copy.setId(rsCopyBook.getInt(1));
                         copy.setTitle(booksTitle);
 
-                        List<Violation> violationsCopyBook = new ArrayList<>();
+                        List<ViolationBook> violationsCopyBook = new ArrayList<>();
                         psCopyBookViolations.setInt(1, copy.getId());
                         rsCopyBookViolations = psCopyBookViolations.executeQuery();
                         while (rsCopyBookViolations.next()) {
-                            violationsCopyBook.add(new Violation(rsCopyBookViolations.getString(1)));
+                            violationsCopyBook.add(new ViolationBook(rsCopyBookViolations.getString(1)));
                         }
                         copy.setCopyBooksViolations(violationsCopyBook);
                         copyBooks.add(copy);
@@ -383,14 +432,14 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
     }
 
     @Override
-    public boolean doesTheCopyBookExist(CopyBook copyBook) {
+    public boolean doesTheCopyBookExist(int copyBookId) {
         Connection connection = take();
         PreparedStatement psCopyBook = null;
         ResultSet rs = null;
 
         try {
             psCopyBook = connection.prepareStatement(SELECT_COPY_BOOK_BY_ID);
-            psCopyBook.setInt(1, copyBook.getId());
+            psCopyBook.setInt(1, copyBookId);
             rs = psCopyBook.executeQuery();
 
             while (rs.next()) {
@@ -398,7 +447,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Method doesTheOrderExist() failed.", e);
+            throw new DAOException("Method doesTheCopyBookExist() failed.", e);
         } finally {
             close(rs);
             close(psCopyBook);

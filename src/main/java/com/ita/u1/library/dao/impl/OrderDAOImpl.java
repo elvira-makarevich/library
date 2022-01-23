@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ita.u1.library.util.ConstantParameter.*;
 
@@ -165,41 +164,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
     }
 
     @Override
-    public void indicateBookViolation(Violation violation) {
-
-        Connection connection = take();
-        PreparedStatement psBooksOrder = null;
-        PreparedStatement psViolationImage = null;
-
-        try {
-            connection.setAutoCommit(false);
-            psBooksOrder = connection.prepareStatement(UPDATE_BOOKS_ORDER_WITH_VIOLATION);
-            psViolationImage = connection.prepareStatement(INSERT_VIOLATION_IMAGES);
-
-            psBooksOrder.setString(1, violation.getMessage());
-            psBooksOrder.setInt(2, violation.getOrderId());
-            psBooksOrder.setInt(3, violation.getCopyId());
-            psBooksOrder.executeUpdate();
-
-            for (int i = 0; i < violation.getImages().size(); i++) {
-                psViolationImage.setInt(1, violation.getOrderId());
-                psViolationImage.setInt(2, violation.getCopyId());
-                psViolationImage.setBytes(3, violation.getImages().get(i));
-                psViolationImage.executeUpdate();
-            }
-
-            connection.commit();
-        } catch (SQLException e) {
-            rollback(connection);
-            throw new DAOException("Method indicateBookViolationAndChangeCost() failed.", e);
-        } finally {
-            close(psBooksOrder, psViolationImage);
-            setAutoCommitTrue(connection);
-            release(connection);
-        }
-    }
-
-    @Override
     public void closeOrder(Order order) {
 
         Connection connection = take();
@@ -271,33 +235,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
             release(connection);
         }
         return books;
-    }
-
-    @Override
-    public boolean doesTheOrderExist(int orderId, int copyId) {
-        Connection connection = take();
-        PreparedStatement psOrder = null;
-        ResultSet rs = null;
-
-        try {
-            psOrder = connection.prepareStatement(SELECT_COPY_BOOK_FROM_ORDER);
-            psOrder.setInt(1, orderId);
-            psOrder.setInt(2, copyId);
-
-            rs = psOrder.executeQuery();
-
-            if (rs.next()) {
-                return true;
-            }
-
-        } catch (SQLException e) {
-            throw new DAOException("Method doesTheOrderExist() failed.", e);
-        } finally {
-            close(rs);
-            close(psOrder);
-            release(connection);
-        }
-        return false;
     }
 
     @Override

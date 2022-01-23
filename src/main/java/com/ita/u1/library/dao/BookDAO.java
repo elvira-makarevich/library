@@ -2,9 +2,9 @@ package com.ita.u1.library.dao;
 
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
+import com.ita.u1.library.entity.ViolationBook;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookDAO {
 
@@ -18,6 +18,8 @@ public interface BookDAO {
 
     void changeCostPerDay(CopyBook copyBook);
 
+    void indicateBookViolation(ViolationBook violationBook);
+
     List<Book> findTheMostPopularBooks();
 
     Book findBookCover(int id);
@@ -26,6 +28,6 @@ public interface BookDAO {
 
     void writeBooksOff(List<CopyBook> copyBooks);
 
-    boolean doesTheCopyBookExist(CopyBook copyBook);
+    boolean doesTheCopyBookExist(int copyBookId);
 
 }

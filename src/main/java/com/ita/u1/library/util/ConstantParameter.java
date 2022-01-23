@@ -107,7 +107,7 @@ public class ConstantParameter {
             SELECT_MOST_POPULAR_BOOKS = "SELECT books_copies.book_id, avg(rating) as rating_book, count(copy_id) as numberPeopleRead FROM books_copies inner join books_orders on books_copies.id=books_orders.copy_id  where rating>-1 and books_orders.order_id>? group by books_copies.book_id order by numberPeopleRead DESC limit 3",
             SELECT_BOOK_COVER = "SELECT cover FROM books_covers WHERE book_id = ? limit 1",
             SELECT_MIN_ORDER_ID_THREE_MONTHS_AGO = "select id from orders where order_date>? order by id limit 1",
-            SELECT_COPY_BOOK_VIOLATION = "SELECT violation FROM books_orders where copy_id=? and violation is not null",
+            SELECT_COPY_BOOK_VIOLATIONS = "SELECT violation FROM books_copies_violations where copy_id=?",
             UPDATE_EXISTENCE = "UPDATE books_copies SET available=0, existence=false, date_of_writing_off=? WHERE id=?",
             SELECT_COPY_BOOK_BY_ID = "SELECT * FROM books_copies WHERE id=?";
 
@@ -126,13 +126,12 @@ public class ConstantParameter {
             SELECT_BOOKS_ORDER_BY_ID = "SELECT * FROM books_orders WHERE order_id=?",
             SELECT_BOOKS_TITLE = "SELECT title FROM books inner join books_copies on books.id=books_copies.book_id where books_copies.id=?",
             SELECT_BOOK_COPY_COST_PER_DAY = "SELECT cost_per_day FROM books_copies where id=?",
-            UPDATE_BOOKS_ORDER_WITH_VIOLATION = "UPDATE books_orders SET violation=? WHERE order_id=? and copy_id=?",
-            INSERT_VIOLATION_IMAGES = "INSERT INTO violation_images (order_id, copy_id, image) VALUES (?,?,?)",
+            INSERT_INTO_BOOKS_COPIES_VIOLATIONS = "INSERT INTO books_copies_violations (copy_id, violation) VALUES (?,?)",
+            INSERT_INTO_VIOLATIONS_IMAGES = "INSERT INTO violations_images (violation_id, image) VALUES (?,?)",
             UPDATE_ORDER_CLOSE = "UPDATE orders SET total_cost=?, real_return_date=?, status=false, penalty=? WHERE id=?",
             UPDATE_BOOKS_ORDER_WITH_RATING = "UPDATE books_orders SET rating=? where order_id=? and copy_id=?",
             UPDATE_BOOKS_COPIES_AVAILABILITY_TRUE = "UPDATE books_copies SET available=1 where id=?",
             SELECT_BOOKS_COPIES_ORDER = "SELECT * FROM books_copies where id=?",
-            SELECT_COPY_BOOK_FROM_ORDER = "SELECT * FROM books_orders WHERE order_id=? and copy_id=? ",
             SELECT_SUM_TOTAL_COST_FROM_TO = "select sum(total_cost) from orders where real_return_date >? and real_return_date<?";
 
     public static final String BOOKS_TO_RETURN = "Books to return: \n",
@@ -150,8 +149,10 @@ public class ConstantParameter {
 
     public static final int MAX_AMOUNT_OF_BOOKS_PER_ORDER = 5,
             NUMBER_OF_BOOKS_4 = 4,
-            NUMBER_OF_BOOKS_2 = 2;
-
+            NUMBER_OF_BOOKS_2 = 2,
+            DEFAULT_PAGE_NUMBER = 1,
+            RECORDS_PER_PAGE_BOOKS = 20,
+            RECORDS_PER_PAGE_CLIENTS = 20;
 }
 
 

@@ -2,6 +2,7 @@ package com.ita.u1.library.service;
 
 import com.ita.u1.library.entity.Book;
 import com.ita.u1.library.entity.CopyBook;
+import com.ita.u1.library.entity.ViolationBook;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface BookService {
     List<CopyBook> findBooks(String title);
 
     void changeCostPerDay(CopyBook copyBook);
+
+    void indicateBookViolation(ViolationBook violationBook);
 
     List<Book> findTheMostPopularBooks();
 

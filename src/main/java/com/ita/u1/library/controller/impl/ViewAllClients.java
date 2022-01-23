@@ -23,9 +23,6 @@ public class ViewAllClients extends AbstractCommand implements Command {
     private final ClientService clientService = ServiceProvider.getInstance().getClientService();
     private static final Logger log = LogManager.getLogger(ViewAllClients.class);
 
-    public static final int DEFAULT_PAGE_NUMBER = 1;
-    public static final int RECORDS_PER_PAGE = 20;
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -37,9 +34,9 @@ public class ViewAllClients extends AbstractCommand implements Command {
             }
 
             int numberOfRecords = clientService.getNumberOfClients();
-            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE_CLIENTS);
 
-            List<Client> clients = clientService.getAllClients((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
+            List<Client> clients = clientService.getAllClients((page - 1) * RECORDS_PER_PAGE_CLIENTS, RECORDS_PER_PAGE_CLIENTS);
 
             request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
             request.setAttribute(CURRENT_PAGE, page);

@@ -24,9 +24,6 @@ public class ViewAllBooks extends AbstractCommand implements Command {
     private final BookService bookService = ServiceProvider.getInstance().getBookService();
     private static final Logger log = LogManager.getLogger(ViewAllBooks.class);
 
-    public static final int RECORDS_PER_PAGE = 20;
-    public static final int DEFAULT_PAGE_NUMBER = 1;
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -38,9 +35,9 @@ public class ViewAllBooks extends AbstractCommand implements Command {
             }
 
             int numberOfRecords = bookService.getNumberOfBooks();
-            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE);
+            int numberOfPages = (int) Math.ceil(numberOfRecords * 1.0 / RECORDS_PER_PAGE_BOOKS);
 
-            List<Book> books = bookService.getAllBooks((page - 1) * RECORDS_PER_PAGE, RECORDS_PER_PAGE);
+            List<Book> books = bookService.getAllBooks((page - 1) * RECORDS_PER_PAGE_BOOKS, RECORDS_PER_PAGE_BOOKS);
 
             request.setAttribute(NUMBER_OF_PAGES, numberOfPages);
             request.setAttribute(CURRENT_PAGE, page);
@@ -48,7 +45,7 @@ public class ViewAllBooks extends AbstractCommand implements Command {
 
         } catch (ControllerValidationException e) {
             log.error("ControllerValidationException. Command: ViewAllBooks.", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ControllerValidationException. Command: ViewAllBooks.");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: ViewAllBooks.", e);
             throw new ControllerException("Database error. Command: ViewAllBooks.", e);

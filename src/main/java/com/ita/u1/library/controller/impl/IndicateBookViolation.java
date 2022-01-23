@@ -3,9 +3,9 @@ package com.ita.u1.library.controller.impl;
 import com.ita.u1.library.controller.Command;
 import com.ita.u1.library.controller.util.Converter;
 import com.ita.u1.library.controller.util.Validator;
-import com.ita.u1.library.entity.Violation;
+import com.ita.u1.library.entity.ViolationBook;
 import com.ita.u1.library.exception.*;
-import com.ita.u1.library.service.OrderService;
+import com.ita.u1.library.service.BookService;
 import com.ita.u1.library.service.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,26 +21,22 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 
 public class IndicateBookViolation implements Command {
 
-    private final OrderService orderService = ServiceProvider.getInstance().getOrderService();
+    private final BookService bookService = ServiceProvider.getInstance().getBookService();
     private static final Logger log = LogManager.getLogger(IndicateBookViolation.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try {
-            int orderId = Converter.toInt(request.getParameter(ORDER_ID));
             int copyId = Converter.toInt(request.getParameter(COPY_ID));
             String message = Validator.assertNotNullOrEmpty(request.getParameter(VIOLATION_MESSAGE));
             List<byte[]> images = Converter.toListBytes(request.getParts().stream().filter(part -> IMAGES.equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()));
 
-            Violation violation = new Violation(orderId, copyId, message, images);
+            ViolationBook violationBook = new ViolationBook(copyId, message, images);
+            bookService.indicateBookViolation(violationBook);
 
-            orderService.indicateBookViolation(violation);
         } catch (ControllerValidationException | ServiceException e) {
-            log.error("Invalid violation data.", e);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        } catch (MissingOrderServiceException e) {
-            log.error("Order with the specified book does not exist.", e);
+            log.error("Invalid data.", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (DAOConnectionPoolException | DAOException e) {
             log.error("Database error. Command: IndicateBookViolation.", e);
