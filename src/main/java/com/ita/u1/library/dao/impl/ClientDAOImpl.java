@@ -143,7 +143,6 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
             rs = ps.executeQuery();
             rs.last();
             numberOfRecords = rs.getRow();
-
         } catch (SQLException e) {
             throw new DAOException("Method getNumberOfRecords() failed.", e);
         } finally {
@@ -181,7 +180,6 @@ public class ClientDAOImpl extends AbstractDAO implements ClientDAO {
                         rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14)));
                 clients.add(client);
             }
-
         } catch (SQLException e) {
             throw new DAOException("DAOException: method getAllClients() failed.", e);
         } finally {

@@ -50,7 +50,6 @@ public class AddNewBook implements Command {
             }
 
             Book book = new Book(title, originalTitle, genres, price, numberOfCopies, authors, covers, publishingYear, numberOfPages, copies);
-
             bookService.add(book);
         } catch (ControllerValidationException | ServiceException e) {
             log.error("Invalid book data.", e);

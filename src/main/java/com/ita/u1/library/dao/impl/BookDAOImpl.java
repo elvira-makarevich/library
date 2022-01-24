@@ -206,7 +206,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
                     }
                 }
             }
-
         } catch (SQLException e) {
             throw new DAOException("DAOException: method findBooks() failed.", e);
         } finally {
@@ -305,7 +304,6 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
             while (rsOrder.next()) {
                 minOrderIdThreeMonthAgo = rsOrder.getInt(1);
-                System.out.println(minOrderIdThreeMonthAgo);
             }
 
             psBooks.setInt(1, minOrderIdThreeMonthAgo);
@@ -442,7 +440,7 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
             psCopyBook.setInt(1, copyBookId);
             rs = psCopyBook.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 return true;
             }
 
@@ -458,14 +456,12 @@ public class BookDAOImpl extends AbstractDAO implements BookDAO {
 
     private double cutOffNumbers(double rating) {
         double scale = Math.pow(10, 1);
-        double result = Math.ceil(rating * scale) / scale;
-        return result;
+        return Math.ceil(rating * scale) / scale;
     }
 
     private BigDecimal convertToBigDecimal(String money) {
         String cost = money.replace(',', '.');
-        BigDecimal copyCost = new BigDecimal(cost.replace(BR, EMPTY));
-        return copyCost;
+        return new BigDecimal(cost.replace(BR, EMPTY));
     }
 }
 

@@ -68,7 +68,7 @@ function viewInTableClients(clients) {
 
         async function addClient() {
             if (await hasClientActiveOrder(idClient) === true) {
-                alert("The reader has not returned the books and cannot take others!");
+                alert("The reader did not return the books and cannot take others!");
             } else {
                 addClientToRealClientContainer(initials, idClient);
             }

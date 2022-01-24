@@ -43,6 +43,7 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_WRITING_OFF_BOOKS_PAGE, new GoToWritingOffBooksPage());
         commands.put(CommandName.FIND_BOOKS_FOR_WRITING_OFF, new FindBooksForWritingOff());
         commands.put(CommandName.WRITE_OFF_BOOKS, new WriteOffBooks());
+        commands.put(CommandName.UNKNOWN_COMMAND, new UnknownCommand());
     }
 
     public Command findCommand(String name) {
@@ -56,8 +57,7 @@ public class CommandProvider {
         } catch (IllegalArgumentException e) {
             commandName = CommandName.UNKNOWN_COMMAND;
         }
-        Command command = commands.get(commandName);
-        return command;
+        return commands.get(commandName);
     }
 
 }

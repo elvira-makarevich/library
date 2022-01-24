@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Converter {
@@ -99,8 +100,8 @@ public class Converter {
                 authors.add(new Author(Integer.parseInt(s)));
             }
         } catch (NullPointerException | NumberFormatException e) {
-            log.error("Values [" + values + "] can't be converted to int.", e);
-            throw new ControllerValidationException("Values [" + values + "] can't be converted to int.", e);
+            log.error("Values [" + Arrays.toString(values) + "] can't be converted to int.", e);
+            throw new ControllerValidationException("Values [" + Arrays.toString(values) + "] can't be converted to int.", e);
         }
         return authors;
     }
@@ -116,8 +117,8 @@ public class Converter {
                 copies.add(new CopyBook(Integer.parseInt(s)));
             }
         } catch (NullPointerException | NumberFormatException e) {
-            log.error("Values [" + values + "] can't be converted to int.", e);
-            throw new ControllerValidationException("Values [" + values + "] can't be converted to int.", e);
+            log.error("Values [" + Arrays.toString(values) + "] can't be converted to int.", e);
+            throw new ControllerValidationException("Values [" + Arrays.toString(values) + "] can't be converted to int.", e);
         }
         return copies;
     }

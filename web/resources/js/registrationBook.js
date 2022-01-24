@@ -136,7 +136,7 @@ function viewInTableAuthors(authors) {
             buttonRemove.innerHTML = "Delete";
 
             let attr = document.createAttribute("onclick");
-            attr.value = "deleteRow(this);";
+            attr.value = "deleteRow(this, 'book_authors');";
             buttonRemove.setAttributeNode(attr);
             row_data_4.appendChild(buttonRemove);
 
@@ -192,9 +192,13 @@ function removeTable(className) {
     table.parentNode.removeChild(table);
 }
 
-function deleteRow(r) {
+function deleteRow(r, tableClassName) {
     let i = r.parentNode.parentNode.rowIndex;
-    document.getElementsByClassName("book_authors")[0].deleteRow(i);
+    document.getElementsByClassName(tableClassName)[0].deleteRow(i);
+    let table = document.getElementsByClassName(tableClassName)[0];
+    if (table.rows.length === 1) {
+        removeTable(tableClassName);
+    }
     checkAuthors();
 }
 

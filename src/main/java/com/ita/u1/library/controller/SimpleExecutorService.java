@@ -26,10 +26,9 @@ import static com.ita.u1.library.util.ConstantParameter.*;
 public class SimpleExecutorService {
 
     private static final SimpleExecutorService instance = new SimpleExecutorService();
-    private ScheduledExecutorService executor;
 
     private SimpleExecutorService() {
-        executor = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(new MailSender(), getDelay(), TimeUnit.MILLISECONDS);
         executor.shutdown();
     }
@@ -40,7 +39,7 @@ public class SimpleExecutorService {
 
     private long getDelay() {
         LocalDate today = LocalDate.now();
-        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 11, 00);
+        LocalDateTime timeToSendMail = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 11, 17);
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(now, timeToSendMail);
         return Math.abs(duration.toMillis());
@@ -74,16 +73,16 @@ public class SimpleExecutorService {
                 });
 
                 if (!freshViolationReturnDates.isEmpty()) {
-                    for (int i = 0; i < freshViolationReturnDates.size(); i++) {
+                    for (ViolationReturnDate freshViolationReturnDate : freshViolationReturnDates) {
                         try {
                             MimeMessage message = new MimeMessage(session);
                             message.setFrom(new InternetAddress(resourceBundle.getString(MAIL_FROM)));
                             message.addRecipient(Message.RecipientType.TO,
-                                    new InternetAddress(freshViolationReturnDates.get(i).getClient().getEmail()));
+                                    new InternetAddress(freshViolationReturnDate.getClient().getEmail()));
                             message.setSubject(MAIL_MESSAGE_SUBJECT);
-                            message.setText(formMessageTextWithCopyBooks(freshViolationReturnDates.get(i).getCopyBooks()));
+                            message.setText(formMessageTextWithCopyBooks(freshViolationReturnDate.getCopyBooks()));
                             Transport.send(message);
-                            log.info("Email is successfully sent to " + freshViolationReturnDates.get(i).getClient().getEmail());
+                            log.info("Email is successfully sent to " + freshViolationReturnDate.getClient().getEmail());
                         } catch (MessagingException e) {
                             log.error("Exception while sending mail.", e);
                         }
@@ -91,16 +90,16 @@ public class SimpleExecutorService {
                 }
 
                 if (!oldViolationReturnDates.isEmpty()) {
-                    for (int i = 0; i < oldViolationReturnDates.size(); i++) {
+                    for (ViolationReturnDate oldViolationReturnDate : oldViolationReturnDates) {
                         try {
                             MimeMessage message = new MimeMessage(session);
                             message.setFrom(new InternetAddress(resourceBundle.getString(MAIL_FROM)));
                             message.addRecipient(Message.RecipientType.TO,
-                                    new InternetAddress(oldViolationReturnDates.get(i).getClient().getEmail()));
+                                    new InternetAddress(oldViolationReturnDate.getClient().getEmail()));
                             message.setSubject(MAIL_MESSAGE_SUBJECT);
-                            message.setText(formMessageTextWithAmountOfPenalty(oldViolationReturnDates.get(i).getPenaltyAmountForDelaying()));
+                            message.setText(formMessageTextWithAmountOfPenalty(oldViolationReturnDate.getPenaltyAmountForDelaying()));
                             Transport.send(message);
-                            log.info("Email is successfully sent to " + oldViolationReturnDates.get(i).getClient().getEmail());
+                            log.info("Email is successfully sent to " + oldViolationReturnDate.getClient().getEmail());
                         } catch (MessagingException e) {
                             log.error("Exception while sending mail.", e);
                         }
@@ -119,10 +118,7 @@ public class SimpleExecutorService {
         }
 
         private static String formMessageTextWithAmountOfPenalty(BigDecimal amountOfPenalty) {
-
-            StringBuilder sb = new StringBuilder(AMOUNT_OF_PENALTY_FOR_DELAYING);
-            sb.append(amountOfPenalty).append(BR);
-            return sb.toString();
+            return AMOUNT_OF_PENALTY_FOR_DELAYING + amountOfPenalty + BR;
         }
     }
 }

@@ -257,7 +257,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO {
                     profitability.setProfit(convertToBigDecimal(rs.getString(SUM)));
                 }
             }
-
         } catch (SQLException e) {
             throw new DAOException("Method checkProfitability() failed.", e);
         } finally {
